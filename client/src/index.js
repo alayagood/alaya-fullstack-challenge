@@ -1,16 +1,24 @@
-import React from 'react';
-import * as ReactDOM from 'react-dom';
-import { combineReducers, createStore, compose, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import posts from './Post/PostReducer';
-import './index.css';
-import App from './App';
+import React from "react";
+import * as ReactDOM from "react-dom";
+import { combineReducers, createStore, compose, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { PostReducer } from "./redux/posts";
+import { UserReducer } from "./redux/user";
+import "./index.css";
+import App from "./App";
 
 // Middleware and store enhancers
-const enhancers = [
-    applyMiddleware(thunk),
-];
+const enhancers = [applyMiddleware(thunk)];
 
-const initialStore = createStore(combineReducers({ posts }), { }, compose(...enhancers));
+const composeEnhancers =
+  (typeof window !== "undefined" &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 
-ReactDOM.render(<App store={initialStore}/>, document.getElementById('root'));
+const initialStore = createStore(
+  combineReducers({ posts: PostReducer, user: UserReducer }),
+  {},
+  composeEnhancers(...enhancers)
+);
+
+ReactDOM.render(<App store={initialStore} />, document.getElementById("root"));
