@@ -91,6 +91,8 @@ export const UserReducer = (state = initialState, action) => {
     case LOGOUT_SUCCEEDED:
       return {
         ...state,
+        loading: false,
+        error: null,
         data: {
           id: null,
           name: null,

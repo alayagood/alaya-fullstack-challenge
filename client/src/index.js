@@ -10,6 +10,7 @@ import App from "./App";
 import "./index.css";
 import { PostReducer } from "./redux/posts";
 import { UserReducer } from "./redux/user";
+import { UiReducer } from "./redux/ui";
 
 export const history = createBrowserHistory();
 const persistConfig = {
@@ -29,6 +30,7 @@ const createRootReducer = (history) =>
     router: connectRouter(history),
     posts: PostReducer,
     user: UserReducer,
+    ui: UiReducer,
   });
 
 const persistedReducer = persistReducer(

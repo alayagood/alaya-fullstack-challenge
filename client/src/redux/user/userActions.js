@@ -1,5 +1,6 @@
 import callApi from "../../util/apiCaller";
 import { push } from "connected-react-router";
+import { showErrorSnackbar, showSuccessSnackbar } from "../ui/uiActions";
 
 // Export Constants
 
@@ -38,9 +39,11 @@ export function fetchLogin(user) {
       .then((res) => {
         dispatch(saveUserInStore(res));
         dispatch(push("/"));
+        dispatch(showSuccessSnackbar("Login success!"));
       })
       .catch((err) => {
         dispatch({ type: LOGIN_FAILED, payload: err });
+        dispatch(showErrorSnackbar("Login failed"));
       });
   };
 }
@@ -52,8 +55,12 @@ export function fetchSignup(user) {
       .then((res) => {
         dispatch(saveSignedUpUser(res.status));
         dispatch(push("/"));
+        dispatch(showSuccessSnackbar("Signup success!"));
       })
-      .catch((err) => dispatch({ type: SIGNUP_FAILED, payload: err }));
+      .catch((err) => {
+        dispatch({ type: SIGNUP_FAILED, payload: err });
+        dispatch(showErrorSnackbar("Signup failed, please try again later"));
+      });
   };
 }
 
@@ -63,6 +70,7 @@ export function logoutUser() {
       dispatch({ type: LOGOUT_STARTED });
       dispatch(push("/"));
       dispatch({ type: LOGOUT_SUCCEEDED });
+      dispatch(showSuccessSnackbar("Logout success, come again soon!"));
     } catch (error) {
       dispatch({ type: LOGOUT_FAILED });
     }

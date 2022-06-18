@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ConnectedRouter } from "connected-react-router";
 import PropTypes from "prop-types";
 import { Provider } from "react-redux";
+import Snackbar from "./Snackbar/Snackbar";
 import { Route, Switch } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { history, persistor } from ".";
@@ -29,6 +30,7 @@ function App(props) {
       <Provider store={props.store}>
         <PersistGate loading={null} persistor={persistor}>
           <ConnectedRouter history={history}>
+            <Snackbar />
             <div className="w-100">
               <Navbar />
               <div className="w-100 pt-5 mt-5">
