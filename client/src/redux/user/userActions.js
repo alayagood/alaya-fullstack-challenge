@@ -3,45 +3,68 @@ import { push } from "connected-react-router";
 
 // Export Constants
 
-export const LOGIN = "LOGIN";
-export const SIGNUP = "SIGNUP";
-export const LOGOUT = "LOGOUT";
-export const SET_TOKEN = "SET_TOKEN";
+export const LOGIN_STARTED = "USER/LOGIN_STARTED";
+export const LOGIN_FAILED = "USER/LOGIN_FAILED";
+export const LOGIN_SUCCEEDED = "USER/LOGIN_SUCCEEDED";
 
-export function loginUser(payload) {
+export const SIGNUP_STARTED = "USER/SIGNUP_STARTED";
+export const SIGNUP_FAILED = "USER/SIGNUP_FAILED";
+export const SIGNUP_SUCCEEDED = "USER/SIGNUP_SUCCEEDED";
+
+export const LOGOUT_STARTED = "USER/LOGOUT_STARTED";
+export const LOGOUT_FAILED = "USER/LOGOUT_FAILED";
+export const LOGOUT_SUCCEEDED = "USER/LOGOUT_SUCCEEDED";
+
+export const SET_TOKEN_STARTED = "USER/SET_TOKEN_STARTED";
+
+export function saveUserInStore(payload) {
   return {
-    type: LOGIN,
+    type: LOGIN_SUCCEEDED,
     payload,
   };
 }
 
-export function signupUser(payload) {
+export function saveSignedUpUser(payload) {
   return {
-    type: SIGNUP,
+    type: SIGNUP_SUCCEEDED,
     payload,
-  };
-}
-
-export function logoutUser() {
-  return {
-    type: LOGOUT,
   };
 }
 
 export function fetchLogin(user) {
   return (dispatch) => {
-    return callApi("users/login", "post", user).then((res) => {
-      dispatch(loginUser(res));
-      dispatch(push("/"));
-    });
+    dispatch({ type: LOGIN_STARTED });
+    return callApi("users/login", "post", user)
+      .then((res) => {
+        dispatch(saveUserInStore(res));
+        dispatch(push("/"));
+      })
+      .catch((err) => {
+        dispatch({ type: LOGIN_FAILED, payload: err });
+      });
   };
 }
 
 export function fetchSignup(user) {
   return (dispatch) => {
-    return callApi("users/signup", "post", user).then((res) => {
-      dispatch(signupUser(res));
+    dispatch({ type: SIGNUP_STARTED });
+    return callApi("users/signup", "post", user)
+      .then((res) => {
+        dispatch(saveSignedUpUser(res.status));
+        dispatch(push("/"));
+      })
+      .catch((err) => dispatch({ type: SIGNUP_FAILED, payload: err }));
+  };
+}
+
+export function logoutUser() {
+  return (dispatch) => {
+    try {
+      dispatch({ type: LOGOUT_STARTED });
       dispatch(push("/"));
-    });
+      dispatch({ type: LOGOUT_SUCCEEDED });
+    } catch (error) {
+      dispatch({ type: LOGOUT_FAILED });
+    }
   };
 }

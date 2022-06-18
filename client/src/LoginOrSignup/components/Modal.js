@@ -1,9 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { isLoadingSelector } from "../../redux/user";
 import MUILink from "@material-ui/core/Link";
 
 function Modal({ title, method, onSubmit }) {
+  const isLoading = useSelector(isLoadingSelector);
+
   const isLogin = method === "login";
   const url = isLogin ? "/signup" : "/login";
   const text =
@@ -15,7 +19,7 @@ function Modal({ title, method, onSubmit }) {
       <div className="row">
         <h1>{title}</h1>
       </div>
-      <form className="row" onSubmit={onSubmit}>
+      <form className="row" onSubmit={isLoading ? () => {} : onSubmit}>
         <div className="col">
           {method === "signup" && (
             <div className="row justify-content-center">
@@ -42,7 +46,9 @@ function Modal({ title, method, onSubmit }) {
             />
           </div>
           <div className="row justify-content-center">
-            <button type="submit">Submit</button>
+            <button disabled={isLoading} type="submit">
+              {isLoading ? "Submitting..." : "Submit"}
+            </button>
           </div>
         </div>
       </form>

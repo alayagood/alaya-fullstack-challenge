@@ -10,6 +10,7 @@ import { history, persistor } from ".";
 import LoginPage from "./LoginOrSignup/LoginPage";
 import SignupPage from "./LoginOrSignup/SignupPage";
 import LogoutPage from "./Logout/LogoutPage";
+import ManagePage from "./Manage/ManagePage";
 import Navbar from "./Nav/components/Navbar";
 import PostDetailPage from "./Post/pages/PostDetailPage/PostDetailPage";
 import PostListPage from "./Post/pages/PostListPage/PostListPage";
@@ -36,6 +37,7 @@ function App(props) {
                   <Route path="/login" exact component={LoginPage} />
                   <Route path="/signup" exact component={SignupPage} />
                   <Route path="/logout" exact component={LogoutPage} />
+                  <Route path="/manage" exact component={ManagePage} />
                   <Route
                     path="/posts/:cuid/:slug"
                     exact

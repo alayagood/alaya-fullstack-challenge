@@ -27,25 +27,29 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
-  }
-
-  const newPost = new Post(req.body.post);
-
-  // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.content = sanitizeHtml(newPost.content);
-
-  newPost.owner = req.user.name || req.user.username;
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
+  try {
+    if (!req.body.title || !req.body.content) {
+      res.status(403).end();
     }
-    res.json({ post: saved });
-  });
+
+    const newPost = new Post(req.body);
+
+    // Let's sanitize inputs
+    newPost.title = sanitizeHtml(newPost.title);
+    newPost.content = sanitizeHtml(newPost.content);
+
+    newPost.owner = req.user.id;
+    newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+    newPost.cuid = cuid();
+    newPost.save((err, saved) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+      res.json({ post: saved });
+    });
+  } catch (error) {
+    res.status(400).send();
+  }
 };
 
 /**

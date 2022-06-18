@@ -21,7 +21,12 @@ signup = async (req, res, next) => {
     // TODO: User token from environment variables
     const token = jwt.sign({ id: createdUser.id }, SECRET_TOKEN);
 
-    res.json({ token });
+    res.status(201).json({
+      token,
+      id: createdUser.id,
+      name: createdUser.name,
+      username: createdUser.username,
+    });
   } catch (error) {
     next(error);
   }
@@ -29,9 +34,13 @@ signup = async (req, res, next) => {
 
 login = async (req, res, next) => {
   try {
-    console.log(req.user);
     const token = jwt.sign({ id: req.user.id }, SECRET_TOKEN);
-    res.json({ username: req.user.username, name: req.user.name, token });
+    res.json({
+      token,
+      id: req.user.id,
+      name: req.user.name,
+      username: req.user.username,
+    });
   } catch (error) {
     next(error);
   }

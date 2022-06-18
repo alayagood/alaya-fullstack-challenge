@@ -7,7 +7,7 @@ const UserController = require("../controllers/user.controller");
 router
   .route("/users/signup")
   .post(
-    body("name"),
+    body("name").optional(),
     body("username"),
     body("password"),
     UserController.signup

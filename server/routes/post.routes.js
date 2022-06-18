@@ -12,11 +12,17 @@ router.route("/posts/:cuid").get(PostController.getPost);
 // Add a new Post
 router
   .route("/posts")
-  .post(passport.authenticate("jwt"), PostController.addPost);
+  .post(
+    passport.authenticate("jwt", { session: false }),
+    PostController.addPost
+  );
 
 // Delete a post by cuid
 router
   .route("/posts/:cuid")
-  .delete(passport.authenticate("jwt"), PostController.deletePost);
+  .delete(
+    passport.authenticate("jwt", { session: false }),
+    PostController.deletePost
+  );
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { getUser } from "../../redux/user/userSelectors";
+import { userDataSelector } from "../../redux/user/userSelectors";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import Typography from "@material-ui/core/Typography";
@@ -8,7 +8,9 @@ import { Link } from "react-router-dom";
 import MUILink from "@material-ui/core/Link";
 
 function Navbar() {
-  const user = useSelector(getUser);
+  const user = useSelector(userDataSelector);
+
+  const userName = user.name || user.username;
 
   return (
     <AppBar position="fixed">
@@ -21,9 +23,9 @@ function Navbar() {
           </Link>
         </Typography>
         <Typography variant="h6">
-          <Link to={user.username ? "/manage" : "/login"}>
+          <Link to={userName ? "/manage" : "/login"}>
             <MUILink component="span" className="text-white">
-              {user.username ? user.username : "Login/Signup"}
+              {userName ? userName : "Login/Signup"}
             </MUILink>
           </Link>
         </Typography>
