@@ -23,7 +23,7 @@ function Navbar() {
         <Typography variant="h6">
           <Link to={user.username ? "/manage" : "/login"}>
             <MUILink component="span" className="text-white">
-              {user.username ? "Manage user" : "Login/Signup"}
+              {user.username ? user.username : "Login/Signup"}
             </MUILink>
           </Link>
         </Typography>

@@ -1,4 +1,5 @@
 import callApi from "../../util/apiCaller";
+import { push } from "connected-react-router";
 
 // Export Constants
 
@@ -7,24 +8,17 @@ export const SIGNUP = "SIGNUP";
 export const LOGOUT = "LOGOUT";
 export const SET_TOKEN = "SET_TOKEN";
 
-export function setToken(token) {
-  return {
-    type: SET_TOKEN,
-    token,
-  };
-}
-
-export function loginUser(user) {
+export function loginUser(payload) {
   return {
     type: LOGIN,
-    user,
+    payload,
   };
 }
 
-export function signupUser(user) {
+export function signupUser(payload) {
   return {
     type: SIGNUP,
-    user,
+    payload,
   };
 }
 
@@ -36,16 +30,18 @@ export function logoutUser() {
 
 export function fetchLogin(user) {
   return (dispatch) => {
-    return callApi("users/login", "post", user).then((res) =>
-      dispatch(setToken(res.token))
-    );
+    return callApi("users/login", "post", user).then((res) => {
+      dispatch(loginUser(res));
+      dispatch(push("/"));
+    });
   };
 }
 
 export function fetchSignup(user) {
-  return (dispatch, getState) => {
-    return callApi("users/signup", "post", user).then((res) =>
-      dispatch(setToken(res.token))
-    );
+  return (dispatch) => {
+    return callApi("users/signup", "post", user).then((res) => {
+      dispatch(signupUser(res));
+      dispatch(push("/"));
+    });
   };
 }
