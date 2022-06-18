@@ -78,10 +78,14 @@ function deletePost(cuid) {
 }
 
 export function deletePostRequest(cuid) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const state = getState();
     dispatch({ type: DELETE_POST_STARTED });
-    return callApi(`posts/${cuid}`, "delete")
-      .then(() => dispatch(deletePost(cuid)))
+    return callApi(`posts/${cuid}`, "delete", {}, state.user.data.token)
+      .then(() => {
+        dispatch(deletePost(cuid));
+        dispatch(fetchPosts());
+      })
       .catch((error) => {
         dispatch({ type: DELETE_POST_FAILED, payload: error });
       });

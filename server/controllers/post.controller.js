@@ -11,6 +11,7 @@ const sanitizeHtml = require("sanitize-html");
  */
 getPosts = async (req, res) => {
   Post.find()
+    .populate("owner")
     .sort("-dateAdded")
     .exec((err, posts) => {
       if (err) {
@@ -74,15 +75,23 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+  Post.findOne({ cuid: req.params.cuid })
+    .populate("owner")
+    .exec((err, post) => {
+      if (err) {
+        res.status(500).send(err);
+      }
 
-    post.remove(() => {
-      res.status(200).end();
+      if (req.user.id === post.owner.id) {
+        post.remove(() => {
+          res.status(200).end();
+        });
+      } else {
+        return res
+          .status(401)
+          .json({ message: "You are not authorized to delete the post" });
+      }
     });
-  });
 };
 
 module.exports = {

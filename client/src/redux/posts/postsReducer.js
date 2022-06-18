@@ -6,6 +6,8 @@ import {
   GET_POSTS_STARTED,
   GET_POSTS_SUCCEEDED,
   GET_POSTS_FAILED,
+  DELETE_POST_SUCCEEDED,
+  DELETE_POST_FAILED,
 } from "./postsActions";
 
 // Initial State
@@ -59,7 +61,24 @@ export const PostReducer = (state = initialState, action) => {
 
     case DELETE_POST_STARTED:
       return {
+        ...state,
+        error: null,
+        loading: true,
+      };
+
+    case DELETE_POST_SUCCEEDED:
+      return {
+        ...state,
+        error: null,
+        loading: false,
         data: state.data.filter((post) => post.cuid !== action.payload),
+      };
+
+    case DELETE_POST_FAILED:
+      return {
+        ...state,
+        error: action.payload,
+        loading: false,
       };
 
     default:

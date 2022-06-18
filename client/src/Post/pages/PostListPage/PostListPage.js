@@ -7,13 +7,13 @@ import {
   addPostRequest,
   deletePostRequest,
   fetchPosts,
-  getPosts,
+  postsDataSelector,
 } from "../../../redux/posts";
 import Logo from "../../../logo.svg";
 
 const PostListPage = ({ showAddPost }) => {
   const dispatch = useDispatch();
-  const posts = useSelector(getPosts);
+  const posts = useSelector(postsDataSelector);
 
   useEffect(() => {
     dispatch(fetchPosts());

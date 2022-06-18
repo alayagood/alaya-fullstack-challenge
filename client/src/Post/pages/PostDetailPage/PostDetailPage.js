@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // Import Actions
-import { fetchPost, getPosts } from "../../../redux/posts";
+import { fetchPost, postsDataSelector } from "../../../redux/posts";
 // Import Selectors
 import { useParams } from "react-router-dom";
 
 export function PostDetailPage() {
   const { cuid } = useParams();
   const dispatch = useDispatch();
-  const posts = useSelector(getPosts);
+  const posts = useSelector(postsDataSelector);
 
   const post = useMemo(
-    () => posts.data.find((_post) => _post.cuid === cuid),
+    () => posts.find((_post) => _post.cuid === cuid),
     [cuid, posts]
   );
 

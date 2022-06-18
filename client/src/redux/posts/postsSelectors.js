@@ -1,2 +1,2 @@
 // Get all posts
-export const getPosts = (state) => state.posts.data;
+export const postsDataSelector = (state) => state.posts.data;
