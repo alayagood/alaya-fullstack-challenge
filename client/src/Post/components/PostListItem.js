@@ -1,32 +1,43 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { Card } from '@material-ui/core';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import { Card } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { userDataSelector } from "../../redux/user/userSelectors";
 
-function PostListItem({ post, onDelete }) {
+export function PostListItem({ post, onDelete }) {
+  const user = useSelector(userDataSelector);
+  const isOwner = user.id === post.owner._id;
+
+  console.log({ isOwner, user, post });
+
   return (
     <Card className="w-100 my-4">
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}/${post.slug}`} >
-            {post.title}
-          </Link>
+          <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
         </Typography>
         <Typography component="p" className="mt-3">
           {post.content}
         </Typography>
-        <Typography color="textSecondary" component="p" className="mt-3 font-italic">
+        <Typography
+          color="textSecondary"
+          component="p"
+          className="mt-3 font-italic"
+        >
           From {post.name}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
+        {isOwner && (
+          <Button size="small" color="secondary" onClick={onDelete}>
+            Delete post
+          </Button>
+        )}
       </CardActions>
     </Card>
   );
@@ -43,4 +54,14 @@ PostListItem.propTypes = {
   onDelete: PropTypes.func.isRequired,
 };
 
-export default PostListItem;
+export function PostListEmptyItem() {
+  return (
+    <Card className="w-100 my-4">
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="h2">
+          No posts
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+}

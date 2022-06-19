@@ -2,19 +2,23 @@ import React from "react";
 import PropTypes from "prop-types";
 
 // Import Components
-import PostListItem from "./PostListItem";
+import { PostListItem, PostListEmptyItem } from "./PostListItem";
 
-function PostList(props) {
+function PostList({ posts, handleDeletePost }) {
   return (
     <div className="d-flex flex-column w-100">
       <h3 className="mt-4">Posts</h3>
-      {props.posts.map((post) => (
-        <PostListItem
-          post={post}
-          key={post.cuid}
-          onDelete={() => props.handleDeletePost(post.cuid)}
-        />
-      ))}
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <PostListItem
+            post={post}
+            key={post.cuid}
+            onDelete={() => handleDeletePost(post.cuid)}
+          />
+        ))
+      ) : (
+        <PostListEmptyItem />
+      )}
     </div>
   );
 }

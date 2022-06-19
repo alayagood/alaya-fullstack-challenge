@@ -4,7 +4,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { ConnectedRouter } from "connected-react-router";
 import PropTypes from "prop-types";
 import { Provider } from "react-redux";
-import Snackbar from "./Snackbar/Snackbar";
 import { Route, Switch } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { history, persistor } from ".";
@@ -15,6 +14,7 @@ import ManagePage from "./Manage/ManagePage";
 import Navbar from "./Nav/components/Navbar";
 import PostDetailPage from "./Post/pages/PostDetailPage/PostDetailPage";
 import PostListPage from "./Post/pages/PostListPage/PostListPage";
+import Snackbar from "./Snackbar/Snackbar";
 
 const theme = createMuiTheme({
   palette: {

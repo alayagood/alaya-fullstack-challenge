@@ -4,8 +4,19 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { isLoadingSelector } from "../../redux/user";
 import MUILink from "@material-ui/core/Link";
+import { Button, TextField } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+  },
+}));
 
 function Modal({ title, method, onSubmit }) {
+  const classes = useStyles();
   const isLoading = useSelector(isLoadingSelector);
 
   const isLogin = method === "login";
@@ -15,42 +26,33 @@ function Modal({ title, method, onSubmit }) {
   const textUrl = isLogin ? "Register now" : "Login instead";
 
   return (
-    <div className="container">
-      <div className="row">
-        <h1>{title}</h1>
-      </div>
-      <form className="row" onSubmit={isLoading ? () => {} : onSubmit}>
-        <div className="col">
-          {method === "signup" && (
-            <div className="row justify-content-center">
-              <input
-                className="form-control"
-                name="name"
-                placeholder="Your name"
-              />
-            </div>
-          )}
-          <div className="row justify-content-center">
-            <input
-              className="form-control"
-              name="username"
-              placeholder="Username"
-            />
-          </div>
-          <div className="row justify-content-center">
-            <input
-              className="form-control"
-              type="password"
-              name="password"
-              placeholder="Password"
-            />
-          </div>
-          <div className="row justify-content-center">
-            <button disabled={isLoading} type="submit">
-              {isLoading ? "Submitting..." : "Submit"}
-            </button>
-          </div>
-        </div>
+    <div className={`${classes.root} d-flex flex-column my-4`}>
+      <h1 className="mx-auto">{title}</h1>
+      <form
+        div
+        className={`${classes.root} d-flex flex-column my-4 mx-auto`}
+        onSubmit={isLoading ? () => {} : onSubmit}
+      >
+        {method === "signup" && (
+          <TextField variant="filled" label="Your name" name="name" />
+        )}
+        <TextField variant="filled" label="Username" name="username" />
+
+        <TextField
+          variant="filled"
+          label="Password"
+          type="password"
+          name="password"
+        />
+
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={isLoading}
+          type="submit"
+        >
+          {isLoading ? "Submitting..." : "Submit"}
+        </Button>
       </form>
       <div className="row justify-content-center">
         <p>

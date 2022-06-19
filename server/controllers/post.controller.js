@@ -42,12 +42,9 @@ addPost = async (req, res) => {
     newPost.owner = req.user.id;
     newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
     newPost.cuid = cuid();
-    newPost.save((err, saved) => {
-      if (err) {
-        return res.status(500).send(err);
-      }
-      res.json({ post: saved });
-    });
+    const newPostAdded = await newPost.save();
+    const newPostAddedWithOwner = await newPostAdded.populate("owner");
+    return res.json({ post: newPostAddedWithOwner });
   } catch (error) {
     res.status(400).send();
   }

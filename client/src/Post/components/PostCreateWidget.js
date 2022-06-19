@@ -44,7 +44,7 @@ const PostCreateWidget = ({ addPost }) => {
       <TextField
         disabled
         variant="filled"
-        label="Author name"
+        label={userData.name ? "Author name" : "You need to be authenticated"}
         name="name"
         onChange={handleChange}
         defaultValue={state.name}
