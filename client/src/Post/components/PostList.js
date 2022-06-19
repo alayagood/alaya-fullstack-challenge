@@ -26,13 +26,13 @@ function PostList({ posts, handleDeletePost }) {
 PostList.propTypes = {
   posts: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      content: PropTypes.string.isRequired,
-      slug: PropTypes.string.isRequired,
-      cuid: PropTypes.string.isRequired,
+      name: PropTypes.string,
+      title: PropTypes.string,
+      content: PropTypes.string,
+      slug: PropTypes.string,
+      cuid: PropTypes.string,
     })
-  ).isRequired,
+  ),
   handleDeletePost: PropTypes.func.isRequired,
 };
 

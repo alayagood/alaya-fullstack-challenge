@@ -1,5 +1,9 @@
 import callApi from "../../util/apiCaller";
+import removeUnusedImages from "../../util/removeUnusedImages";
 import { showErrorSnackbar, showSuccessSnackbar } from "../ui/uiActions";
+
+export const UPDATE_POST_FORM = "POST/UPDATE_POST_FORM";
+export const CLEAR_POST_FORM = "POST/CLEAR_POST_FORM";
 
 // Export Constants
 export const ADD_POST_STARTED = "POST/ADD_POST_STARTED";
@@ -14,6 +18,19 @@ export const DELETE_POST_STARTED = "POST/DELETE_POST_STARTED";
 export const DELETE_POST_SUCCEEDED = "POST/DELETE_POST_SUCCEEDED";
 export const DELETE_POST_FAILED = "POST/DELETE_POST_FAILED";
 
+export function updatePostForm(payload) {
+  return {
+    type: UPDATE_POST_FORM,
+    payload,
+  };
+}
+
+export function clearPostForm() {
+  return {
+    type: CLEAR_POST_FORM,
+  };
+}
+
 // Export Actions
 export function addPost(payload) {
   return {
@@ -23,29 +40,48 @@ export function addPost(payload) {
 }
 
 export function addPostRequest(post) {
-  return (dispatch, getState) => {
-    dispatch({ type: ADD_POST_STARTED });
-    // FIXME: Should I pick the user from here, or send it like a payload? Hmmm...
-    const state = getState();
+  return async (dispatch, getState) => {
+    try {
+      dispatch({ type: ADD_POST_STARTED });
+      const state = getState();
 
-    return callApi(
-      "posts",
-      "post",
-      {
-        owner: state.user.data.id,
-        title: post.title,
-        content: post.content,
-      },
-      state.user.data.token
-    )
-      .then((res) => {
-        dispatch(addPost(res.post));
-        dispatch(showSuccessSnackbar("Post added successfully"));
-      })
-      .catch((error) => {
-        dispatch({ type: ADD_POST_FAILED, payload: error });
-        dispatch(showErrorSnackbar("Post cannot be created"));
+      const { content, images } = removeUnusedImages(
+        post.content,
+        post.imagesToAdd
+      );
+
+      // const fd = new FormData();
+      // images.forEach((image) => {
+      //   console.log({ image });
+      //   fd.append("image", image);
+      // });
+
+      // const imagesResult = await callApi({
+      //   endpoint: "images/upload",
+      //   method: "post",
+      //   data: fd,
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+
+      const response = await callApi({
+        endpoint: "posts",
+        method: "post",
+        token: state.user.data.token,
+        data: {
+          content,
+          title: post.title,
+          owner: state.user.data.id,
+        },
       });
+      dispatch(addPost(response.post));
+      dispatch(showSuccessSnackbar("Post added successfully"));
+      dispatch(clearPostForm());
+    } catch (error) {
+      dispatch({ type: ADD_POST_FAILED, payload: error });
+      dispatch(showErrorSnackbar("Post cannot be created"));
+    }
   };
 }
 
@@ -57,22 +93,26 @@ export function addPosts(payload) {
 }
 
 export function fetchPosts() {
-  return (dispatch) => {
-    dispatch({ type: GET_POSTS_STARTED });
-    return callApi("posts")
-      .then((res) => {
-        dispatch(addPosts(res.posts));
-      })
-      .catch((error) => {
-        dispatch({ type: GET_POSTS_FAILED, payload: error });
-        dispatch(showErrorSnackbar("Cannot get posts, maybe you're offline?"));
-      });
+  return async (dispatch) => {
+    try {
+      dispatch({ type: GET_POSTS_STARTED });
+      const { posts } = await callApi({ endpoint: "posts" });
+      dispatch(addPosts(posts));
+    } catch (error) {
+      dispatch({ type: GET_POSTS_FAILED, payload: error });
+      dispatch(showErrorSnackbar("Cannot get posts, maybe you're offline?"));
+    }
   };
 }
 
 export function fetchPost(cuid) {
-  return (dispatch) => {
-    return callApi(`posts/${cuid}`).then((res) => dispatch(addPost(res.post)));
+  return async (dispatch) => {
+    try {
+      const { post } = await callApi({ endpoint: `posts/${cuid}` });
+      dispatch(addPost(post));
+    } catch (error) {
+      console.log({ error });
+    }
   };
 }
 
@@ -84,20 +124,23 @@ function deletePost(cuid) {
 }
 
 export function deletePostRequest(cuid) {
-  return (dispatch, getState) => {
-    const state = getState();
-    dispatch({ type: DELETE_POST_STARTED });
-    return callApi(`posts/${cuid}`, "delete", {}, state.user.data.token)
-      .then(() => {
-        dispatch(deletePost(cuid));
-        dispatch(fetchPosts());
-        dispatch(showSuccessSnackbar("Post deleted successfully"));
-      })
-      .catch((error) => {
-        dispatch({ type: DELETE_POST_FAILED, payload: error });
-        dispatch(
-          showErrorSnackbar("Cannot delete post, maybe you're not the owner?")
-        );
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      dispatch({ type: DELETE_POST_STARTED });
+      await callApi({
+        method: "delete",
+        endpoint: `posts/${cuid}`,
+        token: state.user.data.token,
       });
+      dispatch(deletePost(cuid));
+      dispatch(fetchPosts());
+      dispatch(showSuccessSnackbar("Post deleted successfully"));
+    } catch (error) {
+      dispatch({ type: DELETE_POST_FAILED, payload: error });
+      dispatch(
+        showErrorSnackbar("Cannot delete post, maybe you're not the owner?")
+      );
+    }
   };
 }

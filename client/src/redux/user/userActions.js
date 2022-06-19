@@ -32,26 +32,29 @@ export function saveSignedUpUser(payload) {
   };
 }
 
-export function fetchLogin(user) {
-  return (dispatch) => {
-    dispatch({ type: LOGIN_STARTED });
-    return callApi("users/login", "post", user)
-      .then((res) => {
-        dispatch(saveUserInStore(res));
-        dispatch(push("/"));
-        dispatch(showSuccessSnackbar("Login success!"));
-      })
-      .catch((err) => {
-        dispatch({ type: LOGIN_FAILED, payload: err });
-        dispatch(showErrorSnackbar("Login failed"));
+export function fetchLogin(data) {
+  return async (dispatch) => {
+    try {
+      const res = await callApi({
+        endpoint: "users/login",
+        method: "post",
+        data,
       });
+      dispatch(saveUserInStore(res));
+      dispatch(push("/"));
+      dispatch(showSuccessSnackbar("Login success!"));
+      dispatch({ type: LOGIN_STARTED });
+    } catch (error) {
+      dispatch({ type: LOGIN_FAILED, payload: error });
+      dispatch(showErrorSnackbar("Login failed"));
+    }
   };
 }
 
-export function fetchSignup(user) {
+export function fetchSignup(data) {
   return (dispatch) => {
     dispatch({ type: SIGNUP_STARTED });
-    return callApi("users/signup", "post", user)
+    return callApi({ endpoint: "users/signup", method: "post", data })
       .then((res) => {
         dispatch(saveSignedUpUser(res.status));
         dispatch(push("/"));

@@ -3,16 +3,27 @@ import axios from "axios";
 export const API_URL = "http://localhost:3000/api";
 
 /**
- * @param {string} endpoint
- * @param {string} method Default "get"
+ * @param {{ endpoint: string, method: string, data: any, token: string, headers: any }} options
  * @param {any} data (optional)
  */
-export default async (endpoint, method = "get", data = {}, token = "") => {
+export default async ({
+  endpoint,
+  method = "get",
+  data = {},
+  token = "",
+  headers = {},
+}) => {
   const authHeader = token ? { Authorization: `bearer ${token}` } : {};
+
+  const newHeaders = {
+    "Content-Type": "application/json",
+    ...authHeader,
+    ...headers,
+  };
 
   return axios({
     url: `${API_URL}/${endpoint}`,
-    headers: { "content-type": "application/json", ...authHeader },
+    headers: newHeaders,
     method,
     data,
   })

@@ -1,7 +1,7 @@
 const Post = require("../models/post");
+const { validationResult } = require("express-validator");
 const cuid = require("cuid");
 const slug = require("limax");
-const sanitizeHtml = require("sanitize-html");
 
 /**
  * Get all posts
@@ -9,16 +9,13 @@ const sanitizeHtml = require("sanitize-html");
  * @param res
  * @returns void
  */
-getPosts = async (req, res) => {
-  Post.find()
-    .populate("owner")
-    .sort("-dateAdded")
-    .exec((err, posts) => {
-      if (err) {
-        res.status(500).send(err);
-      }
-      res.json({ posts });
-    });
+getPosts = async (_req, res, next) => {
+  try {
+    const posts = await Post.find().populate("owner").sort("-dateAdded");
+    res.json({ posts });
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**
@@ -27,26 +24,26 @@ getPosts = async (req, res) => {
  * @param res
  * @returns void
  */
-addPost = async (req, res) => {
+addPost = async (req, res, next) => {
   try {
-    if (!req.body.title || !req.body.content) {
-      res.status(403).end();
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(403).json({ errors: errors.array() });
     }
 
     const newPost = new Post(req.body);
 
-    // Let's sanitize inputs
-    newPost.title = sanitizeHtml(newPost.title);
-    newPost.content = sanitizeHtml(newPost.content);
-
     newPost.owner = req.user.id;
     newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
     newPost.cuid = cuid();
+
+    // const coverURL = await post;
+
     const newPostAdded = await newPost.save();
-    const newPostAddedWithOwner = await newPostAdded.populate("owner");
-    return res.json({ post: newPostAddedWithOwner });
+    return res.json({ post: newPostAdded });
   } catch (error) {
-    res.status(400).send();
+    next(error);
   }
 };
 
@@ -57,12 +54,18 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(403).json({ errors: errors.array() });
     }
+
+    const post = await Post.findOne({ cuid: req.params.cuid });
     res.json({ post });
-  });
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**
@@ -71,24 +74,29 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid })
-    .populate("owner")
-    .exec((err, post) => {
-      if (err) {
-        res.status(500).send(err);
-      }
+deletePost = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
 
-      if (req.user.id === post.owner.id) {
-        post.remove(() => {
-          res.status(200).end();
-        });
-      } else {
-        return res
-          .status(401)
-          .json({ message: "You are not authorized to delete the post" });
-      }
-    });
+    if (!errors.isEmpty()) {
+      return res.status(403).json({ errors: errors.array() });
+    }
+
+    const post = await Post.findOne({ cuid: req.params.cuid }).populate(
+      "owner"
+    );
+
+    if (req.user.id === post?.owner?.id) {
+      await post.remove();
+      res.status(200).end();
+    } else {
+      return res
+        .status(401)
+        .json({ message: "You are not authorized to delete the post" });
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {

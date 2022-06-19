@@ -8,13 +8,41 @@ import {
   GET_POSTS_FAILED,
   DELETE_POST_SUCCEEDED,
   DELETE_POST_FAILED,
+  UPDATE_POST_FORM,
+  CLEAR_POST_FORM,
 } from "./postsActions";
 
 // Initial State
-const initialState = { loading: false, error: null, data: [] };
+const initialState = {
+  loading: false,
+  error: null,
+  data: [],
+  form: {
+    title: "",
+    content: "",
+    imagesToAdd: [],
+  },
+};
 
 export const PostReducer = (state = initialState, action) => {
   switch (action.type) {
+    case UPDATE_POST_FORM:
+      return {
+        ...state,
+        form: {
+          ...state.form,
+          ...action.payload,
+        },
+      };
+
+    case CLEAR_POST_FORM:
+      return {
+        ...state,
+        form: {
+          ...initialState.form,
+        },
+      };
+
     case ADD_POST_STARTED:
       return {
         ...state,

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import PostList from "../../components/PostList";
 import PostCreateWidget from "../../components/PostCreateWidget";
@@ -10,9 +9,11 @@ import {
   postsDataSelector,
 } from "../../../redux/posts";
 import Logo from "../../../logo.svg";
+import { userDataSelector } from "../../../redux/user";
 
-const PostListPage = ({ showAddPost }) => {
+const PostListPage = () => {
   const dispatch = useDispatch();
+  const user = useSelector(userDataSelector);
   const posts = useSelector(postsDataSelector);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const PostListPage = ({ showAddPost }) => {
       <hr />
       <div className="row">
         <div className="col-6">
-          <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
+          <PostCreateWidget addPost={handleAddPost} showAddPost={!!user.name} />
         </div>
         <div className="col-6">
           <PostList handleDeletePost={handleDeletePost} posts={posts} />
@@ -53,10 +54,6 @@ const PostListPage = ({ showAddPost }) => {
       </div>
     </div>
   );
-};
-
-PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired,
 };
 
 export default PostListPage;

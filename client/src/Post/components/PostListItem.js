@@ -1,5 +1,6 @@
 import React from "react";
-import { Card } from "@material-ui/core";
+import ReactMarkdown from "react-markdown";
+import { Card, makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -8,22 +9,36 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { userDataSelector } from "../../redux/user/userSelectors";
+import { useMemo } from "react";
+
+const useStyles = makeStyles({
+  link: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+});
 
 export function PostListItem({ post, onDelete }) {
+  const classes = useStyles();
   const user = useSelector(userDataSelector);
-  const isOwner = user.id === post.owner._id;
-
-  console.log({ isOwner, user, post });
+  const isOwner = useMemo(() => user.id === post.owner._id, [user, post]);
 
   return (
     <Card className="w-100 my-4">
       <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
+        <Typography
+          className={classes.link}
+          gutterBottom
+          variant="h5"
+          component="h2"
+        >
           <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
         </Typography>
-        <Typography component="p" className="mt-3">
+        <ReactMarkdown>{post.content}</ReactMarkdown>
+        {/* <Typography component="p" className="mt-3">
           {post.content}
-        </Typography>
+        </Typography> */}
         <Typography
           color="textSecondary"
           component="p"
@@ -45,11 +60,11 @@ export function PostListItem({ post, onDelete }) {
 
 PostListItem.propTypes = {
   post: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    slug: PropTypes.string.isRequired,
-    cuid: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    title: PropTypes.string,
+    content: PropTypes.string,
+    slug: PropTypes.string,
+    cuid: PropTypes.string,
   }).isRequired,
   onDelete: PropTypes.func.isRequired,
 };

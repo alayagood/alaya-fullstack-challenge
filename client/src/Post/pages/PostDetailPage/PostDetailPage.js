@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// Import Actions
 import { fetchPost, postsDataSelector } from "../../../redux/posts";
-// Import Selectors
+import ReactMarkdown from "react-markdown";
 import { useParams } from "react-router-dom";
 
 export function PostDetailPage() {
@@ -25,7 +24,7 @@ export function PostDetailPage() {
         <div className="col-12">
           <h1>{post.title}</h1>
           <p>By {post.name}</p>
-          <p>{post.content}</p>
+          <ReactMarkdown>{post.content}</ReactMarkdown>
         </div>
       </div>
     </div>
