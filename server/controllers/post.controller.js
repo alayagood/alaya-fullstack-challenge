@@ -2,6 +2,7 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const { STATUS_CODES } = require('../constants');
 
 /**
  * Get all posts
@@ -37,6 +38,7 @@ addPost = async (req, res) => {
   newPost.content = sanitizeHtml(newPost.content);
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+  newPost.autor = req.user.email;
   newPost.cuid = cuid();
   newPost.save((err, saved) => {
     if (err) {
@@ -71,6 +73,10 @@ deletePost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
+    }
+
+    if (req.user.email !== post.autor) {
+      return res.status(STATUS_CODES.FORBIDDEN).send('You are not allowed to delete this post');
     }
 
     post.remove(() => {
