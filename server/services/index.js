@@ -6,10 +6,10 @@ const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 const TOKEN_SECRET = 'TOP_SECRET'
 
-function createToken({ email, cuid }) {
+function createToken({ name, cuid }) {
     const token = jwt.sign({
         user: {
-            email,
+            name,
             cuid
         }
     }, TOKEN_SECRET);

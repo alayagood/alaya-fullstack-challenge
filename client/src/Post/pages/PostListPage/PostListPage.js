@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 // Import Components
@@ -12,6 +12,7 @@ const PostListPage = ({ showAddPost }) => {
 
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts.data);
+  const user = useSelector(state => state.user.data);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -24,8 +25,13 @@ const PostListPage = ({ showAddPost }) => {
   };
 
   const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+    dispatch(addPostRequest({
+      ...post,
+      name: user.name,
+    }));
   };
+
+  const displayAddMorePosts = useMemo(() => !!user.token, [user]);
 
   return (
     <div className="container">
@@ -39,9 +45,9 @@ const PostListPage = ({ showAddPost }) => {
       </div>
       <hr />
       <div className="row">
-        <div className="col-6">
+        { displayAddMorePosts ? <div className="col-6">
           <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
-        </div>
+        </div> : <></> }
         <div className="col-6">
           <PostList handleDeletePost={handleDeletePost} posts={posts} />
         </div>

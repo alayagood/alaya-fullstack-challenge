@@ -34,11 +34,10 @@ addPost = async (req, res) => {
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
+  newPost.name = req.user.name;
   newPost.content = sanitizeHtml(newPost.content);
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.autor = req.user.email;
   newPost.cuid = cuid();
   newPost.save((err, saved) => {
     if (err) {
@@ -75,7 +74,7 @@ deletePost = async (req, res) => {
       res.status(500).send(err);
     }
 
-    if (req.user.email !== post.autor) {
+    if (req.user.name !== post.name) {
       return res.status(STATUS_CODES.FORBIDDEN).send('You are not allowed to delete this post');
     }
 

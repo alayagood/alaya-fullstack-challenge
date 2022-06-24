@@ -4,10 +4,10 @@ const cuid = require('cuid');
 const { STATUS_CODES } = require('../constants');
 const { createToken } = require('../services');
 
-const _userBodyIsValid = ({ user }) => user && user.email && user.password && user.email.includes('@') && user.password.length;
+const _userBodyIsValid = ({ user }) => user && user.name && user.password && user.password.length;
 
-const _getUserByMail = async ({ user }) => await User.findOne({
-    email: user.email
+const _getUserByName = async ({ user }) => await User.findOne({
+    name: user.name
 }).exec();
 
 /**
@@ -21,13 +21,13 @@ signup = async (req, res) => {
         return res.status(STATUS_CODES.BAD_REQUEST).send('Invalid params');
     }
 
-    if (await _getUserByMail(req.body)) {
+    if (await _getUserByName(req.body)) {
         return res.status(STATUS_CODES.CONFLICT).send('User already exists');
     }
 
     const newUser = new User({...req.body.user, cuid: cuid()});
 
-    newUser.email = sanitizeHtml(newUser.email);
+    newUser.name = sanitizeHtml(newUser.name);
 
     newUser.save((err, savedUser) => {
         if (err) {
@@ -36,7 +36,7 @@ signup = async (req, res) => {
 
         const token = createToken(savedUser);
 
-        res.send(token);
+        res.json({token});
     });
 };
 
@@ -45,7 +45,7 @@ login = async (req, res) => {
         return res.status(STATUS_CODES.BAD_REQUEST).send('Invalid params');
     }
 
-    const user = await _getUserByMail(req.body);
+    const user = await _getUserByName(req.body);
 
     if (!user) {
         return res.status(STATUS_CODES.NOT_FOUND).send('User not found');
@@ -57,7 +57,7 @@ login = async (req, res) => {
 
     const token = createToken(user);
 
-    res.send(token);
+    res.json({token});
 };
 
 module.exports = {
