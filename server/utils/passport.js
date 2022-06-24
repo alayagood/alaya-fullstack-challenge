@@ -6,7 +6,6 @@ const { SECRET_TOKEN } = require("../utils/constants");
 
 passport.use(
   new LocalStrategy((username, password, done) => {
-    console.log({ username, password });
     User.findOne({ username }, (err, user) => {
       if (err) {
         return done(err);

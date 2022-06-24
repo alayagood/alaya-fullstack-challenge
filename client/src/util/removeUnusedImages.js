@@ -1,3 +1,34 @@
+const imageRegex = (imageName) =>
+  new RegExp(`[\\!]?\\[${imageName}\\]\\([\\S\\s]*\\)`, "g");
+
+/**
+ * @param {string} content
+ * @param {{ url: string, name: string }} newImage
+ * @return {string}
+ */
+const replaceImageWithNewURL = (content, newImage) => {
+  let contentWithReplacedImage = content;
+  const regex = imageRegex(newImage.name);
+  contentWithReplacedImage = contentWithReplacedImage.replace(
+    regex,
+    `![${newImage.name}](${newImage.url})`
+  );
+  console.log({ contentWithReplacedImage });
+  return contentWithReplacedImage;
+};
+
+/**
+ *
+ * @param {string} content
+ * @param {{url: string, name: string}[]} newImages
+ * @return {string}
+ */
+export const replaceImagesInContent = (content, newImages) =>
+  newImages.reduce(
+    (newContent, newImage) => replaceImageWithNewURL(newContent, newImage),
+    content
+  );
+
 /**
  * @param {string} content
  * @param {string[]} excludedImages
@@ -6,8 +37,7 @@
 const removeImagesFromContent = (content, excludedImages) => {
   let contentWithoutUnusedImages = content;
   excludedImages.forEach((excludedImage) => {
-    const regex = new RegExp(`\\!\\[${excludedImage}\\]\\([\\S\\s]*\\)`, "g");
-    // TODO: create regex to remove image
+    const regex = imageRegex(excludedImage);
     contentWithoutUnusedImages = contentWithoutUnusedImages.replace(regex, "");
   });
   return contentWithoutUnusedImages;
@@ -47,8 +77,6 @@ export const transformPostRequest = (content, images) => {
     content,
     images
   );
-
-  console.log({ content, images });
 
   const newContent = removeImagesFromContent(content, imagesExcluded);
 

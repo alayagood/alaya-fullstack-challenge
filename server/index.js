@@ -14,7 +14,7 @@ const apiPort = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use(fileUpload());
+app.use(fileUpload({ useTempFiles: true }));
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
 app.use(passport.initialize());

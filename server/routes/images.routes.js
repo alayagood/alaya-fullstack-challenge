@@ -8,7 +8,7 @@ const ImageController = require("../controllers/image.controller");
 router
   .route("/images/upload")
   .post(
-    passport.authenticate("local", { session: false }),
+    passport.authenticate("jwt", { session: false }),
     ImageController.upload
   );
 

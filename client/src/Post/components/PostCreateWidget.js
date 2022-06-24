@@ -31,6 +31,7 @@ const PostCreateWidget = ({ addPost }) => {
   const { loading } = useSelector(postsDataSelector);
 
   const classes = useStyles();
+  const userName = userData.name || userData.username;
   const [formState, setFormState] = useState(() => formData);
 
   // Update form in Redux, so we don't lose any progress in form
@@ -38,7 +39,7 @@ const PostCreateWidget = ({ addPost }) => {
 
   const submit = () => {
     if (formData.title.length > 0 && formData.content.length > 0) {
-      addPost({ ...formData, images });
+      addPost({ ...formData, images }, images);
     }
   };
 
@@ -84,10 +85,10 @@ const PostCreateWidget = ({ addPost }) => {
       <TextField
         disabled
         variant="filled"
-        label={userData.name ? "Author name" : "You need to be authenticated"}
+        label={userName ? "Author name" : "You need to be authenticated"}
         name="name"
         onChange={handleChange}
-        defaultValue={userData.name}
+        defaultValue={userName}
       />
       <TextField
         variant="filled"
@@ -107,7 +108,7 @@ const PostCreateWidget = ({ addPost }) => {
         color="primary"
         onClick={() => submit()}
         disabled={
-          !userData?.name || loading || !formState.title || !formState.content
+          !userName || loading || !formState.title || !formState.content
         }
       >
         Submit

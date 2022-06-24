@@ -1,5 +1,7 @@
 import callApi from "../../util/apiCaller";
-import removeUnusedImages from "../../util/removeUnusedImages";
+import removeUnusedImages, {
+  replaceImagesInContent,
+} from "../../util/removeUnusedImages";
 import { showErrorSnackbar, showSuccessSnackbar } from "../ui/uiActions";
 
 export const UPDATE_POST_FORM = "POST/UPDATE_POST_FORM";
@@ -39,31 +41,37 @@ export function addPost(payload) {
   };
 }
 
-export function addPostRequest(post) {
+export function addPostRequest(post, images) {
   return async (dispatch, getState) => {
     try {
       dispatch({ type: ADD_POST_STARTED });
       const state = getState();
+      let content = post.content;
 
-      const { content, images } = removeUnusedImages(
-        post.content,
-        post.imagesToAdd
-      );
+      if (images.length > 0) {
+        const unusedImagesResult = removeUnusedImages(
+          post.content,
+          post.imagesToAdd
+        );
+        content = unusedImagesResult.content;
 
-      // const fd = new FormData();
-      // images.forEach((image) => {
-      //   console.log({ image });
-      //   fd.append("image", image);
-      // });
+        const fd = new FormData();
+        images.forEach(({ file, image }) => {
+          fd.append(image.split("/")[3], file);
+        });
 
-      // const imagesResult = await callApi({
-      //   endpoint: "images/upload",
-      //   method: "post",
-      //   data: fd,
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
+        const imagesResult = await callApi({
+          token: state.user.data.token,
+          endpoint: "images/upload",
+          method: "post",
+          data: fd,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        content = replaceImagesInContent(content, imagesResult);
+      }
 
       const response = await callApi({
         endpoint: "posts",
