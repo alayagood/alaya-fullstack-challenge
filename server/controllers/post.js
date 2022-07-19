@@ -4,7 +4,7 @@ const sanitizeHtml = require("sanitize-html");
 const { SUCCESS, BAD_REQUEST, INTERNAL_ERROR } = require("@constants");
 const Post = require("@models/post");
 const User = require("@models/user");
-const { uploadImage, removeImage } = require("@controllers/cloudinary");
+const { uploadImage, removeImage } = require("@services/cloudinary");
 
 /**
  * Get all posts
