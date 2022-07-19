@@ -1,0 +1,72 @@
+version: "3"
+services:
+  client:
+    build: ./client/
+    container_name: mern-app-client
+    hostname: mern-app-client
+    ports:
+      - $CLIENT_PORT_LOCAL:$CLIENT_PORT_DOCKER
+    volumes:
+      - ./client/:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - mern-app
+    depends_on:
+      - server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_CLOUDINARY_NAME=$CLOUDINARY_NAME
+    restart: always
+    stdin_open: true
+    tty: true
+  server:
+    build: ./server/
+    container_name: mern-app-server
+    hostname: mern-app-server
+    ports:
+      - $SERVER_PORT_LOCAL:$SERVER_PORT_DOCKER
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - API_BASE_URL=api
+      - PORT=$SERVER_PORT_LOCAL
+      - DB_HOST=mongo
+      - DB_USER=$MONGODB_USER
+      - DB_PASSWORD=$MONGODB_PASSWORD
+      - DB_NAME=$MONGODB_DATABASE
+      - DB_PORT=$MONGODB_DOCKER_PORT
+      - JWT_SECRET=$JWT_SECRET
+      - TOKEN_LIFE=$TOKEN_LIFE
+      - CLOUDINARY_NAME=$CLOUDINARY_NAME
+      - CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+      - CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
+    networks:
+      - mern-app
+    depends_on:
+      - mongo
+    restart: always
+    stdin_open: true
+    tty: true
+  mongo:
+    image: mongo:latest
+    container_name: mern-app-db
+    hostname: mern-app-db
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+    command: [ '--auth' ]
+    networks:
+      - mern-app
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+      - MONGO_INITDB_DATABASE=$MONGODB_DATABASE
+    restart: always
+networks:
+  mern-app:
+    driver: bridge
+volumes:
+  mongo-data:
+    driver: local

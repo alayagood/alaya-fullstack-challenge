@@ -1,5 +1,38 @@
-
+``
 # Alaya mern dev challenge 
+
+## Using Docker
+
+1. [Install Docker](https://docs.docker.com/get-docker/) on your machine.
+2. Create the local `.env` file based on `.env.dist` as an example.
+```dotenv
+MONGODB_USER=root
+MONGODB_PASSWORD=root
+MONGODB_DATABASE=mern-app-db
+MONGODB_LOCAL_PORT=27017
+MONGODB_DOCKER_PORT=27017
+
+SERVER_PORT_LOCAL=9000
+SERVER_PORT_DOCKER=9000
+CLIENT_PORT_LOCAL=3000
+CLIENT_PORT_DOCKER=3000
+
+JWT_SECRET=%secret%
+TOKEN_LIFE=7d
+
+CLOUDINARY_NAME=%name%
+CLOUDINARY_API_KEY=%key%
+CLOUDINARY_API_SECRET=%secret%
+```
+3. Build and run your containers. 
+```docker
+   docker-compose up -d --build
+```
+4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+5. Api will be available at this url [http://localhost:9000/api](http://localhost:9000/api).
+
+You can view your images created with `docker images`.
+
 
 ## Presentation
 

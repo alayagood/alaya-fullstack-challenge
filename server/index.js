@@ -1,17 +1,24 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+require("./module-alias");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const app = express();
-const apiPort = 3000;
-const db = require('./db');
-const posts = require('./routes/post.routes');
+const { app: { apiPort } } = require("@configs");
+const db = require("@utils/db");
+const routes = require("@routes");
 
+// DB
+db.connect();
+
+app.use(bodyParser({ limit: "8mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/api', posts);
+// Passport middleware
+require("@utils/passport")(app);
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// Routes
+app.use(routes);
 
 app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
