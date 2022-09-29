@@ -8,16 +8,16 @@ export default async (endpoint, method = 'get', body) => {
     method,
     body: JSON.stringify(body),
   })
-  .then(response => response.json().then(json => ({ json, response })))
-  .then(({ json, response }) => {
-    if (!response.ok) {
-      return Promise.reject(json);
-    }
+    .then((response) => response.json().then((json) => ({ json, response })))
+    .then(({ json, response }) => {
+      if (!response.ok) {
+        return Promise.reject(json);
+      }
 
-    return json;
-  })
-  .then(
-    response => response,
-    error => error
-  );
-}
+      return json;
+    })
+    .then(
+      (response) => response,
+      (error) => error
+    );
+};
