@@ -1,5 +1,5 @@
 import { Button, makeStyles, TextField } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,10 +23,6 @@ export default function RegistetrWidget({ signup }) {
       signup(state);
     }
   };
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   return (
     <div className={`${classes.root} d-flex flex-column my-4 w-100`}>

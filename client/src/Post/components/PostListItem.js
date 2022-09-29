@@ -1,20 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { Card } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Image } from '../../Image/components/Image';
 
 function PostListItem({ post, onDelete }) {
   return (
     <Card className="w-100 my-4">
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}/${post.slug}`} >
-            {post.title}
-          </Link>
+          <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
         </Typography>
         <Typography component="p" className="mt-3">
           {post.content}
@@ -22,6 +21,7 @@ function PostListItem({ post, onDelete }) {
         <Typography color="textSecondary" component="p" className="mt-3 font-italic">
           From {post.name}
         </Typography>
+        <Image className={'w-100'} photoUrl={post.photoUrl} />
       </CardContent>
       <CardActions>
         <Button size="small" color="secondary" onClick={onDelete}>

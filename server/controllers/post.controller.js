@@ -10,12 +10,14 @@ const sanitizeHtml = require('sanitize-html');
  * @returns void
  */
 getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ posts });
-  });
+  Post.find()
+    .sort('-dateAdded')
+    .exec((err, posts) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      res.json({ posts });
+    });
 };
 
 /**
@@ -35,6 +37,7 @@ addPost = async (req, res) => {
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
+  newPost.photoUrl = sanitizeHtml(newPost.photoUrl);
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
@@ -83,5 +86,5 @@ module.exports = {
   getPosts,
   addPost,
   getPost,
-  deletePost
+  deletePost,
 };

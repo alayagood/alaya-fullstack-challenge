@@ -7,19 +7,28 @@ import PostCreateWidget from '../../components/PostCreateWidget';
 // Import Actions
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
 import Logo from '../../../logo.svg';
+import { checkIfTokenInLocalStorage, getEmailFromToken } from '../../../util/auth';
 
 const PostListPage = ({ showAddPost }) => {
-
   const dispatch = useDispatch();
-  const posts = useSelector(state => state.posts.data);
+  const user = useSelector((x) => x.user);
+  const isValidToken = checkIfTokenInLocalStorage(user);
+  const email = getEmailFromToken(isValidToken);
+
+  const posts = useSelector((state) => state.posts.data);
 
   useEffect(() => {
     dispatch(fetchPosts());
-  },[]);
+    // eslint-disable-next-line
+  }, []);
 
-  const handleDeletePost = post => {
-    if (confirm('Do you want to delete this post')) { // eslint-disable-line
-      dispatch(deletePostRequest(post));
+  const handleDeletePost = (post) => {
+    if (post.name === email) {
+      if (window.confirm('Do you want to delete this post')) {
+        dispatch(deletePostRequest(post.cuid));
+      }
+    } else {
+      window.alert('You cannot delete this post.');
     }
   };
 
@@ -31,10 +40,8 @@ const PostListPage = ({ showAddPost }) => {
     <div className="container">
       <div className="row">
         <div className="col-12 d-flex align-items-center">
-          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px'}}/>
-          <h1 className="mt-4">
-             Alaya Blog
-          </h1>
+          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px' }} />
+          <h1 className="mt-4">Alaya Blog</h1>
         </div>
       </div>
       <hr />
@@ -51,8 +58,7 @@ const PostListPage = ({ showAddPost }) => {
 };
 
 PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
+  showAddPost: PropTypes.bool.isRequired,
 };
-
 
 export default PostListPage;
