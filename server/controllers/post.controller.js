@@ -65,6 +65,21 @@ getPost = async (req, res) => {
 };
 
 /**
+ * Update a post photo URL
+ * @param req
+ * @param res
+ * @returns void
+ */
+updatePost = async (req, res) => {
+  Post.findOneAndUpdate(
+    { cuid: req.body.cuid },
+    { photoUrl: req.body.photoUrl }
+  ).then(() => {
+    res.status(200).end();
+  });
+};
+
+/**
  * Delete a post
  * @param req
  * @param res
@@ -86,5 +101,6 @@ module.exports = {
   getPosts,
   addPost,
   getPost,
+  updatePost,
   deletePost,
 };

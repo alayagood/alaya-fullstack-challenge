@@ -8,7 +8,8 @@ import { Typography } from '@material-ui/core';
 
 //Import utils
 import { checkIfTokenInLocalStorage, getEmailFromToken } from '../../util/auth';
-import { CLOUDINARY_UPLOAD_PRESET_NAME, CLOUDINARY_CLOUD_NAME } from '../../util/cloudinary';
+import { uploadImage } from '../../util/cloudinary';
+import { Image } from '../../Image/components/Image';
 
 // Import Style
 const useStyles = makeStyles((theme) => ({
@@ -20,8 +21,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PostCreateWidget = ({ addPost }) => {
+  const [imageUrl, setImageUrl] = useState('');
   const [submitMessage, setSubmitMessage] = useState('Submit');
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
   const user = useSelector((x) => x.user);
   const isValidToken = checkIfTokenInLocalStorage(user);
   const email = getEmailFromToken(isValidToken);
@@ -44,22 +47,11 @@ const PostCreateWidget = ({ addPost }) => {
     });
   };
 
-  const uploadImage = async (e) => {
-    setIsButtonDisabled(true);
-    setSubmitMessage('Uploading image...');
-    let files = e.target.files;
-    let data = new FormData();
-    data.append('file', files[0]);
-    data.append('upload_preset', CLOUDINARY_UPLOAD_PRESET_NAME);
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`, {
-      method: 'POST',
-      body: data,
-    });
-
-    await res.json().then((data) => {
+  const handleUploadImage = async (e) => {
+    uploadImage(e, setSubmitMessage, setIsButtonDisabled).then((data) => {
       setSubmitMessage('submit');
       setIsButtonDisabled(false);
+      setImageUrl(data.url);
       setState((state) => ({ ...state, photoUrl: data.url }));
     });
   };
@@ -73,10 +65,16 @@ const PostCreateWidget = ({ addPost }) => {
           <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
           <Button variant="contained" color="secondary" component="label">
             Upload a photo
-            <input type="file" hidden={true} accept={'image/*'} multiple={false} name="image" onChange={uploadImage} />
+            <input
+              type="file"
+              hidden={true}
+              accept={'image/*'}
+              multiple={false}
+              name="image"
+              onChange={handleUploadImage}
+            />
           </Button>
           <Button
-            className="mt-4"
             variant="contained"
             color="primary"
             onClick={submit}
@@ -84,6 +82,7 @@ const PostCreateWidget = ({ addPost }) => {
           >
             {submitMessage.toUpperCase()}
           </Button>
+          {imageUrl && <Image photoUrl={imageUrl} />}
         </>
       ) : (
         <Typography variant="h6">Login to create a new post</Typography>
