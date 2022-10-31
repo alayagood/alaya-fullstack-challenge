@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "db-daemon": "mongod --config /usr/local/etc/mongod.conf &",
+    "load-fixtures": "npx mongodb-fixtures load -u mongodb://localhost:27017/mern-stack --path ../fixtures",
+    "server": "nodemon index.js",
+    "start": "npm run db-daemon && npm run load-fixtures && npm run server"
   },
   "author": "",
   "license": "ISC",
@@ -13,9 +16,15 @@
     "cors": "^2.8.5",
     "cuid": "^2.1.8",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "limax": "^2.0.0",
     "mongoose": "^5.8.11",
     "nodemon": "^2.0.2",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0",
     "sanitize-html": "^1.21.1"
+  },
+  "devDependencies": {
+    "node-mongodb-fixtures": "^3.2.9"
   }
 }

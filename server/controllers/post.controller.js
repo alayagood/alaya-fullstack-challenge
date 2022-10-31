@@ -27,6 +27,7 @@ getPosts = async (req, res) => {
 addPost = async (req, res) => {
   if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
     res.status(403).end();
+    return;
   }
 
   const newPost = new Post(req.body.post);
@@ -71,6 +72,13 @@ deletePost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
+      return;
+    }
+
+    // TODO: change Post model to store author's CUID to perform this check
+    if (post.name != req.user.name) {
+      res.status(403).end();
+      return;
     }
 
     post.remove(() => {

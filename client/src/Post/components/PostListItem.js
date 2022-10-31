@@ -7,7 +7,17 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 
-function PostListItem({ post, onDelete }) {
+const DeleteButton = ({ deletePost }) => {
+  return (
+    <CardActions>
+      <Button size="small" color="secondary" onClick={deletePost}>
+        Delete post
+      </Button>
+    </CardActions>
+  );
+}
+
+function PostListItem({ post, displayDeleteButton, deletePost }) {
   return (
     <Card className="w-100 my-4">
       <CardContent>
@@ -23,11 +33,7 @@ function PostListItem({ post, onDelete }) {
           From {post.name}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
-      </CardActions>
+      { displayDeleteButton && <DeleteButton deletePost={deletePost} /> }
     </Card>
   );
 }
@@ -40,7 +46,7 @@ PostListItem.propTypes = {
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
   }).isRequired,
-  onDelete: PropTypes.func.isRequired,
+  deletePost: PropTypes.func,
 };
 
 export default PostListItem;

@@ -14,41 +14,51 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PostCreateWidget = ({ addPost }) => {
-
-    const [state, setState] = useState({});
+    const [state, setState] = useState({
+        title: '',
+        content: '',
+    });
     const classes = useStyles();
 
+    const validate = () => state.title && state.content;
 
+    const submit = (evt) => {
+        if (!validate()) {
+            return;
+        }
 
-  const submit = () => {
-    if (state.name && state.title && state.content) {
-      addPost(state);
-    }
-  };
+        addPost(state);
+        setState({
+            title: '',
+            content: ''
+        });
+        evt.preventDefault();
+    };
 
-  const handleChange = (evt) => {
-    const value = evt.target.value;
-    setState({
-        ...state,
-        [evt.target.name]: value
-    });
-  };
+    const handleChange = (evt) => {
+        const value = evt.target.value;
+        setState({
+            ...state,
+            [evt.target.name]: value
+        });
+    };
 
-  return (
-    <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
-        <h3>Create new post</h3>
-        <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
-        <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
-        <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
-            Submit
-        </Button>
-    </div>
-  );
+    return (
+        <form onSubmit={submit} >
+          <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
+            <h3>Create new post</h3>
+            <TextField variant="filled" label="Post title" name="title" value={state.title} onChange={handleChange} />
+            <TextField variant="filled" multiline rows="4" label="Post content" name="content" value={state.content} onChange={handleChange} />
+            <Button type="submit" className="mt-4" variant="contained" color="primary" disabled={!validate()}>
+              Submit
+            </Button>
+          </div>
+        </form>
+    );
 };
 
 PostCreateWidget.propTypes = {
-  addPost: PropTypes.func.isRequired
+    addPost: PropTypes.func.isRequired
 };
 
 export default PostCreateWidget;

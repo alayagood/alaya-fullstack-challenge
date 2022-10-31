@@ -1,17 +1,20 @@
 const express = require('express');
-const router = express.Router();
+const passport = require('passport');
 const PostController = require('../controllers/post.controller');
+const { requireAuthentication } = require('../middleware');
 
-// Get all Posts
+const router = express.Router();
+
+// Get all posts
 router.route('/posts').get(PostController.getPosts);
 
-// Get one post by cuid
+// Get a post by cuid
 router.route('/posts/:cuid').get(PostController.getPost);
 
-// Add a new Post
-router.route('/posts').post(PostController.addPost);
+// Add a new post
+router.route('/posts').post(requireAuthentication, PostController.addPost);
 
 // Delete a post by cuid
-router.route('/posts/:cuid').delete(PostController.deletePost);
+router.route('/posts/:cuid').delete(requireAuthentication, PostController.deletePost);
 
 module.exports = router;

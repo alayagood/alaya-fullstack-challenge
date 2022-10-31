@@ -1,5 +1,5 @@
 
-# Alaya mern dev challenge 
+# Alaya MERN dev challenge 
 
 ## Presentation
 
@@ -7,21 +7,12 @@ In this project which is a MERN stack you can write and edit post blog.
 
 This application is composed by 2 repositories, the server and the client:
 
-- In the server repository you can find an express HTTP server that connect to a local mongo database and expose
-the api.
-To start the server be sure to have installed mongoDB locally as a service then go in the server repository and launch the index.js
-```$xslt
-    cd server
-    npm i
-    node index.js
-```
-If you want to restart the server at any change you can also install nodemon and start the server like this
-```
-    cd server
-    npm i
-    npm i -g nodemon
-    nodemon index.js
-```
+- In the server repository you can find an Express HTTP server that connect to a local Mongo database and expose
+the API.
+To start the server be sure to have installed MongoDB locally as a service then go in the server repository and run `npm start`. This will:
+  1. Boot up the Mongo server (`mongod`) according to the default configuration (`/usr/local/etc/mongod.conf`) in the background.
+  1. Prep the database with some mock records by loading the fixtures in `server/fixtures`.
+  1. Start the `nodemon` daemon to run the server in `index.js` and watch for changes in the filesystem to hot reload.
 - In the client repository you have the Front-end code of the blog that uses React and Redux.
 To start the Front-end
 ```
