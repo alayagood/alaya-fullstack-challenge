@@ -1,7 +1,9 @@
-const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+
+const Post = require('../models/post');
+const asyncHandler = require('../middlewares/asyncHandler');
 
 /**
  * Get all posts
@@ -9,14 +11,10 @@ const sanitizeHtml = require('sanitize-html');
  * @param res
  * @returns void
  */
-getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+getPosts = asyncHandler(async (req, res) => {
+    const posts = await Post.find().sort('-dateAdded');
     res.json({ posts });
-  });
-};
+});
 
 /**
  * Save a post
@@ -24,27 +22,24 @@ getPosts = async (req, res) => {
  * @param res
  * @returns void
  */
-addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
-  }
-
-  const newPost = new Post(req.body.post);
-
-  // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
-
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
+addPost = asyncHandler(async (req, res) => {
+    if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
+        res.status(403).end();
     }
+
+    const newPost = new Post(req.body.post);
+
+    // Let's sanitize inputs
+    newPost.authorId = req.userId;
+    newPost.title = sanitizeHtml(newPost.title);
+    newPost.name = sanitizeHtml(newPost.name);
+    newPost.content = sanitizeHtml(newPost.content);
+
+    newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+    newPost.cuid = cuid();
+    const saved = await newPost.save();
     res.json({ post: saved });
-  });
-};
+});
 
 /**
  * Get a single post
@@ -52,14 +47,13 @@ addPost = async (req, res) => {
  * @param res
  * @returns void
  */
-getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+getPost = asyncHandler(async (req, res) => {
+    const post = await Post.findOne({ cuid: req.params.cuid });
+    if(post === null)
+        return res.status(404).end();
+
     res.json({ post });
-  });
-};
+});
 
 /**
  * Delete a post
@@ -67,17 +61,18 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+deletePost = asyncHandler(async (req, res) => {
+    const post = await Post.findOne({ cuid: req.params.cuid });
 
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
-};
+    if(post === null)
+        return res.status(404).end();
+
+    if(post.authorId !== req.userId)
+        return res.status(401).send({ error: `Only author (id: ${post.authorId}) can delete his own posts` });
+
+    await post.remove();
+    res.status(200).end();
+});
 
 module.exports = {
   getPosts,
