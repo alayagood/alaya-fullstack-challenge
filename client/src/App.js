@@ -18,22 +18,29 @@ const theme = createMuiTheme({
     },
 });
 
+
+export const AppPaths = {
+    LOGIN :'/login',
+    SIGNUP :'/signup',
+    POSTS: '/posts',
+}
+
 function App(props) {
   return (
       <ThemeProvider theme={theme}>
-          <div className="w-100">
-              <Navbar />
-              <div className="w-100 pt-5 mt-5">
-                  <Provider store={props.store}>
-                    <BrowserRouter>
-                      <Switch>
-                          <Route path="/" exact component={PostListPage} />
-                          <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
-                      </Switch>
-                    </BrowserRouter>
-                  </Provider>
+          <Provider store={props.store}>
+              <div className="w-100">
+                  <BrowserRouter>
+                      <Navbar/>
+                      <div className="w-100 pt-5 mt-5">
+                          <Switch>
+                              <Route path="/" exact component={PostListPage}/>
+                              <Route path={`${AppPaths.POSTS}/:cuid/:slug`} exact component={PostDetailPage}/>
+                          </Switch>
+                      </div>
+                  </BrowserRouter>
               </div>
-          </div>
+          </Provider>
       </ThemeProvider>
 );
 }
