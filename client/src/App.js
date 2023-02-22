@@ -4,6 +4,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
+import AuthPage from './Auth/pages/AuthPage/AuthPage';
 import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -40,6 +41,8 @@ function App(props) {
                           <Switch>
                               <Route path="/" exact component={PostListPage}/>
                               <Route path={`${AppPaths.POSTS}/:cuid/:slug`} exact component={PostDetailPage}/>
+                              <Route path={AppPaths.LOGIN} exact component={AuthPage}/>
+                              <Route path={AppPaths.SIGNUP} exact component={AuthPage}/>
                           </Switch>
                       </div>
                   </BrowserRouter>
