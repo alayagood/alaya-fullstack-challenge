@@ -40,6 +40,10 @@ addPost = async (req, res) => {
   newPost.cuid = cuid();
   newPost.created_by = req.user._id
 
+  if (req.body.post.image) {
+    newPost.image = req.body.post.image
+  }
+
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
