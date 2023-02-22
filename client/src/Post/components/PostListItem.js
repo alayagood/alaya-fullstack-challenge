@@ -6,13 +6,21 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
+import {useSelector} from "react-redux";
+import {getUserId} from "../../Auth/AuthReducer";
+import {getPostPageUrl} from "../../util/util";
 
 function PostListItem({ post, onDelete }) {
+
+  const userId = useSelector(getUserId, undefined);
+  const createdBy = post.created_by;
+  const isAuthor = createdBy === userId;
+
   return (
     <Card className="w-100 my-4">
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}/${post.slug}`} >
+          <Link to={getPostPageUrl(post)} >
             {post.title}
           </Link>
         </Typography>
@@ -23,11 +31,11 @@ function PostListItem({ post, onDelete }) {
           From {post.name}
         </Typography>
       </CardContent>
-      <CardActions>
+      {isAuthor && <CardActions>
         <Button size="small" color="secondary" onClick={onDelete}>
           Delete post
         </Button>
-      </CardActions>
+      </CardActions>}
     </Card>
   );
 }

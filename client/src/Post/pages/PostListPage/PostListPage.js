@@ -6,12 +6,15 @@ import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';
 // Import Actions
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
+import {getPosts} from "../../PostReducer";
+import {getUserId} from "../../../Auth/AuthReducer";
 import Logo from '../../../logo.svg';
 
 const PostListPage = ({ showAddPost }) => {
 
   const dispatch = useDispatch();
-  const posts = useSelector(state => state.posts.data);
+  const posts = useSelector(getPosts, undefined);
+  const userId = useSelector(getUserId, undefined);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -38,10 +41,10 @@ const PostListPage = ({ showAddPost }) => {
         </div>
       </div>
       <hr />
-      <div className="row">
-        <div className="col-6">
+      <div className="row justify-content-center">
+        {userId &&  <div className="col-6">
           <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
-        </div>
+        </div>}
         <div className="col-6">
           <PostList handleDeletePost={handleDeletePost} posts={posts} />
         </div>

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
+import {useSelector} from "react-redux";
+import {getUserId} from "../../Auth/AuthReducer";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -15,16 +17,21 @@ const useStyles = makeStyles(theme => ({
 const PostCreateWidget = ({ addPost }) => {
 
     const [state, setState] = useState({});
+    const [error, setError] = useState(undefined);
     const classes = useStyles();
 
-    const isValid = state.name && state.title && state.content
+    const userId = useSelector(getUserId, undefined);
+    const isValid = state.name && state.title && state.content && userId
 
+    const defaultError = 'Something went wrong'
 
-  const submit = () => {
-    if (state.name && state.title && state.content) {
-      addPost(state);
-    }
-  };
+    const submit = async () => {
+        if (!isValid) {
+            setError(defaultError);
+            return;
+        }
+        addPost(state);
+    };
 
   const handleChange = (evt) => {
     const value = evt.target.value;
