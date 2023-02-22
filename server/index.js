@@ -7,6 +7,7 @@ const app = express();
 const apiPort = 3000;
 const db = require('./db');
 const posts = require('./routes/post.routes');
+const upload = require('./routes/upload.routes');
 const auth =require('./routes/auth.routes');
 const session = require('express-session');
 
@@ -27,6 +28,7 @@ require('./middlewares/passport')(app)
 const base_url = '/api'
 app.use(base_url, posts);
 app.use(base_url, auth);
+app.use(base_url, upload);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
