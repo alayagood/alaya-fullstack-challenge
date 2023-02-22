@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+/* Bootstrap override*/
+a {
+  color: #f16c67
+}
+a:hover {
+  color: #4bbfab;
+  text-decoration: none;
+}
