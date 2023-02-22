@@ -14,7 +14,7 @@ function PostListItem({ post, onDelete }) {
 
   const userId = useSelector(getUserId, undefined);
   const createdBy = post.created_by;
-  const isAuthor = createdBy === userId;
+  const isAuthor = userId && (createdBy === userId);
 
   return (
     <Card className="w-100 my-4">
