@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path')
+require('dotenv').config({ path: path.join(__dirname, '.env') })
 const app = express();
 const apiPort = 3000;
 const db = require('./db');
