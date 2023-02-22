@@ -1,33 +1,40 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // Import Actions
-import { fetchPost } from '../../PostActions';
+import { deletePostRequest, fetchPost } from '../../PostActions';
 // Import Selectors
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
+import {getPost} from "../../PostReducer";
+import PostListItem from "../../components/PostListItem"
 
 export function PostDetailPage() {
 
   const { cuid } = useParams();
-  const post = useSelector(state => state.posts.data.find(currentPost => (currentPost.cuid === cuid)));
+  const post = useSelector(state => getPost(state, cuid), undefined);
   const dispatch = useDispatch();
+  const history = useHistory();
 
+  const handleDelete = () => {
+    if (confirm('Do you want to delete this post')) { // eslint-disable-line
+      dispatch(deletePostRequest(cuid)).then(()=> {
+        history.push('/')
+      });
+    }
+  }
 
   useEffect(() => {
     if (!post) dispatch(fetchPost(cuid));
   }, []);
+  if (!post) {
+    return <div>Loading</div>
+  }
 
-  return (post
-    ?
-      (<div className="container">
-        <div className="row">
-          <div className="col-12">
-            <h1>{post.title}</h1>
-            <p>By {post.name}</p>
-            <p>{post.content}</p>
-          </div>
-        </div>
-      </div>)
-    : (<div>Loading</div>)
-  );
+  return <div className="container">
+    <div className="row justify-content-center">
+      <div className="col-12 col-md-6">
+        <PostListItem post={post} onDelete={handleDelete}/>
+      </div>
+    </div>
+  </div>;
 }
 export default PostDetailPage;
