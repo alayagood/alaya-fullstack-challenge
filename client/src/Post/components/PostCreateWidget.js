@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-// Import Style
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -18,6 +17,7 @@ const PostCreateWidget = ({ addPost }) => {
     const [state, setState] = useState({});
     const classes = useStyles();
 
+    const isValid = state.name && state.title && state.content
 
 
   const submit = () => {
@@ -40,7 +40,7 @@ const PostCreateWidget = ({ addPost }) => {
         <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
         <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
         <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
+        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!isValid}>
             Submit
         </Button>
     </div>
