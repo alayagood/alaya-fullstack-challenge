@@ -5,13 +5,14 @@ import storage from 'redux-persist/lib/storage'
 import thunk from 'redux-thunk';
 
 import posts from './../Post/PostReducer';
+import auth from '../Auth/AuthReducer';
 
 const persistConfig = {
     key: 'root',
     storage,
 }
 
-const persistedReducer = persistReducer(persistConfig, combineReducers({ posts }))
+const persistedReducer = persistReducer(persistConfig, combineReducers({ posts, auth }))
 
 // Middleware and store enhancers
 const enhancers = [
