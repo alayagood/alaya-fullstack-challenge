@@ -27,16 +27,6 @@ const isAuthor = (req, res, next) => {
         if (err) {
             return next(err);
         }
-        const Post =
-        // if (!user) {
-        //     return res.status(401).json({message: 'Unauthorized'});
-        // }
-        // Check if the user has the required role
-        console.log('user._id, req.user._id: ', user, req);
-        // if (user.token !== requiredRole) {
-        //     return res.status(403).json({message: 'Forbidden'});
-        // }
-        // Store the authenticated user in the request object
         next();
     })(req, res, next);
 }
