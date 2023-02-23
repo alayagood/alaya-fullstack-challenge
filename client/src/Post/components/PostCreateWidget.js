@@ -13,6 +13,10 @@ const useStyles = makeStyles(theme => ({
             margin: theme.spacing(1),
         },
     },
+    uploadText: {
+        color: theme.palette.primary.main,
+        height: '1em',
+    }
 }));
 
 const PostCreateWidget = ({ addPost }) => {
@@ -60,17 +64,29 @@ const PostCreateWidget = ({ addPost }) => {
         setImage(evt.target.files[0])
     }
 
+    const UploadButton = () => {
+        return <React.Fragment>
+            <Button color="primary" variant="outlined" fullWidth component={"span"}>
+                Upload image
+            </Button>
+            <p className={classes.uploadText}>{image?.name}</p>
+        </React.Fragment>
+    }
+
   return (
     <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
         <h3>Create new post</h3>
         <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
         <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
         <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-        <TextField type="file" name="image" onChange={handleFileChange} />
+        <label htmlFor="upload-image">
+            <TextField type="file" name="image" id={"upload-image"} style={{display: 'none'}} onChange={handleFileChange}/>
+            <UploadButton />
+        </label>
         <Button
             className="mt-4"
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={() => submit()}
             disabled={!isValid || loading}
         >
