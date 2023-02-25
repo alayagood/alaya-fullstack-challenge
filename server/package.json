@@ -14,8 +14,7 @@
     "cuid": "^2.1.8",
     "express": "^4.17.1",
     "limax": "^2.0.0",
-    "mongoose": "^5.8.11",
-    "nodemon": "^2.0.2",
+    "mongoose": "^6.10.0",
     "sanitize-html": "^1.21.1"
   }
 }
