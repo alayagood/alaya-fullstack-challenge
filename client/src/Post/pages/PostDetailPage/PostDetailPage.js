@@ -14,19 +14,19 @@ export function PostDetailPage() {
 
   useEffect(() => {
     if (!post) dispatch(fetchPost(cuid));
-  }, []);
+  });
 
   return (post
     ?
-      (<div className="container">
-        <div className="row">
-          <div className="col-12">
-            <h1>{post.title}</h1>
-            <p>By {post.name}</p>
-            <p>{post.content}</p>
-          </div>
+    (<div className="container">
+      <div className="row">
+        <div className="col-12">
+          <h1>{post.title}</h1>
+          <p>By {post.name}</p>
+          <p>{post.content}</p>
         </div>
-      </div>)
+      </div>
+    </div>)
     : (<div>Loading</div>)
   );
 }
