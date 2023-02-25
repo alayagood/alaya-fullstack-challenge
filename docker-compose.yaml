@@ -1,0 +1,46 @@
+version: "3.1"
+
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+    depends_on:
+      - mongo
+
+  server:
+    image: alaya-backend:latest
+    build: ./server
+    ports:
+      - 3000:80
+    environment:
+      NODE_ENV: development
+      MONGO_CONNECTION_STRING: mongodb://mongo/alaya-blog
+    depends_on:
+      - mongo
+
+  client:
+    image: alaya-frontend:latest
+    build:
+      context: ./client
+      args:
+        BACKEND_API_URL: http://localhost:3000/api # Todo: this should be accessed directly through the container name.
+    ports:
+      - 55544:80
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
+    external: false
