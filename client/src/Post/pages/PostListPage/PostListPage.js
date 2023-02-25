@@ -15,7 +15,7 @@ const PostListPage = ({ showAddPost }) => {
 
   useEffect(() => {
     dispatch(fetchPosts());
-  },[]);
+  });
 
   const handleDeletePost = post => {
     if (confirm('Do you want to delete this post')) { // eslint-disable-line
@@ -31,9 +31,9 @@ const PostListPage = ({ showAddPost }) => {
     <div className="container">
       <div className="row">
         <div className="col-12 d-flex align-items-center">
-          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px'}}/>
+          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px' }} />
           <h1 className="mt-4">
-             Alaya Blog
+            Alaya Blog
           </h1>
         </div>
       </div>
