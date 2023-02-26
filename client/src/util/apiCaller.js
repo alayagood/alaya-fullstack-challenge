@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
-export const API_URL = process.env.REACT_APP_BACKEND_API_URL;
+const API_URL = process.env.REACT_APP_BACKEND_API_URL;
 
 const call = async (endpoint, method = 'get', body) => {
   return fetch(`${API_URL}/${endpoint}`, {
