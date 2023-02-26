@@ -18,18 +18,12 @@ const register = async (req, res) => {
     const { email, password, name } = req.body;
 
     if (!email || !password || !name) {
-        res.status(401).send({
-            type: "RegistrationError",
-            description: "Missing email, password or name!"
-        });
+        res.status(401).send("Missing email, password or name!");
         return;
     }
 
     if (await User.findOne({ email })) {
-        res.status(401).send({
-            type: "RegistrationError",
-            description: "Email address is already in use!"
-        });
+        res.status(401).send("Email address is already in use!");
         return;
     }
 
@@ -40,10 +34,7 @@ const register = async (req, res) => {
     });
 
     if (!user) {
-        res.status(500).send({
-            type: "RegistrationError",
-            description: "Internal error: unable to create user!"
-        });
+        res.status(500).send("Internal error: unable to create user!");
         return;
     }
 
@@ -57,18 +48,12 @@ const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-        res.status(401).send({
-            type: "AuthenticationError",
-            description: "User not found!"
-        });
+        res.status(401).send("User not found!");
         return;
     }
 
     if (!bcryptjs.compareSync(password, user.password)) {
-        res.status(401).send({
-            type: "AuthenticationError",
-            descripiton: "Wrong password!"
-        });
+        res.status(401).send("Wrong password!");
         return;
     }
 

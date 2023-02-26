@@ -13,6 +13,7 @@ getPosts = async (req, res) => {
   Post.find().sort('-dateAdded').exec((err, posts) => {
     if (err) {
       res.status(500).send(err);
+      return;
     }
     res.json({ posts });
   });
@@ -25,15 +26,19 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
+  if (!req.body.post || !req.body.post.title || !req.body.post.content) {
     res.status(403).end();
+    return;
   }
 
-  const newPost = new Post(req.body.post);
+  const newPost = new Post({
+    name: req.user.name,
+    userId: req.user.id,
+    ...req.body.post
+  });
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
@@ -41,6 +46,7 @@ addPost = async (req, res) => {
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
+      return;
     }
     res.json({ post: saved });
   });
@@ -56,6 +62,7 @@ getPost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
+      return;
     }
     res.json({ post });
   });
@@ -71,6 +78,11 @@ deletePost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
+      return;
+    }
+
+    if (post.userId != req.user.id) {
+      res.status(401).send("Unauthorized");
     }
 
     post.remove(() => {
