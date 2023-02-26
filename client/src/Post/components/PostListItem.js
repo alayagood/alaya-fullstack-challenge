@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Card } from '@material-ui/core';
+import { Card, CardMedia } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 
 function PostListItem({ post, onDelete }) {
   const user = useSelector(state => state.user.user);
+  console.log(post.img);
 
   return (
     <Card className="w-100 my-4">
@@ -22,6 +23,7 @@ function PostListItem({ post, onDelete }) {
         <Typography component="p" className="mt-3">
           {post.content}
         </Typography>
+        {post.img && <CardMedia component="img" className="rounded d-block img-thumbnail" image={post.img} alt="Loading..." />}
         <Typography color="textSecondary" component="p" className="mt-3 font-italic">
           From {post.name}
         </Typography>
