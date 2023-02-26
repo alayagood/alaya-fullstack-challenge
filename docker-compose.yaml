@@ -27,6 +27,10 @@ services:
     environment:
       NODE_ENV: development
       MONGO_CONNECTION_STRING: mongodb://mongo/alaya-blog
+      JWT_SECRET: MAg1Cal_Un1C0rnS
+      CLOUDINARY_NAME: ABBA
+      CLOUDINARY_KEY: EDDA
+      CLOUDINARY_SECRET: ACDC
     depends_on:
       - mongo
 
@@ -35,7 +39,7 @@ services:
     build:
       context: ./client
       args:
-        BACKEND_API_URL: http://localhost:3000/api # Todo: this should be accessed directly through the container name.
+        BACKEND_API_URL: http://localhost:3000/api
     ports:
       - 55544:80
     depends_on:
