@@ -6,8 +6,11 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
+import { useSelector } from 'react-redux';
 
 function PostListItem({ post, onDelete }) {
+  const user = useSelector(state => state.user.user);
+
   return (
     <Card className="w-100 my-4">
       <CardContent>
@@ -23,11 +26,14 @@ function PostListItem({ post, onDelete }) {
           From {post.name}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
-      </CardActions>
+      {
+        user && user.id === post.userId &&
+        <CardActions>
+          <Button size="small" color="secondary" onClick={onDelete}>
+            Delete post
+          </Button>
+        </CardActions>
+      }
     </Card>
   );
 }

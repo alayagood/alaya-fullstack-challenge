@@ -40,9 +40,7 @@ function App(props) {
                             <hr />
                             <BrowserRouter>
                                 <Switch>
-                                    <Route path="/" exact>
-                                        <PostListPage showAddPost={true} />
-                                    </Route>
+                                    <Route path="/" exact component={PostListPage} />
                                     <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
                                     <Route path="/register" exact component={RegisterPage} />
                                     <Route path="/login" exact component={LoginPage} />

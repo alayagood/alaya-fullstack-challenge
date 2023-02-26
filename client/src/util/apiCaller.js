@@ -2,9 +2,19 @@ import fetch from 'isomorphic-fetch';
 
 const API_URL = process.env.REACT_APP_BACKEND_API_URL;
 
-const call = async (endpoint, method = 'get', body) => {
+const call = async (endpoint, method = 'get', body, token = null) => {
+  let headers = {
+    'content-type': 'application/json'
+  }
+  if (token) {
+    headers = {
+      ...headers,
+      'Authorization': `Bearer ${token}`
+    }
+  }
+
   return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
+    headers,
     method,
     body: JSON.stringify(body),
   })

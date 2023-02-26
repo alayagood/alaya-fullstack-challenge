@@ -23,7 +23,7 @@ export function registerRequest(user) {
             email: user.email,
             password: user.password
         }).then(res => {
-            if (user.id !== undefined) {
+            if (res.id !== undefined) {
                 dispatch(login(res));
             }
             else {
@@ -39,7 +39,7 @@ export function loginRequest(user) {
             email: user.email,
             password: user.password
         }).then(res => {
-            if (user.id !== undefined) {
+            if (res.id !== undefined) {
                 dispatch(login(res));
             }
             else {
