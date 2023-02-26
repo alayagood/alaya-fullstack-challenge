@@ -1,4 +1,4 @@
-import callApi from '../util/apiCaller';
+import { callApi } from '../util/apiCaller';
 
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';

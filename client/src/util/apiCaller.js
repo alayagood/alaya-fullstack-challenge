@@ -1,8 +1,9 @@
 import fetch from 'isomorphic-fetch';
+import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_API_URL;
 
-const call = async (endpoint, method = 'get', body, token = null) => {
+export const callApi = async (endpoint, method = 'get', body, token = null) => {
   let headers = {
     'content-type': 'application/json'
   }
@@ -35,4 +36,15 @@ const call = async (endpoint, method = 'get', body, token = null) => {
   return responseData;
 }
 
-export default call;
+export const uploadImage = async (image, token) => {
+  const data = new FormData()
+  data.append("image", image)
+  const res = await axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/image`, data, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return res.data;
+}
+

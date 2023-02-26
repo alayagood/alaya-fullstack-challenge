@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { uploadImage } from '../../util/apiCaller';
 // Import Style
 
 const useStyles = makeStyles(theme => ({
@@ -22,25 +22,13 @@ const PostCreateWidget = ({ addPost }) => {
   const user = useSelector(state => state.user.user);
   const [loading, setLoading] = useState(false);
 
-  const imageUploader = async (image) => {
-    const data = new FormData()
-    data.append("image", image)
-    const res = await axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/image`, data, {
-      headers: {
-        'Authorization': `Bearer ${user.token}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    return res.data;
-  }
-
   const submit = async () => {
     if (state.title && state.content) {
       setLoading(true);
       try {
         let post = state;
         if (state.img) {
-          const imgResp = await imageUploader(state.img);
+          const imgResp = await uploadImage(state.img, user.token);
           const img = imgResp.image;
           post = { ...post, img };
         }
