@@ -24,6 +24,7 @@ export function PostDetailPage() {
           <h1>{post.title}</h1>
           <p>By {post.name}</p>
           <p>{post.content}</p>
+          {post.img && <img src={post.img} className="rounded d-block img-thumbnail" alt="Loading..." />}
         </div>
       </div>
     </div>)
