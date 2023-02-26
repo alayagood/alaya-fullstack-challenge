@@ -9,4 +9,6 @@ addImage = async (req, res) => {
     });
 }
 
-module.exports = addImage
+module.exports = {
+    addImage
+}
