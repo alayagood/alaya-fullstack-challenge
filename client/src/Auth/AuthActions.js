@@ -22,7 +22,14 @@ export function registerRequest(user) {
             name: user.name,
             email: user.email,
             password: user.password
-        }).then(res => dispatch(login(res)));
+        }).then(res => {
+            if (user.id !== undefined) {
+                dispatch(login(res));
+            }
+            else {
+                alert("Unable to register!");
+            }
+        })
     };
 }
 
@@ -31,6 +38,13 @@ export function loginRequest(user) {
         return callApi('auth/login', 'post', {
             email: user.email,
             password: user.password
-        }).then(res => dispatch(login(res)));
+        }).then(res => {
+            if (user.id !== undefined) {
+                dispatch(login(res));
+            }
+            else {
+                alert("Unable to log in!");
+            }
+        })
     };
 }
