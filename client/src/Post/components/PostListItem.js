@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 
 function PostListItem({ post, onDelete }) {
   const user = useSelector(state => state.user.user);
-  console.log(post.img);
 
   return (
     <Card className="w-100 my-4">

@@ -13,23 +13,26 @@ const call = async (endpoint, method = 'get', body, token = null) => {
     }
   }
 
-  return fetch(`${API_URL}/${endpoint}`, {
+  const response = await fetch(`${API_URL}/${endpoint}`, {
     headers,
     method,
     body: JSON.stringify(body),
-  })
-    .then(response => response.json().then(json => ({ json, response })))
-    .then(({ json, response }) => {
-      if (!response.ok) {
-        return Promise.reject(json);
-      }
+  });
 
-      return json;
-    })
-    .then(
-      response => response,
-      error => error
-    );
-};
+  let responseData = null;
+  try {
+    responseData = await response.json();
+  } catch (_) {
+    try {
+      responseData = await response.text();
+    } catch (_) { }
+  }
+
+  if (!response.ok) {
+    throw new Error(responseData);
+  }
+
+  return responseData;
+}
 
 export default call;

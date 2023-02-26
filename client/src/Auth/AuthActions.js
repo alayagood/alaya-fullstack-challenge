@@ -17,34 +17,30 @@ export function logout() {
 }
 
 export function registerRequest(user) {
-    return (dispatch) => {
-        return callApi('auth/register', 'post', {
-            name: user.name,
-            email: user.email,
-            password: user.password
-        }).then(res => {
-            if (res.id !== undefined) {
-                dispatch(login(res));
-            }
-            else {
-                alert("Unable to register!");
-            }
-        })
+    return async (dispatch) => {
+        try {
+            const res = await callApi('auth/register', 'post', {
+                name: user.name,
+                email: user.email,
+                password: user.password
+            });
+            dispatch(login(res));
+        } catch (error) {
+            alert("Unable to register!");
+        }
     };
 }
 
 export function loginRequest(user) {
-    return (dispatch) => {
-        return callApi('auth/login', 'post', {
-            email: user.email,
-            password: user.password
-        }).then(res => {
-            if (res.id !== undefined) {
-                dispatch(login(res));
-            }
-            else {
-                alert("Unable to log in!");
-            }
-        })
+    return async (dispatch) => {
+        try {
+            const res = await callApi('auth/login', 'post', {
+                email: user.email,
+                password: user.password
+            });
+            dispatch(login(res));
+        } catch (error) {
+            alert("Unable to log in!");
+        }
     };
 }

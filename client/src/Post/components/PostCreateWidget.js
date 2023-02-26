@@ -31,7 +31,6 @@ const PostCreateWidget = ({ addPost }) => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log(res.data)
     return res.data;
   }
 
