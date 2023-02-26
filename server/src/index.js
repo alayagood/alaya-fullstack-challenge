@@ -6,9 +6,14 @@ const db = require('./db');
 const posts = require('./routes/post.routes');
 const auth = require('./routes/auth.routes');
 const image = require('./routes/image.routes');
+const helmet = require('helmet');
+const morgan = require('morgan');
 
 require('dotenv').config();
 const apiPort = process.env.API_PORT;
+
+app.use(helmet());
+app.use(morgan("common"))
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
