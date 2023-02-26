@@ -13,7 +13,7 @@ function PostList(props) {
           <PostListItem
             post={post}
             key={post.cuid}
-            onDelete={() => props.handleDeletePost(post.cuid)}
+            onDelete={() => props.handleDeletePost(post)}
           />
         ))
       }
