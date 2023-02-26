@@ -10,13 +10,8 @@ const sanitizeHtml = require('sanitize-html');
  * @returns void
  */
 getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-    res.json({ posts });
-  });
+  const posts = await Post.find().sort('-dateAdded') || [];
+  res.json({ posts });
 };
 
 /**
@@ -26,30 +21,30 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post || !req.body.post.title || !req.body.post.content) {
+  const input = req.body.post;
+
+  if (!input || !input.title || !input.content) {
     res.status(403).end();
     return;
   }
 
-  const newPost = new Post({
+  const title = sanitizeHtml(input.title);
+  const post = await Post.create({
     name: req.user.name,
     userId: req.user.id,
-    ...req.body.post
-  });
+    title,
+    content: sanitizeHtml(input.content),
+    slug: slug(title.toLowerCase(), { lowercase: true }),
+    cuid: cuid(),
+    img: input.img
+  })
 
-  // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.content = sanitizeHtml(newPost.content);
+  if (!post) {
+    res.status(500).end();
+    return;
+  }
 
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-    res.json({ post: saved });
-  });
+  res.json({ post });
 };
 
 /**
@@ -59,13 +54,12 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-    res.json({ post });
-  });
+  const post = await Post.findOne({ cuid: req.params.cuid });
+  if (!post) {
+    res.status(404).end();
+    return;
+  }
+  res.json({ post });
 };
 
 /**
@@ -75,20 +69,17 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-
-    if (post.userId != req.user.id) {
-      res.status(401).send("Unauthorized");
-    }
-
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+  const post = await Post.findOne({ cuid: req.params.cuid });
+  if (!post) {
+    res.status(404).end();
+    return;
+  }
+  if (post.userId != req.user.id) {
+    res.status(401).end();
+    return;
+  }
+  await post.remove();
+  res.status(200).end();
 };
 
 module.exports = {

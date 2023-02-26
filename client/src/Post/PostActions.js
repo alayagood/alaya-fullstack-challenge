@@ -1,4 +1,4 @@
-import callApi from '../util/apiCaller';
+import { callApi } from '../util/apiCaller';
 
 // Export Constants
 export const ADD_POST = 'ADD_POST';
@@ -14,10 +14,13 @@ export function addPost(post) {
 }
 
 export function addPostRequest(post, token) {
-  return (dispatch) => {
-    return callApi('posts', 'post', {
-      post
-    }, token).then(res => dispatch(addPost(res.post)));
+  return async (dispatch) => {
+    try {
+      const res = await callApi('posts', 'post', { post }, token);
+      dispatch(addPost(res.post));
+    } catch (error) {
+      alert("Unable to create post!");
+    }
   };
 }
 
@@ -29,16 +32,24 @@ export function addPosts(posts) {
 }
 
 export function fetchPosts() {
-  return (dispatch) => {
-    return callApi('posts').then(res => {
+  return async (dispatch) => {
+    try {
+      const res = await callApi('posts');
       dispatch(addPosts(res.posts));
-    });
+    } catch (error) {
+      alert("Unable to load posts!");
+    }
   };
 }
 
 export function fetchPost(cuid) {
-  return (dispatch) => {
-    return callApi(`posts/${cuid}`).then(res => dispatch(addPost(res.post)));
+  return async (dispatch) => {
+    try {
+      const res = await callApi(`posts/${cuid}`);
+      dispatch(addPost(res.post));
+    } catch (error) {
+      alert("Unable to load post!");
+    }
   };
 }
 
@@ -50,7 +61,12 @@ export function deletePost(cuid) {
 }
 
 export function deletePostRequest(cuid, token) {
-  return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete', undefined, token).then(() => dispatch(deletePost(cuid)));
+  return async (dispatch) => {
+    try {
+      await callApi(`posts/${cuid}`, 'delete', undefined, token);
+      dispatch(deletePost(cuid));
+    } catch (error) {
+      alert("Unable to delete post!");
+    }
   };
 }
