@@ -7,7 +7,7 @@ import PostCreateWidget from '../../components/PostCreateWidget';
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
 import Logo from '../../../logo.svg';
 
-const PostListPage = () => {
+function PostListPage() {
 
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts.data);
@@ -47,7 +47,7 @@ const PostListPage = () => {
       </div>
     </div>
   );
-};
+}
 
 PostListPage.propTypes = {
 };
