@@ -44,21 +44,18 @@ function SignUpPage() {
 						label="Name"
 						name="name"
 						onChange={handleChange}
-						value={state.name}
 					/>
 					<TextField
 						variant="filled"
 						label="Email"
 						name="email"
 						onChange={handleChange}
-						value={state.email}
 					/>
 					<TextField
 						variant="filled"
 						label="Password"
 						name="password"
 						onChange={handleChange}
-						value={state.password}
 					/>
 					<Button
 						className="mt-4"
