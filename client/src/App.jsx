@@ -10,7 +10,7 @@ import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
 import SignInPage from './Auth/pages/SignIn/SignIn';
-import SignUpPage from './Auth/pages/Signup/Signup';
+import SignUpPage from './Auth/pages/SignUp/SignUp';
 
 const theme = createMuiTheme({
     palette: {
@@ -31,8 +31,9 @@ function App({ store }) {
                       <Switch>
                           <Route path="/" exact component={PostListPage} />
                           <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
+                          
                           <Route path="/signin" exact component={SignInPage} />
-                          <Route path="/signin" exact component={SignUpPage} />
+                          <Route path="/signup" exact component={SignUpPage} />
                       </Switch>
                     </BrowserRouter>
                   </Provider>
@@ -43,6 +44,7 @@ function App({ store }) {
 }
 
 App.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
     store: PropTypes.object.isRequired,
 };
 

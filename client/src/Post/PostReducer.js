@@ -3,7 +3,9 @@ import { ADD_POST, ADD_POSTS, DELETE_POST } from './PostActions';
 // Initial State
 const initialState = { data: [] };
 
-const PostReducer = (state = initialState, action) => {
+const PostReducer = (previousState, action) => {
+  const state = previousState || initialState;
+
   switch (action.type) {
     case ADD_POST :
       return {
