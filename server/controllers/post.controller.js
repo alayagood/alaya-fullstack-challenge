@@ -30,8 +30,7 @@ addPost = async (req, res) => {
   }
 
   const newPost = new Post(req.body.post);
-
-  // Let's sanitize inputs
+  
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
