@@ -6,10 +6,10 @@ import posts from './Post/PostReducer';
 import './index.css';
 import App from './App';
 
-const enhancers = [
+const REDUX_ENHANCERS = [
     applyMiddleware(thunk),
 ];
 
-const initialStore = createStore(combineReducers({ posts }), { }, compose(...enhancers));
+const initialStore = createStore(combineReducers({ posts }), { }, compose(...REDUX_ENHANCERS));
 
 ReactDOM.render(<App store={initialStore}/>, document.getElementById('root'));
