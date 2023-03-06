@@ -10,6 +10,7 @@ import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
 import SignInPage from './Auth/pages/SignIn/SignIn';
+import SignUpPage from './Auth/pages/Signup/Signup';
 
 const theme = createMuiTheme({
     palette: {
@@ -31,6 +32,7 @@ function App({ store }) {
                           <Route path="/" exact component={PostListPage} />
                           <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
                           <Route path="/signin" exact component={SignInPage} />
+                          <Route path="/signin" exact component={SignUpPage} />
                       </Switch>
                     </BrowserRouter>
                   </Provider>
