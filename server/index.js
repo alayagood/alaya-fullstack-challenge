@@ -3,16 +3,18 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 const apiPort = 3000;
-const db = require('./db');
+
+const config = require('./config')();
+const db = require('./db')(config);
 
 const posts = require('./routes/post.routes');
 const auth = require('./routes/auth.routes');
 
 process.on('uncaughtException', (err, origin) => {
-    console.log(err);
+	console.log(err);
 });
 process.on('unhandledRejection', (reason, promise) => {
-    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+	console.log('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 app.use(cors());
