@@ -6,7 +6,6 @@ import posts from './Post/PostReducer';
 import './index.css';
 import App from './App';
 
-// Middleware and store enhancers
 const enhancers = [
     applyMiddleware(thunk),
 ];
