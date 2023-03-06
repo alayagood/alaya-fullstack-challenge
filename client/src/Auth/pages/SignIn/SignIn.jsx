@@ -1,61 +1,73 @@
 import React, { useState } from 'react';
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, TextField } from '@material-ui/core';
-import Logo from '../../../logo.svg';
+import { Link } from 'react-router-dom';
+import { Button, TextField, Typography } from '@material-ui/core';
+import { signIn } from '../../AuthActions';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-      '& > *': {
-          margin: theme.spacing(1),
-      },
-  },
+const useStyles = makeStyles((theme) => ({
+	root: {
+		'& > *': {
+			margin: theme.spacing(1),
+		},
+	},
 }));
 
 function SignInPage() {
-  // const dispatch = useDispatch();
-  const [state, setState] = useState({});
-  const classes = useStyles();
+	const dispatch = useDispatch();
+	const [state, setState] = useState({});
+	const classes = useStyles();
 
-  const handleChange = (evt) => {
-    const {value} = evt.target;
-    setState({
-        ...state,
-        [evt.target.name]: value
-    });
-  };
+	const handleChange = (evt) => {
+		const { value } = evt.target;
+		setState({
+			...state,
+			[evt.target.name]: value,
+		});
+	};
 
-  const submit = () => {
-    if (state.username && state.password) {
-      // dispatch(addPostRequest(post));
-    }
-  };
+	const submit = () => {
+		if (state.email && state.password) {
+			dispatch(signIn(state));
+		}
+	};
 
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12 d-flex align-items-center">
-          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px'}}/>
-          <h1 className="mt-4">
-             Alaya Blog
-          </h1>
-        </div>
-      </div>
-      <hr />
-      <div className="row">
-        <div className={`${classes.root} d-flex flex-column my-4 w-100 col-6`}>
-          <TextField variant="filled" label="Username" name="username" onChange={handleChange} />
-          <TextField variant="filled" label="Password" name="password" onChange={handleChange} />
-          <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.username || !state.password}>
-              Sign In
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div className="container">
+			<div className="row">
+				<div className={`${classes.root} d-flex flex-column my-4 w-100 col-6`}>
+					<TextField
+						variant="filled"
+						label="Email"
+						name="email"
+						onChange={handleChange}
+						value={state.email}
+					/>
+					<TextField
+						variant="filled"
+						label="Password"
+						name="password"
+						onChange={handleChange}
+						value={state.password}
+					/>
+					<Button
+						className="mt-4"
+						variant="contained"
+						color="primary"
+						onClick={() => submit()}
+						disabled={!state.email || !state.password}
+					>
+						Sign In
+					</Button>
+					<Typography variant="h6">
+						<Link to="/signup">Create account</Link>
+					</Typography>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 SignInPage.propTypes = {};
-
 
 export default SignInPage;

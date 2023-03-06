@@ -1,4 +1,6 @@
 {
     "useTabs": true,
-    "arrowParens": "always"
+    "arrowParens": "always",
+    "tabWidth": 2,
+    "singleQuote": true
 }
