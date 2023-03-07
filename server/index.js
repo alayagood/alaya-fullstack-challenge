@@ -18,9 +18,10 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 app.use(cors());
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
+// TODO: Add middleware to add authentication token verification
 app.use('/api', posts, auth);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));

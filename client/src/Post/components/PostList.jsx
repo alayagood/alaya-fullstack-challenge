@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 // Import Components
 import PostListItem from './PostListItem';
 
-function PostList({ posts, handleDeletePost }) {
+function PostList({ posts, handleDeletePost, handleUploadPostPhoto }) {
 	return (
 		<div className="d-flex flex-column w-100">
 			<h3 className="mt-4">Posts</h3>
@@ -13,6 +13,7 @@ function PostList({ posts, handleDeletePost }) {
 					post={post}
 					key={post.cuid}
 					onDelete={() => handleDeletePost(post.cuid)}
+					onUploadPhoto={handleUploadPostPhoto}
 				/>
 			))}
 		</div>
@@ -30,6 +31,7 @@ PostList.propTypes = {
 		})
 	).isRequired,
 	handleDeletePost: PropTypes.func.isRequired,
+	handleUploadPostPhoto: PropTypes.func.isRequired,
 };
 
 export default PostList;

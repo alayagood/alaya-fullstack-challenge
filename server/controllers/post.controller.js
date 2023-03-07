@@ -10,12 +10,14 @@ const sanitizeHtml = require('sanitize-html');
  * @returns void
  */
 getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ posts });
-  });
+	Post.find()
+		.sort('-dateAdded')
+		.exec((err, posts) => {
+			if (err) {
+				res.status(500).send(err);
+			}
+			res.json({ posts });
+		});
 };
 
 /**
@@ -25,24 +27,31 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
-  }
+	if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
+		res.status(403).end();
+	}
 
-  const newPost = new Post(req.body.post);
-  
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
+	const newPost = new Post(req.body.post);
 
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ post: saved });
-  });
+	newPost.title = sanitizeHtml(newPost.title);
+	newPost.name = sanitizeHtml(newPost.name);
+	newPost.content = sanitizeHtml(newPost.content);
+
+	newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+	newPost.cuid = cuid();
+	newPost.save((err, saved) => {
+		if (err) {
+			res.status(500).send(err);
+		}
+		res.json({ post: saved });
+	});
+};
+
+uploadPostPhoto = async (req, res) => {
+	console.log('uploading photo');
+	console.log(req.files);
+
+	return res.status(200).json({});
 };
 
 /**
@@ -52,12 +61,12 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ post });
-  });
+	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+		if (err) {
+			res.status(500).send(err);
+		}
+		res.json({ post });
+	});
 };
 
 /**
@@ -67,20 +76,21 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+		if (err) {
+			res.status(500).send(err);
+		}
 
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+		post.remove(() => {
+			res.status(200).end();
+		});
+	});
 };
 
 module.exports = {
-  getPosts,
-  addPost,
-  getPost,
-  deletePost
+	getPosts,
+	addPost,
+	uploadPostPhoto,
+	getPost,
+	deletePost,
 };

@@ -6,8 +6,8 @@ import {
 	addPostRequest,
 	deletePostRequest,
 	fetchPosts,
+	uploadPostPhoto,
 } from '../../PostActions';
-
 function PostListPage() {
 	const dispatch = useDispatch();
 	const posts = useSelector((state) => state.posts.data);
@@ -23,6 +23,10 @@ function PostListPage() {
 		}
 	};
 
+	const handleUploadPostPhoto = (post, file) => {
+		dispatch(uploadPostPhoto(post, file));
+	};
+
 	const handleAddPost = (post) => {
 		dispatch(addPostRequest(post));
 	};
@@ -34,7 +38,11 @@ function PostListPage() {
 					<PostCreateWidget addPost={handleAddPost} />
 				</div>
 				<div className="col-6">
-					<PostList handleDeletePost={handleDeletePost} posts={posts} />
+					<PostList
+						handleDeletePost={handleDeletePost}
+						handleUploadPostPhoto={handleUploadPostPhoto}
+						posts={posts}
+					/>
 				</div>
 			</div>
 		</div>
