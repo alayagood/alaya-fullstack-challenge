@@ -48,10 +48,19 @@ addPost = async (req, res) => {
 };
 
 uploadPostPhoto = async (req, res) => {
-	console.log('uploading photo');
-	console.log(req.files);
+	try {
+		if (!req.files) {
+			res.status(400);
+		} else {
+			let file = req.files.file;
 
-	return res.status(200).json({});
+			console.log(req.files);
+
+			// Move to cloudinary
+		}
+	} catch (err) {
+		res.status(500).send(err);
+	}
 };
 
 /**
