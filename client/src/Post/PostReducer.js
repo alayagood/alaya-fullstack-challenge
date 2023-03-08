@@ -6,7 +6,6 @@ import {
 	DELETE_POST,
 } from './PostActions';
 
-// Initial State
 const initialState = { data: [], media: [] };
 
 const PostReducer = (previousState, action) => {

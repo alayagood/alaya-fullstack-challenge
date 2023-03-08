@@ -5,14 +5,10 @@ const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
 const MediaService = require('../services/media.service');
 
-/**
- * Get all posts
- * @param req
- * @param res
- * @returns void
- */
 getPosts = async (req, res) => {
-	Post.find()
+	const { _id: owner } = req.user;
+
+	Post.find({ owner })
 		.sort('-dateAdded')
 		.exec((err, posts) => {
 			if (err) {
@@ -23,18 +19,16 @@ getPosts = async (req, res) => {
 		});
 };
 
-/**
- * Save a post
- * @param req
- * @param res
- * @returns void
- */
 addPost = async (req, res) => {
 	if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
 		res.status(403).end();
 	}
 
-	const newPost = new Post(req.body.post);
+	const { _id: owner } = req.user;
+	const newPost = new Post({
+		...req.body.post,
+		owner,
+	});
 
 	newPost.title = sanitizeHtml(newPost.title);
 	newPost.name = sanitizeHtml(newPost.name);
@@ -56,6 +50,7 @@ uploadPostPhoto = async (req, res) => {
 		if (!req.files) {
 			res.status(400);
 		} else {
+			const { _id: owner } = req.user;
 			const { cuid: postId } = req.params;
 			const metadata = {
 				postId,
@@ -72,6 +67,7 @@ uploadPostPhoto = async (req, res) => {
 				key: public_id,
 				url: secure_url,
 				postCuid: postId,
+				owner,
 			});
 
 			newMedia.cuid = cuid();
@@ -88,12 +84,6 @@ uploadPostPhoto = async (req, res) => {
 	}
 };
 
-/**
- * Get a single post
- * @param req
- * @param res
- * @returns void
- */
 getPost = async (req, res) => {
 	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
 		if (err) {
@@ -118,12 +108,6 @@ getPostMedia = async (req, res) => {
 		});
 };
 
-/**
- * Delete a post
- * @param req
- * @param res
- * @returns void
- */
 deletePost = async (req, res) => {
 	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
 		if (err) {

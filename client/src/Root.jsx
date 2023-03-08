@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import './App.css';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
 
