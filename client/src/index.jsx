@@ -6,6 +6,7 @@ import posts from './Post/PostReducer';
 import auth from './Auth/AuthReducer';
 import './index.css';
 import App from './App';
+import { updateSession } from './util/api';
 
 // TODO: Refactor this section
 
@@ -13,14 +14,20 @@ const SESSION_STORAGE_KEY = 'session_state';
 
 function getSessionStorage() {
 	try {
-		const state = sessionStorage.getItem(SESSION_STORAGE_KEY);
+		const rawState = sessionStorage.getItem(SESSION_STORAGE_KEY);
 
-		return state ? JSON.parse(state) : undefined;
+		if (rawState) {
+			const state = JSON.parse(rawState);
+
+			updateSession(state?.auth?.token);
+
+			return state;
+		}
 	} catch (error) {
 		console.error(error);
-
-		return undefined;
 	}
+
+	return undefined;
 }
 
 // TODO: Fix issue that is updating the state with null values from the api

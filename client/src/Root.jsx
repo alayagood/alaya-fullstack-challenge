@@ -10,18 +10,11 @@ import Navbar from './Nav/components/Navbar';
 import SignInPage from './Auth/pages/SignIn/SignIn';
 import SignUpPage from './Auth/pages/SignUp/SignUp';
 import AuthProvider from './Auth/components/AuthProvider';
-import { getAuthenticatedUser } from './Auth/AuthActions';
 
 // TODO: Add Logger to the project to avoid having linter warnings
 function Root() {
-	const dispatch = useDispatch();
 	const token = useSelector((state) => state.auth.token);
 	const isAuthenticated = useMemo(() => !!token, [token]);
-
-	// TODO: store the token in the session store so it can be reused
-	useEffect(() => {
-		dispatch(getAuthenticatedUser(token));
-	}, [token]);
 
 	return (
 		<AuthProvider>

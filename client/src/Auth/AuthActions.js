@@ -4,21 +4,13 @@ export const GET_AUTHENTICATED_USER = 'GET_AUTHENTICATED_USER';
 export const FINISH_SIGN_IN = 'FINISH_SIGN_IN';
 export const FINISH_SIGN_UP = 'FINISH_SIGN_UP';
 
-export function setToken(token) {
-	return {
-		type: GET_AUTHENTICATED_USER,
-		token,
-	};
-}
-
 export function getAuthenticatedUser() {
-	return (dispatch) =>
+	return () =>
 		callApi({
-			endpoint: 'profile/me',
+			endpoint: 'profile',
 			method: 'post',
 		}).then((res) => {
 			updateSession(res.token);
-			dispatch(setToken(res.token));
 		});
 }
 
