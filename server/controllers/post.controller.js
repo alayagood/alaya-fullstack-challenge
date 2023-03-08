@@ -17,8 +17,9 @@ getPosts = async (req, res) => {
 		.exec((err, posts) => {
 			if (err) {
 				res.status(500).send(err);
+			} else {
+				res.json({ posts });
 			}
-			res.json({ posts });
 		});
 };
 
@@ -103,6 +104,20 @@ getPost = async (req, res) => {
 	});
 };
 
+getPostMedia = async (req, res) => {
+	Media.find({
+		postCuid: req.params.cuid,
+	})
+		.sort('-dateAdded')
+		.exec((err, media) => {
+			if (err) {
+				res.status(500).send(err);
+			} else {
+				res.json({ media });
+			}
+		});
+};
+
 /**
  * Delete a post
  * @param req
@@ -126,5 +141,6 @@ module.exports = {
 	addPost,
 	uploadPostPhoto,
 	getPost,
+	getPostMedia,
 	deletePost,
 };
