@@ -6,7 +6,7 @@ import {
 } from './PostActions';
 
 // Initial State
-const initialState = { data: [] };
+const initialState = { data: [], media: [] };
 
 const PostReducer = (previousState, action) => {
 	const state = previousState || initialState;
@@ -14,26 +14,26 @@ const PostReducer = (previousState, action) => {
 	switch (action.type) {
 		case ADD_POST:
 			return {
+				media: state.media,
 				data: [action.post, ...state.data],
 			};
 
 		case ADD_POSTS:
 			return {
+				media: state.media,
 				data: action.posts,
 			};
 
 		case ADD_POST_PHOTO: {
-			const postIndex = state.data.findIndex((p) => p.cuid === action.cuid);
-
-			state.data.splice(postIndex, 1, action.data);
-
 			return {
+				media: [action.media, ...state.media],
 				data: state.data,
 			};
 		}
 		case DELETE_POST:
 			return {
 				data: state.data.filter((post) => post.cuid !== action.cuid),
+				media: state.media.filter((media) => media.postCuid !== action.cuid),
 			};
 
 		default:

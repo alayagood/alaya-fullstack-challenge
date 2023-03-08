@@ -34,10 +34,10 @@ export function addPosts(posts) {
 	};
 }
 
-export function addPhoto(post) {
+export function addPhoto(media) {
 	return {
 		type: ADD_POST_PHOTO,
-		post,
+		media,
 	};
 }
 
@@ -63,7 +63,7 @@ export function uploadPostPhoto(post, file) {
 			endpoint: `posts/${post.cuid}/upload`,
 			method: 'post',
 			files: [file],
-		}).then((res) => dispatch(addPost(res.post)));
+		}).then((res) => dispatch(addPhoto(res.media)));
 }
 
 export function deletePost(cuid) {
