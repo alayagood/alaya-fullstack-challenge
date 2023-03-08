@@ -3,17 +3,18 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileupload = require('express-fileupload');
 const app = express();
-const apiPort = 3000;
+
+const posts = require('./routes/post.routes');
+const auth = require('./routes/auth.routes');
+const profile = require('./routes/profile.routes');
 
 const config = require('./config')();
 const db = require('./db')(config);
 
+require('./auth');
 require('./services/media.service').configure(config);
 
-const posts = require('./routes/post.routes');
-const auth = require('./routes/auth.routes');
-
-process.on('uncaughtException', (err, origin) => {
+process.on('uncaughtException', (err, _origin) => {
 	console.log(err);
 });
 process.on('unhandledRejection', (reason, promise) => {
@@ -31,9 +32,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// TODO: Add middleware to add authentication token verification
-app.use('/api', posts, auth);
+app.use('/api', posts, auth, profile);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
+app.listen(config.port, () =>
+	console.log(`Server running on port ${config.port}`)
+);
