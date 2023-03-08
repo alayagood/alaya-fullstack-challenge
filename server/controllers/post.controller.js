@@ -1,7 +1,9 @@
 const Post = require('../models/post');
+const Media = require('../models/media');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const MediaService = require('../services/media.service');
 
 /**
  * Get all posts
@@ -42,8 +44,9 @@ addPost = async (req, res) => {
 	newPost.save((err, saved) => {
 		if (err) {
 			res.status(500).send(err);
+		} else {
+			res.json({ post: saved });
 		}
-		res.json({ post: saved });
 	});
 };
 
@@ -52,11 +55,32 @@ uploadPostPhoto = async (req, res) => {
 		if (!req.files) {
 			res.status(400);
 		} else {
-			let file = req.files.file;
+			const { cuid: postId } = req.params;
+			const metadata = {
+				postId,
+			};
 
-			console.log(req.files);
+			const file = req.files[Object.keys(req.files)[0]];
+			const { public_id, secure_url } = await MediaService.upload(
+				file,
+				metadata
+			);
 
-			// Move to cloudinary
+			const newMedia = new Media({
+				originalFilename: file.name,
+				key: public_id,
+				url: secure_url,
+				postCuid: postId,
+			});
+
+			newMedia.cuid = cuid();
+			newMedia.save((err, saved) => {
+				if (err) {
+					res.status(500).send(err);
+				} else {
+					res.json({ media: saved });
+				}
+			});
 		}
 	} catch (err) {
 		res.status(500).send(err);
@@ -73,8 +97,9 @@ getPost = async (req, res) => {
 	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
 		if (err) {
 			res.status(500).send(err);
+		} else {
+			res.json({ post });
 		}
-		res.json({ post });
 	});
 };
 

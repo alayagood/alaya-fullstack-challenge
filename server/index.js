@@ -8,6 +8,8 @@ const apiPort = 3000;
 const config = require('./config')();
 const db = require('./db')(config);
 
+require('./services/media.service').configure(config);
+
 const posts = require('./routes/post.routes');
 const auth = require('./routes/auth.routes');
 
@@ -20,7 +22,8 @@ process.on('unhandledRejection', (reason, promise) => {
 
 app.use(
 	fileupload({
-		createParentPath: true,
+		useTempFiles: true,
+		tempFileDir: '/tmp',
 		abortOnLimit: true,
 	})
 );
