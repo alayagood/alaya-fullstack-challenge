@@ -2,6 +2,7 @@ import {
 	ADD_POST,
 	ADD_POSTS,
 	ADD_POST_PHOTO,
+	ADD_POST_PHOTOS,
 	DELETE_POST,
 } from './PostActions';
 
@@ -30,6 +31,14 @@ const PostReducer = (previousState, action) => {
 				data: state.data,
 			};
 		}
+
+		case ADD_POST_PHOTOS: {
+			return {
+				media: action.media,
+				data: state.data,
+			};
+		}
+
 		case DELETE_POST:
 			return {
 				data: state.data.filter((post) => post.cuid !== action.cuid),
