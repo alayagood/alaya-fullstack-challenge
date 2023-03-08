@@ -14,11 +14,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SignUpPage() {
 	const dispatch = useDispatch();
-	const [state, setState] = useState({
-		email: 'johndoe@gmail.com',
-		name: 'John Doe',
-		password: 'password',
-	});
+	const [state, setState] = useState({});
 	const classes = useStyles();
 
 	const handleChange = (evt) => {
@@ -30,7 +26,7 @@ function SignUpPage() {
 	};
 
 	const submit = () => {
-		if (state.name && state.email && state.password) {
+		if (state.email && state.password) {
 			dispatch(signUp(state));
 		}
 	};
@@ -39,12 +35,6 @@ function SignUpPage() {
 		<div className="container">
 			<div className="row">
 				<div className={`${classes.root} d-flex flex-column my-4 w-100 col-6`}>
-					<TextField
-						variant="filled"
-						label="Name"
-						name="name"
-						onChange={handleChange}
-					/>
 					<TextField
 						variant="filled"
 						label="Email"
@@ -62,7 +52,7 @@ function SignUpPage() {
 						variant="contained"
 						color="primary"
 						onClick={() => submit()}
-						disabled={!state.name || !state.email || !state.password}
+						disabled={!state.email || !state.password}
 					>
 						Sign Up
 					</Button>

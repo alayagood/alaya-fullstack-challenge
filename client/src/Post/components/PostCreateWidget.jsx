@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
-// Import Style
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -15,10 +13,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function PostCreateWidget({ addPost }) {
-	const user = useSelector((state) => state.auth?.user);
-	const [state, setState] = useState({
-		name: user ? user.name : undefined,
-	});
+	const [state, setState] = useState({});
 	const classes = useStyles();
 
 	// TODO: Clean the form whenever the creation is finished
@@ -44,7 +39,6 @@ function PostCreateWidget({ addPost }) {
 				label="Author name"
 				name="name"
 				onChange={handleChange}
-				defaultValue={state.name}
 			/>
 			<TextField
 				variant="filled"
