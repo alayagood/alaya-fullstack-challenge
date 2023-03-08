@@ -56,6 +56,16 @@ uploadPostPhoto = async (req, res) => {
 				postId,
 			};
 
+			const post = await Post.findOne({ cuid: postId });
+
+			if (!post) {
+				return res.status(404).send(new Error('Not found'));
+			}
+
+			if (post.owner !== owner) {
+				return res.status(403).send(new Error('Permission denied'));
+			}
+
 			const file = req.files[Object.keys(req.files)[0]];
 			const { public_id, secure_url } = await MediaService.upload(
 				file,
@@ -109,14 +119,24 @@ getPostMedia = async (req, res) => {
 };
 
 deletePost = async (req, res) => {
-	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+	const { _id: owner } = req.user;
+
+	Post.findOne({ cuid: req.params.cuid }).exec(async (err, post) => {
 		if (err) {
 			res.status(500).send(err);
-		}
+		} else {
+			if (!post) {
+				return res.status(404).send(new Error('Not found'));
+			}
 
-		post.remove(() => {
-			res.status(200).end();
-		});
+			if (post.owner !== owner) {
+				return res.status(403).send(new Error('Permission denied'));
+			}
+
+			post.remove(() => {
+				res.status(200).end();
+			});
+		}
 	});
 };
 
