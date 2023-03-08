@@ -34,6 +34,15 @@ function Navbar() {
 							</Typography>
 						</Box>
 					)}
+					{user && (
+						<Box sx={{ display: 'flex', align: 'items-end' }}>
+							<Typography variant="h6">
+								<Link href="/" className="text-white mx-5">
+									Home
+								</Link>
+							</Typography>
+						</Box>
+					)}
 				</Toolbar>
 			</AppBar>
 		</Box>

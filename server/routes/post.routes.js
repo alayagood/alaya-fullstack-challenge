@@ -4,6 +4,7 @@ const PostController = require('../controllers/post.controller');
 
 router.route('/posts').get(PostController.getPosts);
 router.route('/posts/:cuid').get(PostController.getPost);
+router.route('/posts/:cuid/upload').post(PostController.uploadPostPhoto);
 router.route('/posts').post(PostController.addPost);
 router.route('/posts/:cuid').delete(PostController.deletePost);
 

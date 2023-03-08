@@ -12,6 +12,7 @@ import SignUpPage from './Auth/pages/SignUp/SignUp';
 import AuthProvider from './Auth/components/AuthProvider';
 import { getAuthenticatedUser } from './Auth/AuthActions';
 
+// TODO: Add Logger to the project to avoid having linter warnings
 function Root() {
 	const dispatch = useDispatch();
 	const token = useSelector((state) => state.auth.token);
