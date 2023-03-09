@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-// Import Components
 import PostListItem from './PostListItem';
 
 function PostList({ posts, handleDeletePost, handleUploadPostPhoto }) {

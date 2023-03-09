@@ -8,6 +8,7 @@ const mediaSchema = new Schema({
 	url: { type: 'String', required: true },
 	postCuid: { type: 'String', required: true },
 	dateAdded: { type: 'Date', default: Date.now, required: true },
+	owner: { type: 'String', required: true },
 });
 
 module.exports = mongoose.model('Media', mediaSchema);

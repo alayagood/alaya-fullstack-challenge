@@ -5,14 +5,10 @@ const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
 const MediaService = require('../services/media.service');
 
-/**
- * Get all posts
- * @param req
- * @param res
- * @returns void
- */
 getPosts = async (req, res) => {
-	Post.find()
+	const { _id: owner } = req.user;
+
+	Post.find({ owner })
 		.sort('-dateAdded')
 		.exec((err, posts) => {
 			if (err) {
@@ -23,18 +19,16 @@ getPosts = async (req, res) => {
 		});
 };
 
-/**
- * Save a post
- * @param req
- * @param res
- * @returns void
- */
 addPost = async (req, res) => {
 	if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
 		res.status(403).end();
 	}
 
-	const newPost = new Post(req.body.post);
+	const { _id: owner } = req.user;
+	const newPost = new Post({
+		...req.body.post,
+		owner,
+	});
 
 	newPost.title = sanitizeHtml(newPost.title);
 	newPost.name = sanitizeHtml(newPost.name);
@@ -56,10 +50,21 @@ uploadPostPhoto = async (req, res) => {
 		if (!req.files) {
 			res.status(400);
 		} else {
+			const { _id: owner } = req.user;
 			const { cuid: postId } = req.params;
 			const metadata = {
 				postId,
 			};
+
+			const post = await Post.findOne({ cuid: postId });
+
+			if (!post) {
+				return res.status(404).send(new Error('Not found'));
+			}
+
+			if (post.owner !== owner) {
+				return res.status(403).send(new Error('Permission denied'));
+			}
 
 			const file = req.files[Object.keys(req.files)[0]];
 			const { public_id, secure_url } = await MediaService.upload(
@@ -72,6 +77,7 @@ uploadPostPhoto = async (req, res) => {
 				key: public_id,
 				url: secure_url,
 				postCuid: postId,
+				owner,
 			});
 
 			newMedia.cuid = cuid();
@@ -88,12 +94,6 @@ uploadPostPhoto = async (req, res) => {
 	}
 };
 
-/**
- * Get a single post
- * @param req
- * @param res
- * @returns void
- */
 getPost = async (req, res) => {
 	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
 		if (err) {
@@ -118,22 +118,30 @@ getPostMedia = async (req, res) => {
 		});
 };
 
-/**
- * Delete a post
- * @param req
- * @param res
- * @returns void
- */
 deletePost = async (req, res) => {
-	Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-		if (err) {
-			res.status(500).send(err);
+	const { _id: owner } = req.user;
+
+	try {
+		const post = await Post.findOne({ cuid: req.params.cuid });
+
+		if (!post) {
+			return res.status(404).send(new Error('Not found'));
 		}
 
-		post.remove(() => {
-			res.status(200).end();
+		if (post.owner !== owner) {
+			return res.status(403).send(new Error('Permission denied'));
+		}
+
+		await post.remove();
+
+		const media = await Media.find({
+			postCuid: req.params.cuid,
 		});
-	});
+
+		await Promise.all(media.map((m) => MediaService.remove(m.key)));
+	} catch (error) {
+		return res.status(500).send(err);
+	}
 };
 
 module.exports = {
