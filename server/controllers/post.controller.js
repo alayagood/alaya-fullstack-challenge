@@ -121,23 +121,29 @@ getPostMedia = async (req, res) => {
 deletePost = async (req, res) => {
 	const { _id: owner } = req.user;
 
-	Post.findOne({ cuid: req.params.cuid }).exec(async (err, post) => {
-		if (err) {
-			res.status(500).send(err);
-		} else {
-			if (!post) {
-				return res.status(404).send(new Error('Not found'));
-			}
+	debugger;
 
-			if (post.owner !== owner) {
-				return res.status(403).send(new Error('Permission denied'));
-			}
+	try {
+		const post = await Post.findOne({ cuid: req.params.cuid });
 
-			post.remove(() => {
-				res.status(200).end();
-			});
+		if (!post) {
+			return res.status(404).send(new Error('Not found'));
 		}
-	});
+
+		if (post.owner !== owner) {
+			return res.status(403).send(new Error('Permission denied'));
+		}
+
+		await post.remove();
+
+		const media = await Media.find({
+			postCuid: req.params.cuid,
+		});
+
+		await Promise.all(media.map((m) => MediaService.remove(m.key)));
+	} catch (error) {
+		return res.status(500).send(err);
+	}
 };
 
 module.exports = {

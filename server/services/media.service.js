@@ -22,7 +22,18 @@ upload = async function (file, metadata) {
 	}
 };
 
+remove = async function (id) {
+	try {
+		await cloudinary.uploader.destroy(id, {
+			invalidate: true,
+		});
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 module.exports = {
 	upload,
+	remove,
 	configure,
 };

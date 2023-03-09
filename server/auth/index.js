@@ -73,18 +73,11 @@ passport.use(
 
 			try {
 				const databaseUser = await User.findOne({ email: normalizedEmail });
-
-				if (!databaseUser) {
-					return done(null, false, {
-						message: 'User not found',
-					});
-				}
-
 				const isPasswordCorrect = await databaseUser.isPasswordCorrect(
 					password
 				);
 
-				if (!isPasswordCorrect) {
+				if (!databaseUser || !isPasswordCorrect) {
 					return done(null, false, {
 						message: 'Wrong credentials',
 					});
