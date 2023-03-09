@@ -121,8 +121,6 @@ getPostMedia = async (req, res) => {
 deletePost = async (req, res) => {
 	const { _id: owner } = req.user;
 
-	debugger;
-
 	try {
 		const post = await Post.findOne({ cuid: req.params.cuid });
 
