@@ -1,8 +1,6 @@
 import Logger from './logger';
 import { updateSession } from './api';
 
-// TODO: Refactor this section
-
 const SESSION_STORAGE_KEY = 'session_state';
 
 export function getSessionStorage() {
@@ -23,7 +21,6 @@ export function getSessionStorage() {
 	return undefined;
 }
 
-// TODO: Fix issue that is updating the state with null values from the api
 export function saveSessionStorage(state) {
 	try {
 		const serialisedState = JSON.stringify(state);

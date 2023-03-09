@@ -2,7 +2,7 @@ import { isString, isObject } from './asserts';
 
 const TRACER_TAG = '[ALAYAGOOD_LOG]';
 
-function parseArguments(message, ...optionalParams) {
+export function parseArguments(message, ...optionalParams) {
 	const logArguments = [message, ...optionalParams];
 
 	return logArguments
