@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:4.4.19-rc2
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/data/mern-stack-db:/data/db
