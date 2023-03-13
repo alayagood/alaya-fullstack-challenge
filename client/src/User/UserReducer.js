@@ -1,14 +1,13 @@
 import { CREATE_USER } from "./UserActions";
 
-const initialState = { data: [] };
+const initialState = { data: {} };
 
 const UserReducer = (state = initialState, action) => {
   switch (action.type) {
-    case CREATE_USER :
+    case CREATE_USER:
       return {
-        data: [action.user, ...state.data],
+        data: action.user,
       };
-
     default:
       return state;
   }
