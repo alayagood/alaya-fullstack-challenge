@@ -48,7 +48,7 @@ const UserCreateWidget = ({ createUser }) => {
       <TextField variant="filled" label="Last name" name="lastName" onChange={handleChange} />
       <TextField variant="filled" label="Username" name="accountName" onChange={handleChange} />
       <TextField variant="filled" label="Email" name="email" onChange={handleChange} />
-      <TextField variant="filled" label="Password" name="password" onChange={handleChange} />
+      <TextField variant="filled" label="Password" type="password" name="password" onChange={handleChange} />
       <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!isUserValid(state)}>
           Register
       </Button>
