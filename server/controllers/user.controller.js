@@ -10,7 +10,8 @@ const isUserValid = (user) => {
 		user.accountName &&
 		user.password &&
 		user.email &&
-		validator.isEmail(user.email);
+		validator.isEmail(user.email) &&
+		validator.isStrongPassword(user.password); // Min 8 chars, 1 uppercase, 1 downcase, 1 number, 1 symbol
 };
 
 /**
