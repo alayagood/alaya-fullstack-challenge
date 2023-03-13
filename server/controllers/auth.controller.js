@@ -44,8 +44,20 @@ const login = async (req, res) => {
 	res.status(200).send();
 };
 
+/**
+ * Logs a user out.
+ * @param req
+ * @param res
+ * @returns void
+ */
+const logout = async (req, res) => {
+	res.clearCookie('jwt');
+	res.status(204).send();
+};
+
 const AuthController = {
 	login,
+	logout,
 };
 
 module.exports = AuthController;
