@@ -26,10 +26,7 @@ const PostListPage = ({ showAddPost }) => {
   };
 
   const handleAddPost = (post) => {
-    dispatch(addPostRequest({
-      ...post,
-      name: user?.accountName,
-    }));
+    dispatch(addPostRequest(post));
   };
 
   return (
