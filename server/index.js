@@ -7,10 +7,12 @@ const db = require('./db');
 const postsRoutes = require('./routes/post.routes');
 const userRoutes = require('./routes/user.routes');
 const authRoutes = require('./routes/auth.routes');
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use('/api', postsRoutes);
 app.use('/api', userRoutes);

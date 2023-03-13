@@ -39,7 +39,9 @@ const login = async (req, res) => {
 	};
 
 	const token = jwt.sign(jwtPayload, process.env.AUTH_JWT_SECRET, jwtConfig);
-	res.status(200).send({ token });
+	res.cookie('jwt', token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, });
+	
+	res.status(200).send();
 };
 
 const AuthController = {
