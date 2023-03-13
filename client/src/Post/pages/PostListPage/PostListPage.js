@@ -6,7 +6,6 @@ import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';
 // Import Actions
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
-import Logo from '../../../logo.svg';
 import Title from '../../../common/components/Title';
 
 const PostListPage = ({ showAddPost }) => {
