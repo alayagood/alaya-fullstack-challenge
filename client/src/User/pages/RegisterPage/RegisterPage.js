@@ -1,29 +1,42 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import Logo from '../../../logo.svg';
 import UserCreateWidget from '../../components/UserCreateWidget';
-import { createUserRequest } from '../../UserActions';
+import UserLoginWidget from '../../components/UserLoginWidget';
+import { loginRequest, createUserRequest } from '../../UserActions';
+import Title from '../../../common/components/Title';
+import { Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 export function RegisterPage() {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const createUser = (user) => {
-    dispatch(createUserRequest(user));
+    dispatch(async d => {
+      await createUserRequest(user)(d);
+      history.push('/');
+    })
+  };
+
+  const login = async (login) => {
+    dispatch(async d => {
+      await loginRequest(login)(d);
+      history.push('/');
+    });
   };
 
   return (
     <div className="container">
       <div className="row">
-        <div className="col-12 d-flex align-items-center">
-          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px'}}/>
-          <h1 className="mt-4">
-             Register
-          </h1>
+        <div className="col-5">
+          <Title text="Login" />
+          <UserLoginWidget login={login} />
         </div>
-      </div>
-      <hr />
-      <div className="row justify-content-center">
-        <div className="col-6">
+        <div className="col-1 align-self-center">
+          <Typography variant="h6" align="center">OR</Typography>
+        </div>
+        <div className="col-5">
+          <Title text="Register" />
           <UserCreateWidget createUser={createUser} />
         </div>
       </div>

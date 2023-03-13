@@ -1,19 +1,33 @@
 import callApi from '../util/apiCaller';
 
-export const CREATE_USER = 'CREATE_USER';
+export const SET_USER = 'SET_USER';
 
-export function createUser(user) {
+function setUser(user) {
   return {
-    type: CREATE_USER,
+    type: SET_USER,
     user,
   };
 }
 
 export function createUserRequest(user) {
-  return (dispatch) => {
-    return callApi('user', 'post', user).then(() => {
-      const { password, ...data } = user;
-      dispatch(createUser(data));
-    });
+  return async (dispatch) => {
+    await callApi('user', 'post', user);
+    const { email, password } = user;
+    return loginRequest({ email, password })(dispatch);
   };
+}
+
+export function getUserRequest() {
+  return async (dispatch) => {
+    const user = await callApi('user', 'get');
+    dispatch(setUser(user));
+  }
+}
+
+export function loginRequest(login) {
+  return async (dispatch) => {
+    await callApi('login', 'post', login);
+    const userReq = getUserRequest();
+    return await userReq(dispatch);
+  }
 }
