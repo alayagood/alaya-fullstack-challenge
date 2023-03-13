@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
+import validator from 'validator';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,7 +18,10 @@ const isUserValid = (user) => user &&
   user.lastName &&
   user.accountName &&
   user.password &&
-  user.email;
+  user.email &&	
+  validator.isEmail(user.email) &&
+  validator.isStrongPassword(user.password); // Min 8 chars, 1 uppercase, 1 downcase, 1 number, 1 symbol
+
 
 const UserCreateWidget = ({ createUser }) => {
   const [state, setState] = useState({});
@@ -31,6 +35,7 @@ const UserCreateWidget = ({ createUser }) => {
 
   const handleChange = (evt) => {
     const value = evt.target.value;
+
     setState({
         ...state,
         [evt.target.name]: value
