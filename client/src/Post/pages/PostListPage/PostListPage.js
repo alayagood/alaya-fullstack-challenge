@@ -12,6 +12,8 @@ const PostListPage = ({ showAddPost }) => {
 
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts.data);
+  const user = useSelector(state => state.user.data);
+  const isLoggedIn = !!user?.accountName;
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -24,7 +26,10 @@ const PostListPage = ({ showAddPost }) => {
   };
 
   const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+    dispatch(addPostRequest({
+      ...post,
+      name: user?.accountName,
+    }));
   };
 
   return (
@@ -34,11 +39,14 @@ const PostListPage = ({ showAddPost }) => {
       </div>
       <hr />
       <div className="row">
-        <div className="col-6">
-          <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
-        </div>
-        <div className="col-6">
-          <PostList handleDeletePost={handleDeletePost} posts={posts} />
+        {
+          isLoggedIn &&
+          <div className="col-6">
+            <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
+          </div>
+        }
+        <div className={isLoggedIn ? "col-6" : "col-12"}>
+          <PostList handleDeletePost={handleDeletePost} posts={posts} currentUser={user?.accountName} />
         </div>
       </div>
     </div>

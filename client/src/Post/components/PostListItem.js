@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 
-function PostListItem({ post, onDelete }) {
+function PostListItem({ post, allowDelete, onDelete }) {
   return (
     <Card className="w-100 my-4">
       <CardContent>
@@ -24,9 +24,12 @@ function PostListItem({ post, onDelete }) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
+        {
+          allowDelete &&
+          <Button size="small" color="secondary" onClick={onDelete}>
+            Delete post
+          </Button>
+        }
       </CardActions>
     </Card>
   );
@@ -40,7 +43,8 @@ PostListItem.propTypes = {
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
   }).isRequired,
-  onDelete: PropTypes.func.isRequired,
+  allowDelete: PropTypes.bool,
+  onDelete: PropTypes.func,
 };
 
 export default PostListItem;
