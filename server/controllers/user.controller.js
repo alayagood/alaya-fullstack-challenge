@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const passwordCrypto = require('../utils/passwordCrypto');
 const httpResponse = require('../utils/httpResponse');
-var validator = require('validator');
+const validator = require('validator');
 
 const isUserValid = (user) => {
 	return user &&
