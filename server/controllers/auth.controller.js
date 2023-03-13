@@ -29,7 +29,16 @@ const login = async (req, res) => {
 		return;
 	}
 
-	const token = jwt.sign({ email: user.email }, process.env.AUTH_JWT_SECRET);
+	const jwtPayload = {
+		email: user.email,
+	};
+
+	const jwtConfig = { 
+		audience: process.env.AUDIENCE,
+		issuer: process.env.ISSUER
+	};
+
+	const token = jwt.sign(jwtPayload, process.env.AUTH_JWT_SECRET, jwtConfig);
 	res.status(200).send({ token });
 };
 

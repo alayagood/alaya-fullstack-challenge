@@ -5,7 +5,9 @@ const User = require('../models/user');
 
 const strategyOptions = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-	secretOrKey: process.env.AUTH_JWT_SECRET
+	secretOrKey: process.env.AUTH_JWT_SECRET,
+	audience: process.env.AUDIENCE,
+	issuer: process.env.ISSUER
 };
 
 const strategyCallback = async (jwt, callback) => {
