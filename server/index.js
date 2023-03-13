@@ -10,7 +10,7 @@ const authRoutes = require('./routes/auth.routes');
 const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_APP_ORIGIN, credentials: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
