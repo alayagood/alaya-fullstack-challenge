@@ -5,7 +5,7 @@ import './App.css';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
@@ -19,25 +19,38 @@ const theme = createMuiTheme({
     },
 });
 
+function Layout() {
+    const user = useSelector(state => state.user.data);
+
+    return (
+        <div className="w-100">
+            <Navbar isLoggedIn={!!user?.accountName} />
+            <div className="w-100 pt-5 mt-5">
+            <BrowserRouter>
+                <Switch>
+                    <Route path="/" exact component={PostListPage} />
+                    <Route path="/register" exact component={RegisterPage} />
+                    <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
+                </Switch>
+            </BrowserRouter>
+            </div>
+        </div>
+    );
+}
+
 function App(props) {
-  return (
+    return (
       <ThemeProvider theme={theme}>
-          <div className="w-100">
-              <Navbar />
-              <div className="w-100 pt-5 mt-5">
-                  <Provider store={props.store}>
-                    <BrowserRouter>
-                      <Switch>
-                          <Route path="/" exact component={PostListPage} />
-                          <Route path="/register" exact component={RegisterPage} />
-                          <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
-                      </Switch>
-                    </BrowserRouter>
-                  </Provider>
-              </div>
-          </div>
+        <Provider store={props.store}>
+            <div className="w-100">
+                <Navbar />
+                <div className="w-100 pt-5 mt-5">
+                  <Layout />
+                </div>
+            </div>
+        </Provider>
       </ThemeProvider>
-);
+    );
 }
 
 App.propTypes = {
