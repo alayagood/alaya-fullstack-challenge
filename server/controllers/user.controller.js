@@ -55,8 +55,20 @@ const postUser = async (req, res) => {
 	res.status(201).send();
 };
 
+/**
+ * Gets the current user.
+ * @param req
+ * @param res
+ * @returns void
+ */
+const getUser = async (req, res) => {
+	const { firstName, lastName, accountName, email } = req.user;
+	res.status(200).send({ firstName, lastName, accountName, email });
+};
+
 const UserController = {
 	postUser,
+	getUser,
 };
 
 module.exports = UserController;
