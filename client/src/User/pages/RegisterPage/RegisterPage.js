@@ -21,7 +21,8 @@ export function RegisterPage() {
           </h1>
         </div>
       </div>
-      <div className="row">
+      <hr />
+      <div className="row justify-content-center">
         <div className="col-6">
           <UserCreateWidget createUser={createUser} />
         </div>
