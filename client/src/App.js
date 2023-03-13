@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
+import RegisterPage from './User/pages/RegisterPage/RegisterPage';
 
 const theme = createMuiTheme({
     palette: {
@@ -28,6 +29,7 @@ function App(props) {
                     <BrowserRouter>
                       <Switch>
                           <Route path="/" exact component={PostListPage} />
+                          <Route path="/register" exact component={RegisterPage} />
                           <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
                       </Switch>
                     </BrowserRouter>
