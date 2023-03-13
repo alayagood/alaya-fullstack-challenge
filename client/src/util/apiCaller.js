@@ -7,6 +7,7 @@ export default async (endpoint, method = 'get', body) => {
     headers: { 'content-type': 'application/json' },
     method,
     body: JSON.stringify(body),
+    credentials: "include"
   })
   .then(response => response.json().then(json => ({ json, response })))
   .then(({ json, response }) => {
