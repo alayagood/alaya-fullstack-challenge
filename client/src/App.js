@@ -10,7 +10,8 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
 import RegisterPage from './User/pages/RegisterPage/RegisterPage';
-import { createLoginRequest, createUserRequest, getUserRequest } from './User/UserActions';
+import { getUserRequest } from './User/UserActions';
+import LogoutPage from './User/pages/LogoutPage/LogoutPage';
 
 const theme = createMuiTheme({
     palette: {
@@ -28,18 +29,23 @@ function Layout() {
         dispatch(getUserRequest());
     }, []);
 
+    useEffect(() => {
+        console.log(user);
+    }, [user]);
+
     return (
         <div className="w-100">
-            <Navbar isLoggedIn={!!user?.accountName} />
-            <div className="w-100 pt-5 mt-5">
             <BrowserRouter>
-                <Switch>
-                    <Route path="/" exact component={PostListPage} />
-                    <Route path="/auth" exact component={RegisterPage} />
-                    <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
-                </Switch>
+                <div className="w-100 pt-5 mt-5">
+                    <Navbar isLoggedIn={!!user?.accountName} />
+                    <Switch>
+                        <Route path="/" exact component={PostListPage} />
+                        <Route path="/auth" exact component={RegisterPage} />
+                        <Route path="/logout" exact component={LogoutPage} />
+                        <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />                    
+                    </Switch>
+                </div>
             </BrowserRouter>
-            </div>
         </div>
     );
 }
@@ -48,12 +54,7 @@ function App(props) {
     return (
       <ThemeProvider theme={theme}>
         <Provider store={props.store}>
-            <div className="w-100">
-                <Navbar />
-                <div className="w-100 pt-5 mt-5">
-                  <Layout />
-                </div>
-            </div>
+            <Layout />
         </Provider>
       </ThemeProvider>
     );

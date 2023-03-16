@@ -1,4 +1,4 @@
-import { SET_USER } from "./UserActions";
+import { DELETE_USER, SET_USER } from "./UserActions";
 
 const initialState = { data: {} };
 
@@ -8,6 +8,8 @@ const UserReducer = (state = initialState, action) => {
       return {
         data: action.user,
       };
+    case DELETE_USER:
+      return initialState;
     default:
       return state;
   }
