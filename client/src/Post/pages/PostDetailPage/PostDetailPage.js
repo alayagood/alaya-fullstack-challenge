@@ -22,6 +22,7 @@ export function PostDetailPage() {
         <div className="row">
           <div className="col-12">
             <h1>{post.title}</h1>
+            <img className="mx-3" src={post.media} alt={`post-media-${post.title}`} />
             <p>By {post.name}</p>
             <p>{post.content}</p>
           </div>
