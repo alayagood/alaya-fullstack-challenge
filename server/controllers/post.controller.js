@@ -2,6 +2,7 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const cloudinary = require('cloudinary').v2;
 
 /**
  * Get all posts
@@ -28,7 +29,6 @@ const addPost = async (req, res) => {
   if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
     res.status(403).end();
   }
-
   const newPost = new Post(req.body.post);
 
   // Let's sanitize inputs
@@ -38,6 +38,15 @@ const addPost = async (req, res) => {
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
+
+  if (req.body.post.media) {
+    const res = await cloudinary.uploader.upload(`data:image/jpeg;base64,${req.body.post.media}`, {
+      public_id: newPost.cuid,
+    });
+
+    newPost.media = res.secure_url;
+  }
+
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
