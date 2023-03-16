@@ -82,7 +82,8 @@ const deletePost = async (req, res) => {
       res.status(500).send(err);
     }
 
-    post.remove(() => {
+    post.remove(async () => {
+      await cloudinary.uploader.destroy(post.cuid);
       res.status(200).end();
     });
   });
