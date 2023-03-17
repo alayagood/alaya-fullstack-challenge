@@ -1,7 +1,7 @@
-const Post = require('../models/post');
-const cuid = require('cuid');
-const slug = require('limax');
-const sanitizeHtml = require('sanitize-html');
+const Post = require("../models/post");
+const cuid = require("cuid");
+const slug = require("limax");
+const sanitizeHtml = require("sanitize-html");
 
 /**
  * Get all posts
@@ -10,12 +10,13 @@ const sanitizeHtml = require('sanitize-html');
  * @returns void
  */
 getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ posts });
-  });
+  Post.find()
+    .sort("-dateAdded")
+    .exec((err, posts) => {
+      if (err) {
+      }
+      res.json({ posts });
+    });
 };
 
 /**
@@ -29,7 +30,8 @@ addPost = async (req, res) => {
     res.status(403).end();
   }
 
-  const newPost = new Post(req.body.post);
+  const userId = req.user._id;
+  const newPost = new Post({ ...req.body.post, userId });
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
@@ -73,8 +75,13 @@ deletePost = async (req, res) => {
       res.status(500).send(err);
     }
 
+    const userId = req.user._id;
+    if (userId !== post.userId) {
+      return res.status(403).end();
+    }
+
     post.remove(() => {
-      res.status(200).end();
+      res.status(200).json({ deleted: true });
     });
   });
 };
@@ -83,5 +90,5 @@ module.exports = {
   getPosts,
   addPost,
   getPost,
-  deletePost
+  deletePost,
 };
