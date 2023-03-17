@@ -1,17 +1,21 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const apiPort = 3000;
 const db = require('./db');
-const posts = require('./routes/post.routes');
+const posts = require('./routes/post');
+const auth = require('./routes/auth');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+require('dotenv').config();
+
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
+// Routes
+app.use('/api', auth);
 app.use('/api', posts);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
+const apiPort =  process.env.API_PORT || 3000;
+app.listen(apiPort, () => console.log(`Server running on port http://localhost:${apiPort}`));
