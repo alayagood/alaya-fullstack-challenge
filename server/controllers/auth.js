@@ -7,7 +7,6 @@ exports.signup = async (req, res, next) => {
 
     await user.save();
 
-
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     res.json({ token });
 
@@ -15,10 +14,6 @@ exports.signup = async (req, res, next) => {
     res.status(500).send(err);
   }
 }
-
-const login = async (req, res) => {}
-const logout = async (req, res) => {}
-
 
 exports.login = async (req, res, next) => {
   try {
