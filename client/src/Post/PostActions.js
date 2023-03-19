@@ -1,6 +1,7 @@
 import callApi from "../util/apiCaller";
 
 // Export Constants
+export const SHOW_POST = "SHOW_POST";
 export const ADD_POST = "ADD_POST";
 export const ADD_POSTS = "ADD_POSTS";
 export const DELETE_POST = "DELETE_POST";
@@ -10,6 +11,13 @@ export function addPost(post) {
   return {
     type: ADD_POST,
     post,
+  };
+}
+export function showPost(post, photos) {
+  return {
+    type: SHOW_POST,
+    post,
+    photos,
   };
 }
 
@@ -42,7 +50,12 @@ export function fetchPosts() {
 
 export function fetchPost(cuid) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`).then((res) => dispatch(addPost(res.post)));
+    return Promise.all([
+      callApi(`posts/${cuid}`),
+      callApi(`posts/${cuid}/photos`),
+    ]).then(([postRes, photosRes]) =>
+      dispatch(showPost(postRes.post, photosRes))
+    );
   };
 }
 

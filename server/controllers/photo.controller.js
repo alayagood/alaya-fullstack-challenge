@@ -15,10 +15,16 @@ getPhotos = async (req, res) => {
     .sort("-dateAdded")
     .limit(1);
 
-  res
-    .status(200)
-    .json({ profilePhoto: profilePhotos[0], mainPhoto: mainPhotos[0] });
+  res.status(200).json({
+    profilePhoto: buildPhotoResponse(profilePhotos[0]),
+    mainPhoto: buildPhotoResponse(mainPhotos[0]),
+  });
 };
+
+buildPhotoResponse = (photo) => ({
+  base64: photo.image.data.toString("base64"),
+  contentType: photo.image.contentType,
+});
 
 addPhoto = async (req, res) => {
   if (!(await isValidInput(req, res))) {
