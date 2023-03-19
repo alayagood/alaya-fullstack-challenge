@@ -21,10 +21,15 @@ getPhotos = async (req, res) => {
   });
 };
 
-buildPhotoResponse = (photo) => ({
-  base64: photo.image.data.toString("base64"),
-  contentType: photo.image.contentType,
-});
+buildPhotoResponse = (photo) => {
+  if (photo) {
+    return {
+      base64: photo.image.data.toString("base64"),
+      contentType: photo.image.contentType,
+    };
+  }
+  return undefined;
+};
 
 addPhoto = async (req, res) => {
   if (!(await isValidInput(req, res))) {
@@ -69,6 +74,13 @@ isValidInput = async (req, res) => {
 
   if (!req.file) {
     res.status(400).json({ message: "Image must be provided" });
+    return false;
+  }
+
+  if (req.user._id !== post.userId) {
+    res
+      .status(403)
+      .json({ message: "Cannot add photos to another user's post" });
     return false;
   }
 

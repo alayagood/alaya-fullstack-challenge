@@ -13,6 +13,7 @@ export function addPost(post) {
     post,
   };
 }
+
 export function showPost(post, photos) {
   return {
     type: SHOW_POST,
@@ -23,13 +24,17 @@ export function showPost(post, photos) {
 
 export function addPostRequest(post) {
   return (dispatch) => {
-    return callApi("posts", "post", {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
-    }).then((res) => dispatch(addPost(res.post)));
+    return callApi(
+      "posts",
+      "post",
+      JSON.stringify({
+        post: {
+          name: post.name,
+          title: post.title,
+          content: post.content,
+        },
+      })
+    ).then((res) => dispatch(addPost(res.post)));
   };
 }
 
@@ -75,6 +80,24 @@ export function deletePostRequest(cuid) {
         if (window.confirm("Cannot delete another user's post")) {
           return;
         }
+      }
+    });
+  };
+}
+
+export function uploadImage(postId, type, image) {
+  const body = new FormData();
+  body.append("image", image);
+  body.append("type", type);
+
+  return (dispatch) => {
+    return callApi(`posts/${postId}/photos`, "post", body, {}).then((res) => {
+      if (res.message) {
+        if (confirm(res.message)) { // eslint-disable-line
+          return;
+        }
+      } else {
+        dispatch(fetchPost(postId));
       }
     });
   };
