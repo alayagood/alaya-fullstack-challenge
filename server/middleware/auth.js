@@ -5,7 +5,7 @@ const ExtractJWT = require("passport-jwt").ExtractJwt;
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/user");
 const authConfig = require("../config/auth.config");
-var LoginError = require("../error/login.error");
+const LoginError = require("../error/login.error");
 
 passport.use(
   "signup",
