@@ -13,7 +13,9 @@ signUp = async (req, res, next) => {
     "signup",
     { session: false },
     async (err, user, next) => {
-      errorHandler.handleSignUpError(err, res);
+      if (!errorHandler.handleSignUpError(err, res)) {
+        return;
+      }
 
       res.status(200).json({ success: true });
     }
@@ -26,7 +28,9 @@ login = async (req, res, next) => {
   }
 
   passport.authenticate("login", async (err, user, next) => {
-    errorHandler.handleLoginError(err, user, res);
+    if (!errorHandler.handleLoginError(err, user, res)) {
+      return;
+    }
 
     req.login(user, { session: false }, async (error) => {
       if (error) return res.status(500).end();
