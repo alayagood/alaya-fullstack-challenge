@@ -38,6 +38,8 @@ addPost = async (req, res) => {
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
+  newPost.author = req.body.author.id;
+
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
@@ -67,16 +69,21 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
+deletePost = async (req, res, next) => {
+  try {
+    const post = await  Post.findOne({ cuid: req.params.cuid });
+
+    if(!post) {
+      res.status(500).send(err).end();
     }
 
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+    const userId = req.body.user.id;
+
+    await post.remove({ userId });
+    res.status(200).end();
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {
