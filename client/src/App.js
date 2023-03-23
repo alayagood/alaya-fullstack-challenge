@@ -27,9 +27,9 @@ function App(props) {
         <Provider store={props.store}>
             <ThemeProvider theme={theme}>
                 <div className="w-100">
-                    <Navbar />
                     <div className="w-100 pt-5 mt-5">
                         <BrowserRouter>
+                            <Navbar />
                             <Switch>
                                 <Route path="/" exact component={() => <Redirect to="/posts" /> } />
                                 <PrivateRoute path="/posts" exact component={PostListPage} />

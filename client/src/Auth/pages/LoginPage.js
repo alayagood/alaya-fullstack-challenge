@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { login } from '../AuthActions';
 import { TextField, Button, Typography, Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,15 +27,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function LoginPage({ login }) {
+function LoginPage() {
   const classes = useStyles();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(login(username, password));
+    dispatch(login(email, password))
+    .then(() => {
+      history.push("/posts");
+    });
   };
 
   return (
@@ -46,10 +51,10 @@ function LoginPage({ login }) {
         <form className={classes.form} onSubmit={handleSubmit}>
           <TextField
             className={classes.textField}
-            label="Username"
+            label="Email"
             variant="outlined"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
             className={classes.textField}
