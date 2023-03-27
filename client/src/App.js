@@ -5,7 +5,8 @@ import './App.css';
 import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
-import LoginPage from './Auth/pages/LoginPage';
+import LoginPage from './Auth/pages/Login/LoginPage';
+import RegisterPage from './Auth/pages/Register/RegisterPage';
 import { Provider, useSelector } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,6 +36,7 @@ function App(props) {
                                 <PrivateRoute path="/posts" exact component={PostListPage} />
                                 <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
                                 <Route path="/login" exact component={LoginPage} />
+                                <Route path="/register" exact component={RegisterPage} />
                             </Switch>
                         </BrowserRouter>
                     </div>
