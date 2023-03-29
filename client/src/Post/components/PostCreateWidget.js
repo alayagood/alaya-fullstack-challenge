@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
+import { Button, Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-// Import Style
+import ImageUploadWidget from './ImageUploadWidget';
+import { getError } from '../PostReducer';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -15,32 +17,90 @@ const useStyles = makeStyles(theme => ({
 
 const PostCreateWidget = ({ addPost }) => {
 
-    const [state, setState] = useState({});
-    const classes = useStyles();
+  const initialState = {
+    title: '',
+    content: '',
+    imageData: ''
+  }
+  const [state, setState] = useState(initialState);
+  const [fileInputState, setFileInputState] = useState('');
+  const [err, setErr] = useState('');
+  const classes = useStyles();
 
+  const postError = useSelector(getError);
 
+  useEffect(() => {
+    if (postError?.type === 'add_post') {
+      setErr('Error creating post. Please try later.');
+    } else {
+      setErr('');
+    }
+  }, [postError]);
 
-  const submit = () => {
-    if (state.name && state.title && state.content) {
+  const submit = (e) => {
+    e.preventDefault();
+    if (state.title && state.content) {
       addPost(state);
+      clearState();
     }
   };
 
-  const handleChange = (evt) => {
-    const value = evt.target.value;
+  const handleChange = (e) => {
+    const value = e.target.value;
     setState({
         ...state,
-        [evt.target.name]: value
+        [e.target.name]: value
     });
   };
 
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setFileInputState(e.target.value);
+    readFile(file);
+  }
+
+  const readFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setState({
+        ...state,
+        imageData: reader.result
+      });
+    }
+    reader.onerror = () => {
+      setErr('Could not read this image. Please try another one.');
+    };
+  }
+
+  const clearState = () => {
+    setState(initialState);
+    setFileInputState('');
+  };
+
   return (
-    <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
+    <div className={`${classes.root} d-flex flex-column my-4 w-100 align-items-center`} >
         <h3>Create new post</h3>
-        <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
-        <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
-        <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
+        <TextField
+          className={'w-100'}
+          variant="filled"
+          label="Post title"
+          name="title"
+          onChange={handleChange}
+          value={state.title}
+        />
+        <TextField
+          className={'w-100'}
+          variant="filled"
+          multiline minRows="4"
+          label="Post content"
+          name="content"
+          onChange={handleChange}
+          value={state.content}
+        />
+        <ImageUploadWidget imageData={state.imageData} handleImage={handleImage} value={fileInputState} />
+        { err && <Typography  variant="subtitle1" color="error">{err}</Typography>}
+        <Button className="mt-4" variant="contained" color="primary" onClick={(e) => submit(e)} disabled={!state.title || !state.content}>
             Submit
         </Button>
     </div>

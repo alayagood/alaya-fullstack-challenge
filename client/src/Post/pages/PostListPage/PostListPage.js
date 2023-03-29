@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Typography } from '@material-ui/core';
 // Import Components
 import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';
+import { getError } from '../../PostReducer';
 // Import Actions
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
 import Logo from '../../../logo.svg';
@@ -11,7 +12,20 @@ import Logo from '../../../logo.svg';
 const PostListPage = ({ showAddPost }) => {
 
   const dispatch = useDispatch();
+  const [err, setErr] = useState('');
+
   const posts = useSelector(state => state.posts.data);
+  const postError = useSelector(getError);
+
+  useEffect(() => {
+    if (postError?.type === 'fetch_posts') {
+      setErr('There was an error fetching your posts. Please try later.');
+    } else if (postError?.type === 'delete_post') {
+      setErr('There was an error deleting your post. Please try later.');
+    } else {
+      setErr('');
+    }
+  }, [postError]);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -38,6 +52,7 @@ const PostListPage = ({ showAddPost }) => {
         </div>
       </div>
       <hr />
+      { err && <Typography  variant="subtitle1" color="error">{err}</Typography>}
       <div className="row">
         <div className="col-6">
           <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
@@ -49,10 +64,5 @@ const PostListPage = ({ showAddPost }) => {
     </div>
   );
 };
-
-PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
-};
-
 
 export default PostListPage;

@@ -2,22 +2,32 @@ import fetch from 'isomorphic-fetch';
 
 export const API_URL = 'http://localhost:3000/api';
 
-export default async (endpoint, method = 'get', body) => {
-  return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
-    method,
-    body: JSON.stringify(body),
-  })
-  .then(response => response.json().then(json => ({ json, response })))
-  .then(({ json, response }) => {
+export default async (endpoint, token, method = 'get',
+  body, headers={ 'content-type': 'application/json' }) => {
+  try {
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_URL}/${endpoint}`, {
+      headers,
+      method,
+      body: JSON.stringify(body),
+    });
+    if (method === 'get' && endpoint ==='posts/clfq9zac4000vjzs78gkk5ajs')
+      throw new Error(JSON.stringify({ error: 2}));
+
     if (!response.ok) {
-      return Promise.reject(json);
+      const errorJson = await response.json();
+      throw new Error(JSON.stringify(errorJson));
     }
 
+    if (method === 'delete') {
+      // Delete was successful
+      return;
+    }
+    const json = await response.json();
     return json;
-  })
-  .then(
-    response => response,
-    error => error
-  );
+  } catch (error) {
+    return { error };
+  }
 }

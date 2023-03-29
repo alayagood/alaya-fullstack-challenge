@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 // Import Components
 import PostListItem from './PostListItem';
 
-function PostList(props) {
+const PostList = (props) => {
   return (
     <div className="d-flex flex-column w-100">
       <h3 className="mt-4">Posts</h3>
       {
-        props.posts.map(post => (
+        props.posts?.map(post => (
           <PostListItem
             post={post}
             key={post.cuid}

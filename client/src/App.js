@@ -5,6 +5,9 @@ import './App.css';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
+import Login from './User/pages/LoginSignupPage/Login';
+import SignUp from './User/pages/LoginSignupPage/SignUp';
+import ProtectedRoute from './routes/ProtectedRoute';
 import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,23 +22,33 @@ const theme = createMuiTheme({
 });
 
 function App(props) {
-  return (
-      <ThemeProvider theme={theme}>
-          <div className="w-100">
-              <Navbar />
-              <div className="w-100 pt-5 mt-5">
-                  <Provider store={props.store}>
-                    <BrowserRouter>
-                      <Switch>
-                          <Route path="/" exact component={PostListPage} />
-                          <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
-                      </Switch>
-                    </BrowserRouter>
-                  </Provider>
-              </div>
-          </div>
-      </ThemeProvider>
-);
+    return (
+        <ThemeProvider theme={theme}>
+            <Provider store={props.store}>
+                <div className="w-100">
+                    <Navbar />
+                    <div className="w-100 pt-5 mt-5">
+                        <BrowserRouter>
+                        <Switch>
+                            <ProtectedRoute
+                                exact
+                                path="/"
+                                component={PostListPage}
+                            />
+                            <ProtectedRoute
+                                exact
+                                path="/posts/:cuid/:slug"
+                                component={PostDetailPage}
+                            />
+                            <Route path="/login" exact component={Login} />
+                            <Route path="/signup" exact component={SignUp} />
+                        </Switch>
+                        </BrowserRouter>
+                    </div>
+                </div>
+            </Provider>
+        </ThemeProvider>
+    );
 }
 
 App.propTypes = {

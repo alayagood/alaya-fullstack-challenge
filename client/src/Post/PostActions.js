@@ -1,60 +1,79 @@
 import callApi from '../util/apiCaller';
-
-// Export Constants
-export const ADD_POST = 'ADD_POST';
-export const ADD_POSTS = 'ADD_POSTS';
-export const DELETE_POST = 'DELETE_POST';
+import { ADD_POST, ADD_POSTS, DELETE_POST, ERROR } from './PostConstants';
 
 // Export Actions
-export function addPost(post) {
-  return {
-    type: ADD_POST,
-    post,
-  };
-}
+export const addPost = (post) => ({
+  type: ADD_POST,
+  post,
+});
 
-export function addPostRequest(post) {
-  return (dispatch) => {
-    return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
-    }).then(res => dispatch(addPost(res.post)));
-  };
-}
+export const reportError = (error) => ({
+  type: ERROR,
+  error
+})
 
-export function addPosts(posts) {
-  return {
-    type: ADD_POSTS,
-    posts,
-  };
-}
+export const addPostRequest = (post) => async (dispatch, getState) => {
+  const { userLogin: { userToken }} = getState();
+  const res = await callApi('posts', userToken, 'post', {
+    title: post.title,
+    content: post.content,
+    image: post.imageData
+  });
+  if (!res.error) {
+    dispatch(addPost(res.post));
+  } else {
+    dispatch(reportError({
+      type: "add_post",
+      msg: res.error
+    }));
+  }
+};
 
-export function fetchPosts() {
-  return (dispatch) => {
-    return callApi('posts').then(res => {
-      dispatch(addPosts(res.posts));
-    });
-  };
-}
+export const addPosts = (posts) => ({
+  type: ADD_POSTS,
+  posts,
+});
 
-export function fetchPost(cuid) {
-  return (dispatch) => {
-    return callApi(`posts/${cuid}`).then(res => dispatch(addPost(res.post)));
-  };
-}
+export const fetchPosts = () => async (dispatch, getState) => {
+  const { userLogin: { userToken }} = getState();
+  const res = await callApi('posts', userToken);
+  if (!res.error) {
+    dispatch(addPosts(res.posts));
+  } else {
+    dispatch(reportError({
+      type: "fetch_posts",
+      msg: res.error
+    }));
+  }
+};
 
-export function deletePost(cuid) {
-  return {
-    type: DELETE_POST,
-    cuid,
-  };
-}
+export const fetchPost = (cuid) => async (dispatch, getState) => {
+  const { userLogin: { userToken }} = getState();
+  const res = await callApi(`posts/${cuid}`, userToken);
+  if (!res.error) {
+    dispatch(addPost(res.post));
+  } else {
+    dispatch(reportError({
+      type: "fetch_post",
+      msg: res.error
+    }));
+  }
+};
 
-export function deletePostRequest(cuid) {
-  return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
-  };
-}
+export const deletePost = (cuid) => ({
+  type: DELETE_POST,
+  cuid,
+});
+
+export const deletePostRequest = (cuid) => async (dispatch, getState) => {
+  const { userLogin: { userToken }} = getState();
+  const res = await callApi(`posts/${cuid}`, userToken, 'delete');
+  if (!res?.error) {
+    dispatch(deletePost(cuid));
+  } else {
+    dispatch(reportError({
+      type: "del_post",
+      msg: res.error
+    }));
+  }
+};

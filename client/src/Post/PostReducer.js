@@ -1,9 +1,9 @@
-import { ADD_POST, ADD_POSTS, DELETE_POST } from './PostActions';
+import { ADD_POST, ADD_POSTS, DELETE_POST, ERROR } from './PostConstants';
 
 // Initial State
-const initialState = { data: [] };
+const initialState = { data: [], error: {} };
 
-const PostReducer = (state = initialState, action) => {
+const posts = (state = initialState, action) => {
   switch (action.type) {
     case ADD_POST :
       return {
@@ -20,6 +20,12 @@ const PostReducer = (state = initialState, action) => {
         data: state.data.filter(post => post.cuid !== action.cuid),
       };
 
+    case ERROR:
+      return {
+        error: action.error,
+        ...state
+      }
+
     default:
       return state;
   }
@@ -33,5 +39,6 @@ export const getPosts = state => state.posts.data;
 // Get post by cuid
 export const getPost = (state, cuid) => state.posts.data.filter(post => post.cuid === cuid)[0];
 
+export const getError = state => state.posts.error;
 // Export Reducer
-export default PostReducer;
+export default posts;

@@ -6,11 +6,12 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
+import ImageViewer from './ImageViewer';
 
-function PostListItem({ post, onDelete }) {
+const PostListItem = ({ post, onDelete }) => {
   return (
-    <Card className="w-100 my-4">
-      <CardContent>
+    <Card className="w-100 my-4 d-flex align-items-center flex-column">
+      <CardContent className="d-flex align-items-center flex-column">
         <Typography gutterBottom variant="h5" component="h2">
           <Link to={`/posts/${post.cuid}/${post.slug}`} >
             {post.title}
@@ -19,6 +20,7 @@ function PostListItem({ post, onDelete }) {
         <Typography component="p" className="mt-3">
           {post.content}
         </Typography>
+        {post.image && <ImageViewer imageData={post.image.url} height="300" />}
         <Typography color="textSecondary" component="p" className="mt-3 font-italic">
           From {post.name}
         </Typography>
