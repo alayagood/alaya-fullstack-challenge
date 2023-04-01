@@ -9,7 +9,6 @@ import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions
 import Logo from '../../../logo.svg';
 
 const PostListPage = ({ showAddPost }) => {
-
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts.data);
 

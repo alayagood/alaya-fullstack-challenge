@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.61",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
@@ -21,7 +22,7 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "start": "PORT=8000 react-scripts start",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && set PORT=8000 && react-scripts start --openssl-legacy-provider",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
