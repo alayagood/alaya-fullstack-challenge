@@ -76,10 +76,32 @@ login = async (req, res) => {
     }
 }
 
+authCheck = [
+    check('token').isLength({ min: 1 }).withMessage('Token is required'),
+];
+
+auth = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const result = jwt.verify(req.body.token, process.env.JWT_SECRET);
+        return res.status(200).json({ result });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+}
+
+
 
 module.exports = {
     registerCheck,
     register,
     loginCheck,
     login,
+    authCheck,
+    auth
 };

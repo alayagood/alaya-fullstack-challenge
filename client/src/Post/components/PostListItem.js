@@ -25,6 +25,9 @@ function PostListItem({ post, onDelete }) {
         <Typography color="textSecondary" component="p" className="mt-3 font-italic">
           From {post.name}
         </Typography>
+        {post.images.map(function (item) {
+          return (<img alt="imagen" src={item} width="300" />)
+        })}
       </CardContent>
       <CardActions>
         {(user === post.name) &&

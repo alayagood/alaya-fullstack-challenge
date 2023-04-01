@@ -24,4 +24,11 @@ router.post(
   AuthController.login
 );
 
+// Route to authenticate user and generate JWT
+router.post(
+  '/auth',
+  AuthController.authCheck,
+  AuthController.auth
+);
+
 module.exports = router;

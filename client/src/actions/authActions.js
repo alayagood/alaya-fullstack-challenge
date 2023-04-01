@@ -7,6 +7,17 @@ export const LOGOUT = 'LOGOUT';
 
 const API_URL = 'http://localhost:3000/api';
 
+export const auth = () => async (dispatch) => {
+  try {
+    let token = localStorage.getItem('token');
+    const response = await axios.post(`${API_URL}/auth`, { token });
+    let user = response.data.result;
+    user.token = token;
+    dispatch({ type: LOGIN_SUCCESS, payload: user });
+  }
+  catch { }
+};
+
 export const login = (username, password) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
   try {

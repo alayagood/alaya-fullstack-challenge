@@ -1,11 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import './App.css';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
-import { Provider } from 'react-redux';
 import { useSelector } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,6 +19,7 @@ const theme = createMuiTheme({
 });
 
 function App(props) {
+
     const user = useSelector((state) => state.auth?.user);
 
     return (
@@ -33,10 +32,12 @@ function App(props) {
                             <Route path="/login">
                                 {user ? <Redirect to="/" /> : <Login />}
                             </Route>
+                            <Route path="/posts/:cuid/:slug"  >
+                                {!user ? <Redirect to="/login" /> : <PostDetailPage />}
+                            </Route>
                             <Route path="/" >
                                 {!user ? <Redirect to="/login" /> : <PostListPage />}
                             </Route>
-                            <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
                         </Switch>
                     </BrowserRouter>
                 </div>
@@ -44,9 +45,5 @@ function App(props) {
         </ThemeProvider>
     );
 }
-
-// App.propTypes = {
-//     store: PropTypes.object.isRequired,
-// };
 
 export default App;
