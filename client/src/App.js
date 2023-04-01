@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import './App.css';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
 import Login from './Auth/components/login';
+import { auth } from './actions/authActions';
 
 const theme = createMuiTheme({
     palette: {
@@ -19,8 +20,12 @@ const theme = createMuiTheme({
 });
 
 function App(props) {
-
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.auth?.user);
+
+    useEffect(() => {
+        dispatch(auth());
+    }, [dispatch]);
 
     return (
         <ThemeProvider theme={theme}>
