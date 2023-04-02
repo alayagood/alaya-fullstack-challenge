@@ -12,9 +12,10 @@ export function PostDetailPage() {
   const dispatch = useDispatch();
 
 
+
   useEffect(() => {
     if (!post) dispatch(fetchPost(cuid));
-  }, []);
+  }, [post, dispatch, cuid]);
 
   return (post
     ?
@@ -24,6 +25,7 @@ export function PostDetailPage() {
             <h1>{post.title}</h1>
             <p>By {post.name}</p>
             <p>{post.content}</p>
+            {post.picture && <img className={'w-400 my-4'} alt={'detail'} src={post.picture}/>}
           </div>
         </div>
       </div>)

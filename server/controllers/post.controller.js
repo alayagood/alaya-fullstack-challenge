@@ -3,6 +3,9 @@ const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
 
+const uploader = require('../services/uploader')
+
+
 /**
  * Get all posts
  * @param req
@@ -14,7 +17,7 @@ getPosts = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
-    res.json({ posts });
+    res.json({posts});
   });
 };
 
@@ -25,24 +28,32 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
+  if (!req.body.name || !req.body.title || !req.body.content) {
+    return res.status(400).end();
   }
 
-  const newPost = new Post(req.body.post);
+  const newPost = new Post(req.body);
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
 
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+  newPost.slug = slug(newPost.title.toLowerCase(), {lowercase: true});
   newPost.cuid = cuid();
-  newPost.save((err, saved) => {
+  newPost.picture = null;
+  newPost.author = req.context.user.email;
+
+  if (req.file?.path) {
+    const file = await uploader.uploads(req.file.path, 'images');
+    newPost.picture = file.url;
+  }
+
+   newPost.save((err, saved) => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
     }
-    res.json({ post: saved });
+    return res.json({post: saved});
   });
 };
 
@@ -53,11 +64,11 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({cuid: req.params.cuid}).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
     }
-    res.json({ post });
+    res.json({post});
   });
 };
 
@@ -68,9 +79,13 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({cuid: req.params.cuid}).exec((err, post) => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
+    }
+
+    if(post.author !== req.context.user.email){
+      return res.status(403).end();
     }
 
     post.remove(() => {
@@ -83,5 +98,5 @@ module.exports = {
   getPosts,
   addPost,
   getPost,
-  deletePost
+  deletePost,
 };

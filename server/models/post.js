@@ -7,7 +7,9 @@ const postSchema = new Schema({
     content: { type: 'String', required: true },
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
+    picture: { type: 'String', required: false },
     dateAdded: { type: 'Date', default: Date.now, required: true },
+    author: {type: 'String', required: true}
 });
 
 module.exports = mongoose.model('Post', postSchema);

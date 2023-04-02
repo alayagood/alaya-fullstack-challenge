@@ -15,12 +15,15 @@ export function addPost(post) {
 
 export function addPostRequest(post) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
+    const formData = new FormData()
+    formData.append('name', post.name);
+    formData.append('title', post.content);
+    formData.append('content', post.content);
+    formData.append('picture', post.picture);
+
+    return callApi('posts', 'post', formData,{
+      body: formData,
+      headers: {},
     }).then(res => dispatch(addPost(res.post)));
   };
 }
@@ -55,6 +58,6 @@ export function deletePost(cuid) {
 
 export function deletePostRequest(cuid) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
+    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid))).catch(err => console.error(err));
   };
 }

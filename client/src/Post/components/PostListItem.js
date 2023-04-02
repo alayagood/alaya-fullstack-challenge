@@ -7,12 +7,12 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 
-function PostListItem({ post, onDelete }) {
+function PostListItem({post, onDelete}) {
   return (
     <Card className="w-100 my-4">
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}/${post.slug}`} >
+          <Link to={`/posts/${post.cuid}/${post.slug}`}>
             {post.title}
           </Link>
         </Typography>
@@ -22,6 +22,7 @@ function PostListItem({ post, onDelete }) {
         <Typography color="textSecondary" component="p" className="mt-3 font-italic">
           From {post.name}
         </Typography>
+        {post.picture && <img className={'w-100 my-4'} alt={'preview'} src={post.picture}/>}
       </CardContent>
       <CardActions>
         <Button size="small" color="secondary" onClick={onDelete}>
@@ -39,6 +40,7 @@ PostListItem.propTypes = {
     content: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
+    picture: PropTypes.string
   }).isRequired,
   onDelete: PropTypes.func.isRequired,
 };
