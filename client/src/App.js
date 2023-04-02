@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
+import { AuthPage } from "./Auth/pages/Auth";
 
 const theme = createMuiTheme({
     palette: {
@@ -29,6 +30,7 @@ function App(props) {
                       <Switch>
                           <Route path="/" exact component={PostListPage} />
                           <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
+                          <Route path="/login" exact component={AuthPage} />
                       </Switch>
                     </BrowserRouter>
                   </Provider>
