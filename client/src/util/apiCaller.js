@@ -1,10 +1,12 @@
 import fetch from 'isomorphic-fetch';
+import auth from './authService';
 
 export const API_URL = 'http://localhost:3000/api';
 
 export default async (endpoint, method = 'get', body) => {
+
   return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', 'Authorization': auth.getJwt()},
     method,
     body: JSON.stringify(body),
   })
@@ -13,7 +15,6 @@ export default async (endpoint, method = 'get', body) => {
     if (!response.ok) {
       return Promise.reject(json);
     }
-
     return json;
   })
   .then(
