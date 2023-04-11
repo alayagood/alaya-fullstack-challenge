@@ -30,6 +30,17 @@ To start the Front-end
     npm start
 ```
 
+
+- I changed a script fom packages.json because my environment did not recognize PORT command
+```
+    "start": "PORT=3000 react-scripts start",
+```
+-to
+```
+    "start": "react-scripts start",
+```
+
+
 ## Show us your skills :)
 
 Please create a pull request for each exercise, so that we can evaluate the final features' code.

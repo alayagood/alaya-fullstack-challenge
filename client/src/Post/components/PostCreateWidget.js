@@ -21,18 +21,23 @@ const PostCreateWidget = ({ addPost }) => {
 
 
   const submit = () => {
-    if (state.name && state.title && state.content) {
+
+    if (state.name && state.title && state.content && state.file) {
       addPost(state);
     }
   };
 
   const handleChange = (evt) => {
-    const value = evt.target.value;
+    let value = evt.target.value;
+    evt.target.type === 'file' ? value = evt.target.files[0] : value = value;
+
     setState({
         ...state,
         [evt.target.name]: value
     });
   };
+
+ 
 
   return (
     <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
@@ -40,7 +45,9 @@ const PostCreateWidget = ({ addPost }) => {
         <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
         <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
         <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
+        <TextField label="Post content" name="file" type='file' onChange={handleChange} />
+
+        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content || !state.file}>
             Submit
         </Button>
     </div>

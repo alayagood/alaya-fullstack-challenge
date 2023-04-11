@@ -1,4 +1,5 @@
 import callApi from '../util/apiCaller';
+import auth from '../util/authService';
 
 // Export Constants
 export const ADD_POST = 'ADD_POST';
@@ -14,14 +15,19 @@ export function addPost(post) {
 }
 
 export function addPostRequest(post) {
+  const authorCuid = auth.getCurrentUser().cuid;
+
+  let data = new FormData();
+  data.append("my_file", post.file)
+  data.set('name', post.name);
+  data.set('title', post.title);
+  data.set('content', post.content);
+  data.set('authorCuid', authorCuid);
+
   return (dispatch) => {
     return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
-    }).then(res => dispatch(addPost(res.post)));
+      data
+    }, true).then(res => dispatch(addPost(res.post)));
   };
 }
 

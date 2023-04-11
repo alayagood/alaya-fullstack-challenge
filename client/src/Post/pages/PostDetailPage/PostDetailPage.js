@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { awsUrl } from "../../../config.json";
 // Import Actions
 import { fetchPost } from '../../PostActions';
 // Import Selectors
 import { useParams } from 'react-router-dom';
+
+
 
 export function PostDetailPage() {
 
@@ -16,6 +19,7 @@ export function PostDetailPage() {
     if (!post) dispatch(fetchPost(cuid));
   }, []);
 
+
   return (post
     ?
       (<div className="container">
@@ -25,6 +29,11 @@ export function PostDetailPage() {
             <p>By {post.name}</p>
             <p>{post.content}</p>
           </div>
+          <img
+            className="align-baseline mw-100"
+            src={`${awsUrl}/${post.image}`}
+            loading="lazy"
+          />
         </div>
       </div>)
     : (<div>Loading</div>)
