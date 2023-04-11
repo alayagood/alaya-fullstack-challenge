@@ -1,4 +1,9 @@
 {
-    "jwtPrivateKey": "jwtPrivateKey_test"
+  "jwtPrivateKey": "jwtPrivateKey_test",
+  "aws": {
+    "accessKeyId": "AKIA35RX5RHBPTJH4U4U",
+    "secretAccessKey": "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",
+    "bucket": "test-challenge-pau"
+
   }
-  
+}

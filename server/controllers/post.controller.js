@@ -2,6 +2,8 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const media = require('../utils/media')
+
 
 /**
  * Get all posts
@@ -25,27 +27,27 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
+  const newPost = new Post(req.body);
 
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content || !req.body.post.authorCuid) {
-    res.status(403).end();
-  }
-
-  const newPost = new Post(req.body.post);
-
-  // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
-  newPost.authorCuid = sanitizeHtml(newPost.authorCuid);
+  newPost.title = sanitizeHtml(req.body.title);
+  newPost.name = sanitizeHtml(req.body.name);
+  newPost.content = sanitizeHtml(req.body.content);
+  newPost.authorCuid = req.body.authorCuid;
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
+  newPost.image = newPost.cuid + newPost.title;
+
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
     }
+     media.handleUpload(req.file, newPost.image);
     res.json({ post: saved });
   });
+
 };
+
+
 
 /**
  * Get a single post

@@ -17,15 +17,17 @@ export function addPost(post) {
 export function addPostRequest(post) {
   const authorCuid = auth.getCurrentUser().cuid;
 
+  let data = new FormData();
+  data.append("my_file", post.file)
+  data.set('name', post.name);
+  data.set('title', post.title);
+  data.set('content', post.content);
+  data.set('authorCuid', authorCuid);
+
   return (dispatch) => {
     return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-        authorCuid: authorCuid,
-      },
-    }).then(res => dispatch(addPost(res.post)));
+      data
+    }, true).then(res => dispatch(addPost(res.post)));
   };
 }
 
