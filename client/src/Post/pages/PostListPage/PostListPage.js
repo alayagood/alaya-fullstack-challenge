@@ -40,7 +40,7 @@ const PostListPage = ({ showAddPost }) => {
       <hr />
       <div className="row">
         <div className="col-6">
-          <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
+          <PostCreateWidget addPost={handleAddPost} />
         </div>
         <div className="col-6">
           <PostList handleDeletePost={handleDeletePost} posts={posts} />
@@ -49,10 +49,5 @@ const PostListPage = ({ showAddPost }) => {
     </div>
   );
 };
-
-PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
-};
-
 
 export default PostListPage;

@@ -24,9 +24,9 @@ function PostListItem({ post, onDelete }) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
+        {post.canBeDeleted && <Button size="small" color="secondary" onClick={onDelete}>
           Delete post
-        </Button>
+        </Button>}
       </CardActions>
     </Card>
   );

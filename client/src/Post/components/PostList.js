@@ -17,6 +17,8 @@ function PostList(props) {
           />
         ))
       }
+
+      {props.posts.length == 0 && <span>Nothing here...</span>}
     </div>
   );
 }

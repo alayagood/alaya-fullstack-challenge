@@ -1,5 +1,4 @@
 const Post = require('../models/post');
-const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
 
@@ -14,6 +13,15 @@ getPosts = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
+
+    // handle delete permissions
+    posts = posts.map(post => {
+      let canBeDeleted = false;
+      if (post.user == req.session.cuid) canBeDeleted = true;
+
+      return { ...post.toJSON(), canBeDeleted };
+    });
+
     res.json({ posts });
   });
 };
@@ -25,24 +33,24 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
+  if (!req.body.post || !req.body.post.title || !req.body.post.content) {
+    return res.status(403).end();
   }
 
   const newPost = new Post(req.body.post);
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
 
+  newPost.user = req.session.cuid;
+  newPost.name = `${req.session.firstname} ${req.session.lastname}`;
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
   newPost.save((err, saved) => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
     }
-    res.json({ post: saved });
+    res.json({ post: { ...saved.toJSON(), canBeDeleted: true } });
   });
 };
 
@@ -73,8 +81,13 @@ deletePost = async (req, res) => {
       res.status(500).send(err);
     }
 
+    // validate if it can be deleted by user
+    if (post.user != req.session.cuid) {
+      return res.status(400).end();
+    }
+
     post.remove(() => {
-      res.status(200).end();
+      res.status(200).send({ cuid: req.params.cuid });
     });
   });
 };
