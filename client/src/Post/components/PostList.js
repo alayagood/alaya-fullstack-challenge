@@ -6,7 +6,7 @@ import PostListItem from './PostListItem';
 
 function PostList(props) {
   return (
-    <div className="d-flex flex-column w-100">
+    <section className="d-flex flex-column w-100">
       <h3 className="mt-4">Posts</h3>
       {
         props.posts.map(post => (
@@ -18,8 +18,8 @@ function PostList(props) {
         ))
       }
 
-      {props.posts.length == 0 && <span>Nothing here...</span>}
-    </div>
+      {props.posts.length === 0 && <span>Nothing here...</span>}
+    </section>
   );
 }
 

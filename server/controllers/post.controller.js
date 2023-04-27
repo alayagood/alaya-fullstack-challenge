@@ -1,6 +1,8 @@
 const Post = require('../models/post');
+const Image = require('../models/image');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const { uploadImages } = require('../services/cloudinary');
 
 /**
  * Get all posts
@@ -37,6 +39,17 @@ addPost = async (req, res) => {
     return res.status(403).end();
   }
 
+  // try to upload images
+  const { images } = req.body.post;
+  let uploadedImages = [];
+  try {
+    uploadedImages = await uploadImages(images);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ error: "Error creating post, try again." });
+  }
+
+
   const newPost = new Post(req.body.post);
 
   // Let's sanitize inputs
@@ -46,12 +59,24 @@ addPost = async (req, res) => {
   newPost.user = req.session.cuid;
   newPost.name = `${req.session.firstname} ${req.session.lastname}`;
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.save((err, saved) => {
-    if (err) {
-      return res.status(500).send(err);
-    }
-    res.json({ post: { ...saved.toJSON(), canBeDeleted: true } });
-  });
+
+  try {
+    //save post
+    const saved = await newPost.save();
+
+    //save images
+    const savedImages = await Image.insertMany(uploadedImages.map(image => ({
+      url: image.url,
+      publicId: image.public_id,
+      post: saved.cuid,
+      user: req.session.cuid
+    })));
+
+    res.json({ post: { ...saved.toJSON(), images: savedImages, canBeDeleted: true } });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+
 };
 
 /**
@@ -61,7 +86,7 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({ cuid: req.params.cuid }).exec(async (err, post) => {
     if (err) {
       res.status(500).send(err);
     }
@@ -76,17 +101,23 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({ cuid: req.params.cuid }).exec(async (err, post) => {
     if (err) {
       res.status(500).send(err);
     }
 
     // validate if it can be deleted by user
-    if (post.user != req.session.cuid) {
+    if (!post || post.user != req.session.cuid) {
       return res.status(400).end();
     }
 
-    post.remove(() => {
+    /* 
+      * this post and images should be deleted with logic deleted field dateDeleted=Date.now()
+    */
+    post.remove(async () => {
+      //remove images
+      await Image.deleteMany({ post: post.cuid });
+
       res.status(200).send({ cuid: req.params.cuid });
     });
   });

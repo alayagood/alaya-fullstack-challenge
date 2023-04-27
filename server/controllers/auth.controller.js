@@ -72,7 +72,7 @@ signIn = async (req, res) => {
       lastname: user.lastname
     }
 
-    const token = jwt.sign(user, 'secret');
+    const token = jwt.sign(user, process.env.JWT_SECRET);
 
     res.json({
       session: {
