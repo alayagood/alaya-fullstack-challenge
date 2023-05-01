@@ -15,6 +15,6 @@ router.route("/posts/:cuid").get(PostController.getPost);
 router.route("/posts").post(jwtAuth, PostController.addPost);
 
 // Delete a post by cuid
-router.route("/posts/:cuid").delete(PostController.deletePost);
+router.route("/posts/:cuid").delete(jwtAuth, PostController.deletePost);
 
 module.exports = router;

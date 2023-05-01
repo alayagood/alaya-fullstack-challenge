@@ -27,21 +27,14 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (
-    !req.body.post ||
-    !req.body.post.name ||
-    !req.body.post.title ||
-    !req.body.post.content
-  ) {
-    res.status(400).end();
-    return;
+  if (!req.body.post || !req.body.post.title || !req.body.post.content) {
+    return res.status(400).end();
   }
 
   const newPost = new Post(req.body.post);
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
 
   newPost.slug = slug(newPost.title.toLowerCase(), {lowercase: true});
@@ -80,7 +73,14 @@ getPost = async (req, res) => {
 deletePost = async (req, res) => {
   Post.findOne({cuid: req.params.cuid}).exec((err, post) => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
+    }
+    if (!post) {
+      return res.status(404).end();
+    }
+
+    if (req.user._id !== post.author.toString()) {
+      return res.status(403).end();
     }
 
     post.remove(() => {
