@@ -31,6 +31,8 @@ passport.use(
   )
 );
 
+const failedLoginMsg = "Incorrect email or password.";
+
 passport.use(
   "local-login",
   new LocalStrategy(
@@ -39,12 +41,12 @@ passport.use(
       try {
         const author = await Author.findOne({email});
         if (!author) {
-          return done(null, false, {message: "Incorrect email or password."});
+          return done(null, false, {message: failedLoginMsg});
         }
 
         const passowrdIsOk = await author.comparePassword(password);
         if (!passowrdIsOk) {
-          return done(null, false, {message: "Incorrect email or password."});
+          return done(null, false, {message: failedLoginMsg});
         }
         return done(null, author);
       } catch (err) {
@@ -63,7 +65,6 @@ passport.use(
       jwtFromRequest: cookieExtractor,
     },
     async (token, done) => {
-      console.log({token});
       try {
         return done(null, token.user);
       } catch (error) {
