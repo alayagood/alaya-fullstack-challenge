@@ -1,9 +1,10 @@
 const express = require("express");
+
+const {jwtAuth} = require("../middleware/auth");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 const router = express.Router();
-require("../middleware/auth");
 
 router.post(
   "/signup",
@@ -41,6 +42,10 @@ router.post("/login", async (req, res, next) => {
       return next(error);
     }
   })(req, res, next);
+});
+
+router.get("/check", jwtAuth, async (req, res) => {
+  res.json({success: true, user: req.user});
 });
 
 module.exports = router;

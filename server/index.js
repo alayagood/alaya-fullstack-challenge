@@ -11,7 +11,8 @@ const posts = require("./routes/post.routes");
 const access = require("./routes/access.routes");
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cors());
+app.use(cors({credentials: true, origin: "http://localhost:8000"}));
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.get("/status", (req, res) => {
@@ -19,7 +20,7 @@ app.get("/status", (req, res) => {
 });
 
 app.use("/api", posts);
-app.use("/access", access);
+app.use("/api", access);
 
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 

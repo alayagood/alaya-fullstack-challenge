@@ -1,9 +1,8 @@
 const express = require("express");
-const passport = require("passport");
+const {jwtAuth} = require("../middleware/auth");
 
 const router = express.Router();
 const PostController = require("../controllers/post.controller");
-const jwtAuth = passport.authenticate("jwt", {session: false});
 
 // Get all Posts
 router.route("/posts").get(PostController.getPosts);
