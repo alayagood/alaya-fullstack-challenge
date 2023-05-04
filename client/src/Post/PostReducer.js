@@ -1,18 +1,52 @@
-import { ADD_POST, ADD_POSTS, DELETE_POST } from './PostActions';
+import {  
+  ADD_POST_REQUEST, 
+  ADD_POST, 
+  ADD_POST_FAILED,
+  FETCH_POSTS_REQUEST, 
+  ADD_POSTS,
+  FETCH_POSTS_FAILED, 
+  DELETE_POST 
+} from './PostActions';
 
 // Initial State
-const initialState = { data: [] };
+const initialState = { data: [], error: null, loadingAdd: false, loadingFetch: false };
 
 const PostReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ADD_POST_REQUEST:
+      return {
+        ...state,
+        loadingAdd: true
+      };
+
     case ADD_POST :
       return {
+        loadingAdd: false,
         data: [action.post, ...state.data],
+      };
+    
+    case ADD_POST_FAILED :
+      return {
+        ...state,
+        loadingAdd: false,
+      };
+
+    case FETCH_POSTS_REQUEST:
+      return {
+        ...state,
+        loadingFetch: true
       };
 
     case ADD_POSTS :
       return {
         data: action.posts,
+        loadingFetch: false
+      };
+    
+    case FETCH_POSTS_FAILED:
+      return {
+        ...state,
+        loadingFetch: false
       };
 
     case DELETE_POST :

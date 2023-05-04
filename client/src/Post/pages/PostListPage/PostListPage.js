@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 // Import Components
 import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';
+import PageTitle from '../../../common/components/PageTitle';
 // Import Actions
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
-import Logo from '../../../logo.svg';
 
-const PostListPage = ({ showAddPost }) => {
+const PostListPage = () => {
 
   const dispatch = useDispatch();
-  const posts = useSelector(state => state.posts.data);
+  const { data, loadingAdd, loadingFetch } = useSelector(state => state.posts);
+  const { token } = useSelector(state => state.auth);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -28,31 +28,18 @@ const PostListPage = ({ showAddPost }) => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
+      <PageTitle title={'AlayaBlog'}/>
       <div className="row">
-        <div className="col-12 d-flex align-items-center">
-          <img className="mx-3" src={Logo} alt="Logo" style={{ height: '72px'}}/>
-          <h1 className="mt-4">
-             Alaya Blog
-          </h1>
-        </div>
-      </div>
-      <hr />
-      <div className="row">
+        {token && <div className="col-6">
+          <PostCreateWidget addPost={handleAddPost} loading={loadingAdd} />
+        </div>}
         <div className="col-6">
-          <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
-        </div>
-        <div className="col-6">
-          <PostList handleDeletePost={handleDeletePost} posts={posts} />
+          <PostList handleDeletePost={handleDeletePost} posts={data} loading={loadingFetch} />
         </div>
       </div>
     </div>
   );
 };
-
-PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
-};
-
 
 export default PostListPage;

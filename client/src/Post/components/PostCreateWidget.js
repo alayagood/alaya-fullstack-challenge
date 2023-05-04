@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import { CircularProgress, TextField, Button } from '@material-ui/core/'
 import { makeStyles } from '@material-ui/core/styles';
 // Import Style
-
 const useStyles = makeStyles(theme => ({
     root: {
         '& > *': {
@@ -13,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const PostCreateWidget = ({ addPost }) => {
+const PostCreateWidget = ({ addPost, loading }) => {
 
     const [state, setState] = useState({});
     const classes = useStyles();
@@ -23,6 +21,7 @@ const PostCreateWidget = ({ addPost }) => {
   const submit = () => {
     if (state.name && state.title && state.content) {
       addPost(state);
+      resetState();
     }
   };
 
@@ -34,15 +33,22 @@ const PostCreateWidget = ({ addPost }) => {
     });
   };
 
+  const resetState = () => {
+    setState({});
+  }
+
   return (
-    <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
-        <h3>Create new post</h3>
-        <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
-        <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
-        <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-        <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
+    <div className={`${classes.root} d-flex flex-column w-100`}>
+        <h3 className='mt-4'>Create new post</h3>
+        <TextField variant="filled" label="Author name" name="name" onChange={handleChange} value={state.name || ''} />
+        <TextField variant="filled" label="Post title" name="title" onChange={handleChange} value={state.title || ''} />
+        <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} value={state.content || ''} />
+        { loading ? <CircularProgress />
+          :
+          <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content || loading}>
             Submit
-        </Button>
+          </Button>
+        }
     </div>
   );
 };
