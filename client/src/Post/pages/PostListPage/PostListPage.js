@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 
 import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
 import useAuth, {fetchUserState} from "../../../util/hooks/useAuth";
 
 // Import Components
@@ -13,13 +12,6 @@ import {addPostRequest, deletePostRequest, fetchPosts} from "../../PostActions";
 import Logo from "../../../logo.svg";
 
 const PostListPage = ({showAddPost}) => {
-  const history = useHistory();
-  const {user} = useAuth();
-
-  if (user === fetchUserState.loggedOut) {
-    history.push("/access");
-  }
-
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.data);
 

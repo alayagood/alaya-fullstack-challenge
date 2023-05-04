@@ -5,6 +5,8 @@ import "./App.css";
 import {Route, BrowserRouter, Switch} from "react-router-dom";
 import PostListPage from "./Post/pages/PostListPage/PostListPage";
 import AccessPage from "./Access/pages/AccessPage/AccessPage";
+import {LoggedInRoute} from "./util/components/LoggedInRoute";
+
 import PostDetailPage from "./Post/pages/PostDetailPage/PostDetailPage";
 import {Provider} from "react-redux";
 
@@ -28,7 +30,15 @@ function App(props) {
           <Provider store={props.store}>
             <BrowserRouter>
               <Switch>
-                <Route path="/" exact component={PostListPage} />
+                <Route
+                  path="/"
+                  exact
+                  render={() => (
+                    <LoggedInRoute>
+                      <PostListPage />
+                    </LoggedInRoute>
+                  )}
+                />
                 <Route path="/access" exact component={AccessPage} />
                 <Route
                   path="/posts/:cuid/:slug"
