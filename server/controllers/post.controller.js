@@ -84,7 +84,7 @@ deletePost = async (req, res) => {
     }
 
     post.remove(() => {
-      res.status(200).end();
+      res.status(200).json({cuid: req.params.cuid});
     });
   });
 };

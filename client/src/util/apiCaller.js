@@ -24,8 +24,13 @@ export default async function request(endpoint, method = "get", body) {
     if (!error.response) {
       throw new Error(error.message);
     }
-    const json = await error.response.json();
-    error.json = json;
+    try {
+      const json = await error.response.json();
+      error.json = json;
+    } catch (e) {
+      error.json = null;
+    }
+
     throw error;
   }
 }
