@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
-import PropTypes from "prop-types";
-import {useDispatch, useSelector} from "react-redux";
+import React, {useState} from "react";
+
 // Import Components
 import Login from "../../components/Login";
 
@@ -12,8 +11,6 @@ const tabs = {
   login: "login",
   signup: "signup",
 };
-
-// when switching tabs we lose state, don't care, makes code cleaner
 
 const AcccessPage = () => {
   const [tab, setTab] = useState(tabs.login);

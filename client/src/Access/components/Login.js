@@ -1,12 +1,33 @@
-import React from "react";
+import React, {useState} from "react";
+import {useHistory} from "react-router-dom";
 import {Formik, Form, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
+import callApi from "../../util/apiCaller";
 
 function Login() {
+  const history = useHistory();
+  const [submitError, setSubmitError] = useState("");
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Required"),
     password: Yup.string().required("Required"),
   });
+
+  const handleSubmit = (values, {setSubmitting}) => {
+    callApi("login", "post", {
+      email: values.username,
+      password: values.password,
+    })
+      .then(() => {
+        history.push("/");
+      })
+      .catch((err) => {
+        setSubmitError(err.json.message);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  };
+
   return (
     <Formik
       initialValues={{
@@ -14,12 +35,7 @@ function Login() {
         password: "",
       }}
       validationSchema={validationSchema}
-      onSubmit={(values, {setSubmitting}) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
-      }}
+      onSubmit={handleSubmit}
     >
       {({isSubmitting}) => (
         <Form>
@@ -60,6 +76,7 @@ function Login() {
           >
             {isSubmitting ? "Submitting..." : "Login"}
           </button>
+          {submitError && <div className="text-danger">{submitError}</div>}
         </Form>
       )}
     </Formik>

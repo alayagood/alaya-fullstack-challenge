@@ -1,6 +1,10 @@
 import React, {useEffect} from "react";
+
 import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
+import useAuth, {fetchUserState} from "../../../util/hooks/useAuth";
+
 // Import Components
 import PostList from "../../components/PostList";
 import PostCreateWidget from "../../components/PostCreateWidget";
@@ -9,6 +13,13 @@ import {addPostRequest, deletePostRequest, fetchPosts} from "../../PostActions";
 import Logo from "../../../logo.svg";
 
 const PostListPage = ({showAddPost}) => {
+  const history = useHistory();
+  const {user} = useAuth();
+
+  if (user === fetchUserState.loggedOut) {
+    history.push("/access");
+  }
+
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.data);
 
@@ -46,7 +57,9 @@ const PostListPage = ({showAddPost}) => {
           <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
         </div>
         <div className="col-6">
-          <PostList handleDeletePost={handleDeletePost} posts={posts} />
+          {posts && (
+            <PostList handleDeletePost={handleDeletePost} posts={posts} />
+          )}
         </div>
       </div>
     </div>
@@ -54,7 +67,7 @@ const PostListPage = ({showAddPost}) => {
 };
 
 PostListPage.propTypes = {
-  // showAddPost: PropTypes.bool.isRequired,
+  // showAddPost: PropTypes.bool.isRequired, //TODO
 };
 
 export default PostListPage;

@@ -1,11 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
+import {useHistory} from "react-router-dom";
+import apiCaller from "../../util/apiCaller";
 import {Formik, Form, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Signup() {
+  const history = useHistory();
+  const [submitError, setSubmitError] = useState("");
   const validationSchema = Yup.object().shape({
-    author: Yup.string().required("Required"),
+    name: Yup.string().required("Required"),
     email: Yup.string().email("Invalid email address").required("Required"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
@@ -15,21 +19,34 @@ function Signup() {
       .required("Required"),
   });
 
+  const handleSubmit = (values, {setSubmitting}) => {
+    apiCaller("signup", "post", values)
+      .then(() =>
+        apiCaller("login", "post", {
+          email: values.email,
+          password: values.password,
+        })
+      )
+      .then((resp) => {
+        console.log({resp});
+        history.push("/");
+      })
+      .catch((err) => {
+        setSubmitError(err.json.message);
+        setSubmitting(false);
+      });
+  };
+
   return (
     <Formik
       initialValues={{
-        author: "",
+        name: "",
         email: "",
         password: "",
         repeatPassword: "",
       }}
       validationSchema={validationSchema}
-      onSubmit={(values, {setSubmitting}) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
-      }}
+      onSubmit={handleSubmit}
     >
       {({isSubmitting}) => (
         <Form>
@@ -38,15 +55,11 @@ function Signup() {
             <Field
               type="text"
               className="form-control"
-              id="author-input"
-              name="author"
+              id="name-input"
+              name="name"
               placeholder="Enter author name"
             />
-            <ErrorMessage
-              name="author"
-              component="div"
-              className="text-danger"
-            />
+            <ErrorMessage name="name" component="div" className="text-danger" />
           </div>
           <div className="form-group">
             <label htmlFor="email-input">Email address</label>
@@ -100,6 +113,7 @@ function Signup() {
           >
             {isSubmitting ? "Submitting..." : "Sign Up"}
           </button>
+          {submitError && <div className="text-danger">{submitError}</div>}
         </Form>
       )}
     </Formik>
