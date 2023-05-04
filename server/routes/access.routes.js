@@ -6,13 +6,23 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
-router.post(
-  "/signup",
-  passport.authenticate("local-signup", {session: false}),
-  async (_, res) => {
-    res.json({message: "Signup successful"});
-  }
-);
+router.post("/signup", async (req, res, next) => {
+  passport.authenticate(
+    "local-signup",
+    {session: false},
+    async (err, created, info) => {
+      if (!created) {
+        return res.status(403).json(info);
+      }
+
+      if (err) {
+        const error = new Error("An error occurred.");
+        return next(error);
+      }
+      res.json(info);
+    }
+  )(req, res, next);
+});
 
 router.post("/login", async (req, res, next) => {
   passport.authenticate("local-login", async (err, user, info) => {

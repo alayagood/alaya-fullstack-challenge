@@ -23,7 +23,7 @@ passport.use(
 
         const newAuthor = new Author({email, name: req.body.name, password});
         await newAuthor.save();
-        return done(null, newAuthor);
+        return done(null, newAuthor, {message: "User created"});
       } catch (err) {
         return done(err);
       }
