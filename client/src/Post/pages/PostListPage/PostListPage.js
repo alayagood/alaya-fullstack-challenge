@@ -16,7 +16,7 @@ const PostListPage = ({showAddPost}) => {
 
   useEffect(() => {
     dispatch(fetchPosts());
-  }, []);
+  }, [dispatch]);
 
   const handleDeletePost = (post) => {
     // eslint-disable-next-line
@@ -58,7 +58,7 @@ const PostListPage = ({showAddPost}) => {
 };
 
 PostListPage.propTypes = {
-  // showAddPost: PropTypes.bool.isRequired, //TODO
+  showAddPost: PropTypes.func.isRequired,
 };
 
 export default PostListPage;

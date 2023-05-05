@@ -23,7 +23,7 @@ const PostCreateWidget = ({addPost}) => {
   useEffect(
     function setDefaultAuthorName() {
       if (user) {
-        setState({...state, name: user.name});
+        setState((state) => ({...state, name: user.name}));
       }
     },
     [user]
