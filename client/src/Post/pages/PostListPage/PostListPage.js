@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 
 import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
-import useAuth, {fetchUserState} from "../../../util/hooks/useAuth";
 
 // Import Components
 import PostList from "../../components/PostList";

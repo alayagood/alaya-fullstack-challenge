@@ -27,8 +27,7 @@ function Signup() {
           password: values.password,
         })
       )
-      .then((resp) => {
-        console.log({resp});
+      .then(() => {
         history.push("/");
       })
       .catch((err) => {
