@@ -30,8 +30,15 @@ const PostCreateWidget = ({addPost}) => {
   );
 
   const submit = () => {
+    const resetState = (state) => ({
+      ...Object.keys(state).reduce((prev, key) => ({...prev, [key]: ""}), {}),
+      name: user.name,
+    });
+
     if (state.name && state.title && state.content) {
-      addPost(state);
+      addPost(state).then(() => {
+        setState(resetState);
+      });
     }
   };
 
@@ -59,6 +66,7 @@ const PostCreateWidget = ({addPost}) => {
         label="Post title"
         name="title"
         onChange={handleChange}
+        value={state.title}
       />
       <TextField
         variant="filled"
@@ -67,6 +75,7 @@ const PostCreateWidget = ({addPost}) => {
         label="Post content"
         name="content"
         onChange={handleChange}
+        value={state.content}
       />
       <Button
         className="mt-4"

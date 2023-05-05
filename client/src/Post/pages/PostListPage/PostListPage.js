@@ -25,8 +25,8 @@ const PostListPage = ({showAddPost}) => {
     }
   };
 
-  const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+  const handleAddPost = async (post) => {
+    return dispatch(addPostRequest(post));
   };
 
   return (
