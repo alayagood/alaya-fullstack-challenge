@@ -1,27 +1,27 @@
 import {useEffect, useState} from "react";
 import callApi from "../apiCaller";
-
-export const fetchUserState = {
-  idle: "idle",
-  loggedOut: "loggedOut",
-};
+import {useDispatch} from "react-redux";
+import {setUser} from "../../Access/AccessActions";
+import {userAccessState} from "../userAccessState";
 
 const useAuth = () => {
-  const [user, setUser] = useState(fetchUserState.idle);
+  const dispatch = useDispatch();
+  const [accessState, setAccessState] = useState(userAccessState.idle);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await callApi("check", "get");
-        setUser(response.user);
+        dispatch(setUser(response.user));
+        setAccessState(userAccessState.loggedIn);
       } catch (error) {
-        setUser(fetchUserState.loggedOut);
+        setAccessState(userAccessState.loggedOut);
       }
     };
     fetchUser();
-  }, []);
+  }, [dispatch]);
 
-  return {user};
+  return {accessState};
 };
 
 export default useAuth;

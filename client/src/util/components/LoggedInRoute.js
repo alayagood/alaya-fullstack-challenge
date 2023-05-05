@@ -1,10 +1,11 @@
-import useAuth, {fetchUserState} from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth";
+import {userAccessState} from "../userAccessState";
 import {useHistory} from "react-router-dom";
 
 export const LoggedInRoute = ({children}) => {
-  const {user} = useAuth();
+  const {accessState} = useAuth();
   const history = useHistory();
-  if (user === fetchUserState.loggedOut) {
+  if (accessState === userAccessState.loggedOut) {
     history.push("/access");
   }
   return children;
