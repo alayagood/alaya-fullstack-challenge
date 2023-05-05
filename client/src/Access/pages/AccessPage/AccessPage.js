@@ -2,6 +2,7 @@ import React, {useState} from "react";
 
 // Import Components
 import Login from "../../components/Login";
+import LinkButton from "../../../util/components/LinkButton";
 
 // Import Actions
 import Logo from "../../../logo.svg";
@@ -42,10 +43,10 @@ const AcccessPage = () => {
                     [tabs.login, "Log in"],
                     [tabs.signup, "Sign up"],
                   ].map(([tabValue, tabName]) => (
-                    <div className="col-md-6">
-                      <a href="#" onClick={(e) => handleClick(e, tabValue)}>
+                    <div className="col-md-6 text-center">
+                      <LinkButton onClick={(e) => handleClick(e, tabValue)}>
                         {tabName}
-                      </a>
+                      </LinkButton>
                     </div>
                   ))}
                 </div>
