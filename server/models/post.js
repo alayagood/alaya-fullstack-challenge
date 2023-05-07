@@ -9,6 +9,7 @@ const postSchema = new Schema({
     cuid: { type: 'String', required: true },
     dateAdded: { type: 'Date', default: Date.now, required: true },
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    images: [{ type: Schema.Types.ObjectId, ref: 'Image' }]
 });
 
 module.exports = mongoose.model('Post', postSchema);
