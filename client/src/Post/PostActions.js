@@ -37,6 +37,7 @@ export function addPostRequest(post) {
         name: post.name,
         title: post.title,
         content: post.content,
+        images: post.images
       },
     };
     return callApi('posts', 'post', body)
