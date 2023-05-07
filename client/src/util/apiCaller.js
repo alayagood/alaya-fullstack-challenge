@@ -3,13 +3,23 @@ import Cookies from 'js-cookie';
 
 export const API_URL = 'http://localhost:3000/api';
 
-export default async (endpoint, method = 'get', body) => {
+export default async (endpoint, method = 'get', body, type = 'json') => {
   const token = Cookies.get('jwt');
-  return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json', ...(token && { 'Authorization': `Bearer ${token}` }) },
-    method,
-    body: JSON.stringify(body),
-  })
+  let options = {
+    method
+  };
+  switch(type){
+    case 'formData':
+      options.headers = { ...(token && { 'Authorization': `Bearer ${token}` }) };
+      options.body = body;
+      break;
+    case 'json':
+    default:
+      options.headers = { 'content-type': 'application/json', ...(token && { 'Authorization': `Bearer ${token}` }) };
+      options.body = JSON.stringify(body);
+      break;
+  }
+  return fetch(`${API_URL}/${endpoint}`, options)
   .then(response => response.json().then(json => ({ json, response })))
   .then(({ json, response }) => {
     if (!response.ok) {
