@@ -58,7 +58,7 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({ cuid: req.params.cuid }).populate('images').exec((err, post) => {
     if (err) {
       res.status(500).json({ error: 'Internal server error' });
     }
