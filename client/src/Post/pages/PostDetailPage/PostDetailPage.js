@@ -18,7 +18,7 @@ export function PostDetailPage() {
 
   return (post
     ?
-      (<div className="container">
+      (<div className="container mt-5">
         <div className="row">
           <div className="col-12">
             <h1>{post.title}</h1>

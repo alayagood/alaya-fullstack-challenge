@@ -12,7 +12,7 @@ const sanitizeHtml = require('sanitize-html');
 getPosts = async (req, res) => {
   Post.find().sort('-dateAdded').exec((err, posts) => {
     if (err) {
-      res.status(500).send(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
     res.json({ posts });
   });
@@ -25,8 +25,8 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
+  if (!req.body.post || !req.body.post.name || !req.body.post.title || !req.body.post.content) {
+    res.status(400).json({ error: 'Invalid request data' });
   }
 
   const newPost = new Post(req.body.post);
@@ -38,9 +38,10 @@ addPost = async (req, res) => {
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
+  newPost.user = req.session.userId;
   newPost.save((err, saved) => {
     if (err) {
-      res.status(500).send(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
     res.json({ post: saved });
   });
@@ -55,7 +56,7 @@ addPost = async (req, res) => {
 getPost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
-      res.status(500).send(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
     res.json({ post });
   });
@@ -70,11 +71,14 @@ getPost = async (req, res) => {
 deletePost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
-      res.status(500).send(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
-
+    // Check if it belongs to user
+    if (post.user != req.session.userId) {
+      return res.status(403).json({ error: 'Post doesn\'t belong to user' });
+    }
     post.remove(() => {
-      res.status(200).end();
+      res.status(200).json({ message: 'Post deleted' });
     });
   });
 };

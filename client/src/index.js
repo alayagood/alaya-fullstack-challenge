@@ -1,8 +1,10 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { combineReducers, createStore, compose, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import posts from './Post/PostReducer';
+import auth from './Auth/AuthReducer';
 import './index.css';
 import App from './App';
 
@@ -11,6 +13,6 @@ const enhancers = [
     applyMiddleware(thunk),
 ];
 
-const initialStore = createStore(combineReducers({ posts }), { }, compose(...enhancers));
+const initialStore = createStore(combineReducers({ auth, posts }), { }, compose(...enhancers));
 
-ReactDOM.render(<App store={initialStore}/>, document.getElementById('root'));
+ReactDOM.render(<Provider store={initialStore}><App /></Provider>, document.getElementById('root'));
