@@ -12,7 +12,7 @@ const imageService = require('../services/image.service');
  * @returns void
  */
 getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
+  Post.find().select('-images -content -user').sort('-dateAdded').exec((err, posts) => {
     if (err) {
       res.status(500).json({ error: 'Internal server error' });
     }
