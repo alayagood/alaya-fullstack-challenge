@@ -68,7 +68,11 @@ export function fetchPosts() {
 
 export function fetchPost(cuid) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`).then(res => dispatch(addPost(res.post)));
+    return callApi(`posts/${cuid}`).then(res => {
+      if(res.post){
+        dispatch(addPost(res.post));
+      }
+    });
   };
 }
 
