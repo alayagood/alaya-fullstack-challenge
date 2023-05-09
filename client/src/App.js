@@ -11,6 +11,8 @@ import PostDetailPage from "./Post/pages/PostDetailPage/PostDetailPage";
 import {Provider} from "react-redux";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 import Navbar from "./Nav/components/Navbar";
 
 const theme = createMuiTheme({

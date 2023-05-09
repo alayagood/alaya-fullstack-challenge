@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
+    "bootstrap-icons": "^1.10.5",
     "fetch": "^1.1.0",
     "formik": "^2.2.9",
     "isomorphic-fetch": "^2.2.1",
