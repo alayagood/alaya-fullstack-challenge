@@ -2,12 +2,13 @@ import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
-import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
 import {makeStyles} from "@material-ui/core/styles";
 import {useSelector} from "react-redux";
 import {getUser} from "../../Access/AccessReducer";
 import UploadWidget from "../../util/components/CloudinaryUploadWidget";
+import ModalContent from "../../util/components/ModalContent";
+
 import ImageList from "./ImageList";
 import callApi from "../../util/apiCaller";
 
@@ -147,31 +148,14 @@ const PostCreateWidget = ({addPost}) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Card
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 1000,
-            backgroundColor: "white",
-            border: "2px solid #000",
-            padding: 4,
-          }}
-        >
-          <span
-            onClick={() => setModalOpen(false)}
-            style={{position: "absolute", right: 0, marginRight: 10}}
-          >
-            <i class="bi bi-x-lg cursorPointer"></i>
-          </span>
+        <ModalContent onModalClose={() => setModalOpen(false)}>
           <ImageList
             images={images}
             selectedImgs={post.images}
             toggleSelectImg={togglePostImg}
             closeModal={() => setModalOpen(false)}
           />
-        </Card>
+        </ModalContent>
       </Modal>
     </div>
   );
