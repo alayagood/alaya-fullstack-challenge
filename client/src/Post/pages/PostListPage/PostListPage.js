@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 
 import {useDispatch, useSelector} from "react-redux";
+import {getUser} from "../../../Access/AccessReducer";
 
 // Import Components
 import PostList from "../../components/PostList";
@@ -12,6 +13,7 @@ import Logo from "../../../logo.svg";
 const PostListPage = () => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.data);
+  const {user} = useSelector((state) => getUser(state));
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -42,16 +44,18 @@ const PostListPage = () => {
         </div>
       </div>
       <hr />
-      <div className="row">
-        <div className="col-md-6">
-          <PostCreateWidget addPost={handleAddPost} />
+      {user && (
+        <div className="row">
+          <div className="col-md-6">
+            <PostCreateWidget addPost={handleAddPost} />
+          </div>
+          <div className="col-md-6">
+            {posts && (
+              <PostList handleDeletePost={handleDeletePost} posts={posts} />
+            )}
+          </div>
         </div>
-        <div className="col-md-6">
-          {!!posts && (
-            <PostList handleDeletePost={handleDeletePost} posts={posts} />
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

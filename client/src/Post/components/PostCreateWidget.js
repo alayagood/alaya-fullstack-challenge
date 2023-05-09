@@ -11,7 +11,7 @@ import UploadWidget from "../../util/components/CloudinaryUploadWidget";
 import ImageList from "./ImageList";
 import callApi from "../../util/apiCaller";
 
-import useSelectedImages from "../hooks/useSelectedImages";
+import usePost from "../hooks/usePost";
 import useImages from "../hooks/useImages";
 
 // Import Style
@@ -26,44 +26,36 @@ const useStyles = makeStyles((theme) => ({
 
 const PostCreateWidget = ({addPost}) => {
   const {user} = useSelector((state) => getUser(state));
-  const [state, setState] = useState({name: "", title: "", content: ""});
 
   const [images, setImages] = useImages();
   const [error, updateError] = useState();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const [selectedImgs, addSelectedImg, toggleSelectImg] = useSelectedImages();
+  const {post, updatePost, resetPost, addImgToPost, togglePostImg} = usePost();
 
   const classes = useStyles();
 
   useEffect(
     function setDefaultAuthorName() {
       if (user) {
-        setState((state) => ({...state, name: user.name}));
+        updatePost("name", user.name);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [user]
   );
 
   const submit = () => {
-    const resetState = (state) => ({
-      ...Object.keys(state).reduce((prev, key) => ({...prev, [key]: ""}), {}),
-      name: user.name,
-    });
-
-    if (state.name && state.title && state.content) {
-      addPost(state).then(() => {
-        setState(resetState);
+    if (post.name && post.title && post.content) {
+      addPost(post).then(() => {
+        resetPost({name: user.name});
       });
     }
   };
 
   const handleChange = (evt) => {
-    const value = evt.target.value;
-    setState({
-      ...state,
-      [evt.target.name]: value,
-    });
+    const {name, value} = evt.target;
+    updatePost(name, value);
   };
 
   function handleOnUpload(error, result, widget) {
@@ -84,7 +76,7 @@ const PostCreateWidget = ({addPost}) => {
       })
       .then(({images}) => {
         setImages(images);
-        addSelectedImg(path);
+        addImgToPost(path);
       });
   }
 
@@ -96,15 +88,15 @@ const PostCreateWidget = ({addPost}) => {
         label="Author name"
         name="name"
         onChange={handleChange}
-        value={state.name}
-        InputLabelProps={{shrink: !!state.name}}
+        value={post.name}
+        InputLabelProps={{shrink: !!post.name}}
       />
       <TextField
         variant="filled"
         label="Post title"
         name="title"
         onChange={handleChange}
-        value={state.title}
+        value={post.title}
       />
       <TextField
         variant="filled"
@@ -113,7 +105,7 @@ const PostCreateWidget = ({addPost}) => {
         label="Post content"
         name="content"
         onChange={handleChange}
-        value={state.content}
+        value={post.content}
       />
 
       <UploadWidget onUpload={handleOnUpload}>
@@ -135,7 +127,7 @@ const PostCreateWidget = ({addPost}) => {
       {!!images.length && (
         <Button variant="outlined" onClick={() => setModalOpen(true)}>
           Add images to post{" "}
-          {!!selectedImgs.length && `(${selectedImgs.length} added)`}
+          {!!post.images?.length && `(${post.images.length} added)`}
         </Button>
       )}
 
@@ -144,7 +136,7 @@ const PostCreateWidget = ({addPost}) => {
         variant="contained"
         color="primary"
         onClick={() => submit()}
-        disabled={!state.name || !state.title || !state.content}
+        disabled={!post.name || !post.title || !post.content}
       >
         Submit
       </Button>
@@ -175,8 +167,8 @@ const PostCreateWidget = ({addPost}) => {
           </span>
           <ImageList
             images={images}
-            selectedImgs={selectedImgs}
-            toggleSelectImg={toggleSelectImg}
+            selectedImgs={post.images}
+            toggleSelectImg={togglePostImg}
             closeModal={() => setModalOpen(false)}
           />
         </Card>
