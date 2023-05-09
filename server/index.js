@@ -7,8 +7,9 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const apiPort = process.env.API_PORT;
 const db = require("./db");
-const posts = require("./routes/post.routes");
+const post = require("./routes/post.routes");
 const access = require("./routes/access.routes");
+const image = require("./routes/image.routes");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors({credentials: true, origin: process.env.APP_SERVER}));
@@ -19,8 +20,9 @@ app.get("/status", (req, res) => {
   return res.status(200).json({status: "ok"});
 });
 
-app.use("/api", posts);
+app.use("/api", post);
 app.use("/api", access);
+app.use("/api", image);
 
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
