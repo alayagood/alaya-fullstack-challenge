@@ -34,7 +34,6 @@ PostList.propTypes = {
     })
   ).isRequired,
   handleDeletePost: PropTypes.func.isRequired,
-  userId: PropTypes.string.isRequired,
 };
 
 export default PostList;

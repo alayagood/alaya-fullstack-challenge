@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PostCreateWidget = ({addPost}) => {
   const {user} = useSelector((state) => getUser(state));
-  const [state, setState] = useState({});
+  const [state, setState] = useState({name: "", title: "", content: ""});
   const classes = useStyles();
 
   useEffect(
