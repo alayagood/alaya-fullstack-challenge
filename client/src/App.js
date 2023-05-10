@@ -1,14 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import './App.css';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Cookies from 'js-cookie';
+
+// Import pages
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
-import { Provider } from 'react-redux';
+import LoginPage from './Auth/pages/AuthLoginPage';
+import RegisterPage from './Auth/pages/AuthRegisterPage';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+// Import components
 import Navbar from './Nav/components/Navbar';
+
+// Import Actions
+import { loginSuccess } from './Auth/AuthActions';
 
 const theme = createMuiTheme({
     palette: {
@@ -18,28 +26,34 @@ const theme = createMuiTheme({
     },
 });
 
-function App(props) {
-  return (
+function App() {
+    const dispatch = useDispatch();
+    
+    useEffect(() => {
+        const token = Cookies.get('jwt');
+        if (token) {
+            dispatch(loginSuccess(token));
+        }
+    }, []);
+
+    return (
       <ThemeProvider theme={theme}>
           <div className="w-100">
-              <Navbar />
-              <div className="w-100 pt-5 mt-5">
-                  <Provider store={props.store}>
+              <div className="w-100 pt-5">
                     <BrowserRouter>
+                      <Navbar />
                       <Switch>
                           <Route path="/" exact component={PostListPage} />
+                          <Route path="/login" exact component={LoginPage} />
+                          <Route path="/register" exact component={RegisterPage} />
                           <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
+                          <Redirect from="*" to="/" />
                       </Switch>
-                    </BrowserRouter>
-                  </Provider>
+                    </BrowserRouter> 
               </div>
           </div>
       </ThemeProvider>
-);
+    );
 }
-
-App.propTypes = {
-    store: PropTypes.object.isRequired,
-};
 
 export default App;
