@@ -43,11 +43,11 @@ const PostListPage = () => {
       </div>
       <hr />
       <div className="row">
-        <div className="col-6">
+        <div className="col-md-6">
           <PostCreateWidget addPost={handleAddPost} />
         </div>
-        <div className="col-6">
-          {posts && (
+        <div className="col-md-6">
+          {!!posts && (
             <PostList handleDeletePost={handleDeletePost} posts={posts} />
           )}
         </div>
