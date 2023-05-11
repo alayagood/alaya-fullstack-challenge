@@ -17,11 +17,13 @@ const usePost = () => {
   };
 
   const addImgToPost = (img) => {
-    setPost({
+    setPost((post) => ({
       ...post,
       images: [...post.images, img],
-    });
+    }));
+    console.log(post.images);
   };
+
   const togglePostImg = (img) => {
     const imgs = post.images;
     const pos = imgs.indexOf(img);

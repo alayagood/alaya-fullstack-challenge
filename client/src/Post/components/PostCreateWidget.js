@@ -14,6 +14,7 @@ import callApi from "../../util/apiCaller";
 
 import usePost from "../hooks/usePost";
 import useImages from "../hooks/useImages";
+import useHandleRequestError from "../hooks/useHandleRequestError";
 
 // Import Style
 
@@ -29,10 +30,12 @@ const PostCreateWidget = ({addPost}) => {
   const {user} = useSelector((state) => getUser(state));
 
   const [images, setImages] = useImages();
-  const [error, updateError] = useState();
-  const [modalOpen, setModalOpen] = useState(false);
-
   const {post, updatePost, resetPost, addImgToPost, togglePostImg} = usePost();
+
+  const {error, setError, handleCatchError, resetError} =
+    useHandleRequestError();
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   const classes = useStyles();
 
@@ -47,10 +50,13 @@ const PostCreateWidget = ({addPost}) => {
   );
 
   const submit = () => {
+    resetError();
     if (post.name && post.title && post.content) {
-      addPost(post).then(() => {
-        resetPost({name: user.name});
-      });
+      addPost(post)
+        .then(() => {
+          resetPost({name: user.name});
+        })
+        .catch(handleCatchError);
     }
   };
 
@@ -60,9 +66,11 @@ const PostCreateWidget = ({addPost}) => {
   };
 
   function handleOnUpload(error, result, widget) {
+    resetError();
     const path = result?.info?.secure_url;
     if (error || !path) {
-      updateError(error);
+      setError("Error uploading file.");
+
       widget.close({
         quiet: true,
       });
@@ -78,7 +86,8 @@ const PostCreateWidget = ({addPost}) => {
       .then(({images}) => {
         setImages(images);
         addImgToPost(path);
-      });
+      })
+      .catch(handleCatchError);
   }
 
   return (
@@ -117,31 +126,31 @@ const PostCreateWidget = ({addPost}) => {
           }
           return (
             <Button variant="outlined" onClick={handleOnClick}>
-              <i class="bi bi-cloud-arrow-up bi-cloud-arrow-up-lg pr-2"></i>
+              <i className="bi bi-cloud-arrow-up bi-cloud-arrow-up-lg pr-2"></i>
               Upload Images
             </Button>
           );
         }}
       </UploadWidget>
 
-      {error && <p>{error}</p>}
       {!!images.length && (
         <Button variant="outlined" onClick={() => setModalOpen(true)}>
           Add images to post{" "}
           {!!post.images?.length && `(${post.images.length} added)`}
         </Button>
       )}
-
-      <Button
-        className="mt-4"
-        variant="contained"
-        color="primary"
-        onClick={() => submit()}
-        disabled={!post.name || !post.title || !post.content}
-      >
-        Submit
-      </Button>
-
+      <div className="text-center">
+        {error && <div className="text-danger mb-3">{error}</div>}
+        <Button
+          className="mt-4"
+          variant="contained"
+          color="primary"
+          onClick={() => submit()}
+          disabled={!post.name || !post.title || !post.content}
+        >
+          Submit
+        </Button>
+      </div>
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
