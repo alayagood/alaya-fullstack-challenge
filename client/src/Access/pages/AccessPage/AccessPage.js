@@ -43,7 +43,7 @@ const AcccessPage = () => {
                     [tabs.login, "Log in"],
                     [tabs.signup, "Sign up"],
                   ].map(([tabValue, tabName]) => (
-                    <div className="col-md-6 text-center">
+                    <div key={tabName} className="col-md-6 text-center">
                       <LinkButton onClick={(e) => handleClick(e, tabValue)}>
                         {tabName}
                       </LinkButton>
