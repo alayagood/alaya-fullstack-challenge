@@ -4,7 +4,7 @@ const {jwtAuth} = require("../middleware/auth");
 const router = express.Router();
 const ImageController = require("../controllers/image.controller");
 
-// Get all Posts
+// Get all Images
 router.route("/images").get(jwtAuth, ImageController.getImages);
 
 // Add a new Image

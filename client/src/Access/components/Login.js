@@ -24,7 +24,9 @@ function Login() {
         history.push("/");
       })
       .catch((err) => {
-        setSubmitError(err.json.message);
+        const message = err?.json?.message || err?.message;
+
+        setSubmitError(message || "Unkown error");
       })
       .finally(() => {
         setSubmitting(false);

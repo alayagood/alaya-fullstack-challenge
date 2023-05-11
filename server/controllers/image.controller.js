@@ -36,7 +36,7 @@ addImage = async (req, res) => {
     if (err) {
       return res.status(500).send(err);
     }
-    res.json({post: saved});
+    res.json({images: saved});
   });
 };
 
