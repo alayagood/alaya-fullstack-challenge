@@ -5,7 +5,7 @@ import "./ModalContent.css";
 const ModalContent = React.forwardRef(({children, onModalClose}, ref) => (
   <Card ref={ref} className="modalContent">
     <span onClick={onModalClose}>
-      <i class="bi bi-x-lg cursorPointer"></i>
+      <i className="bi bi-x-lg cursorPointer"></i>
     </span>
     {children}
   </Card>

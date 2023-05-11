@@ -14,6 +14,7 @@ function ImageList({images, selectedImgs, toggleSelectImg, closeModal}) {
       <div className="d-flex flex-wrap justify-content-center wrapper">
         {images.map(({path}) => (
           <div
+            key={path}
             className={`image cursorPointer d-flex align-items-center m-2 p-2 border  ${
               isImgSelected(path) ? "border-success" : "border-light"
             }`}

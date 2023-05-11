@@ -5,7 +5,6 @@ import {useFormik} from "formik";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import * as Yup from "yup";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
