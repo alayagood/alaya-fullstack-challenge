@@ -7,9 +7,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useSelector} from "react-redux";
 import {getUser} from "../../Access/AccessReducer";
 import UploadWidget from "../../util/components/CloudinaryUploadWidget";
-import ModalContent from "../../util/components/ModalContent";
-
-import ImageList from "./ImageList";
+import RichTextEditor from "./RichTextEditor";
 import callApi from "../../util/apiCaller";
 
 import usePost from "../hooks/usePost";
@@ -17,7 +15,6 @@ import useImages from "../hooks/useImages";
 import useHandleRequestError from "../hooks/useHandleRequestError";
 
 // Import Style
-
 const useStyles = makeStyles((theme) => ({
   root: {
     "& > *": {
@@ -30,12 +27,10 @@ const PostCreateWidget = ({addPost}) => {
   const {user} = useSelector((state) => getUser(state));
 
   const [images, setImages] = useImages();
-  const {post, updatePost, resetPost, addImgToPost, togglePostImg} = usePost();
+  const {post, updatePost, resetPost} = usePost();
 
   const {error, setError, handleCatchError, resetError} =
     useHandleRequestError();
-
-  const [modalOpen, setModalOpen] = useState(false);
 
   const classes = useStyles();
 
@@ -85,7 +80,6 @@ const PostCreateWidget = ({addPost}) => {
       })
       .then(({images}) => {
         setImages(images);
-        addImgToPost(path);
       })
       .catch(handleCatchError);
   }
@@ -117,6 +111,10 @@ const PostCreateWidget = ({addPost}) => {
         onChange={handleChange}
         value={post.content}
       />
+      <RichTextEditor
+        images={images}
+        setContent={(content) => updatePost("content", content)}
+      />
 
       <UploadWidget onUpload={handleOnUpload}>
         {({open}) => {
@@ -133,12 +131,6 @@ const PostCreateWidget = ({addPost}) => {
         }}
       </UploadWidget>
 
-      {!!images.length && (
-        <Button variant="outlined" onClick={() => setModalOpen(true)}>
-          Add images to post{" "}
-          {!!post.images?.length && `(${post.images.length} added)`}
-        </Button>
-      )}
       <div className="text-center">
         {error && <div className="text-danger mb-3">{error}</div>}
         <Button
@@ -151,21 +143,6 @@ const PostCreateWidget = ({addPost}) => {
           Submit
         </Button>
       </div>
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <ModalContent onModalClose={() => setModalOpen(false)}>
-          <ImageList
-            images={images}
-            selectedImgs={post.images}
-            toggleSelectImg={togglePostImg}
-            closeModal={() => setModalOpen(false)}
-          />
-        </ModalContent>
-      </Modal>
     </div>
   );
 };

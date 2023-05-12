@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-const initialState = {images: [], name: "", title: "", content: ""};
+const initialState = {name: "", title: "", content: ""};
 
 const usePost = () => {
   const [post, setPost] = useState(initialState);
@@ -16,28 +16,7 @@ const usePost = () => {
     setPost({...initialState, ...defaultValues});
   };
 
-  const addImgToPost = (img) => {
-    setPost((post) => ({
-      ...post,
-      images: [...post.images, img],
-    }));
-    console.log(post.images);
-  };
-
-  const togglePostImg = (img) => {
-    const imgs = post.images;
-    const pos = imgs.indexOf(img);
-    if (pos === -1) {
-      addImgToPost(img);
-    } else {
-      setPost({
-        ...post,
-        images: [...post.images.slice(0, pos), ...post.images.slice(pos + 1)],
-      });
-    }
-  };
-
-  return {post, updatePost, resetPost, addImgToPost, togglePostImg};
+  return {post, updatePost, resetPost};
 };
 
 export default usePost;

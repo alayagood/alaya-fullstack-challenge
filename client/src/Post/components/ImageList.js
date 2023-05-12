@@ -2,23 +2,16 @@ import React from "react";
 import {Button} from "@material-ui/core";
 import "./ImageList.css";
 
-function ImageList({images, selectedImgs, toggleSelectImg, closeModal}) {
-  const isImgSelected = (img) => selectedImgs.includes(img);
-
+function ImageList({images, handleImageSelection, closeModal}) {
   return (
     <div>
-      <div className="imagesListHeader">
-        Select images to add to the post:
-        <span>{selectedImgs.length} added</span>
-      </div>
+      <div className="imagesListHeader">Select an image to add</div>
       <div className="d-flex flex-wrap justify-content-center wrapper">
         {images.map(({path}) => (
           <div
             key={path}
-            className={`image cursorPointer d-flex align-items-center m-2 p-2 border  ${
-              isImgSelected(path) ? "border-success" : "border-light"
-            }`}
-            onClick={() => toggleSelectImg(path)}
+            className="image cursorPointer d-flex align-items-center m-2 p-2 border border-light"
+            onClick={() => handleImageSelection(path)}
           >
             {/* eslint-disable-next-line */}
             <img src={path} width="100%" />
