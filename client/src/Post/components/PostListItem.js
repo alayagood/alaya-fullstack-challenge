@@ -6,6 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
+import "./PostListItem.css";
 
 function PostListItem({post, onDelete, showDeleteLink}) {
   return (
@@ -14,8 +15,8 @@ function PostListItem({post, onDelete, showDeleteLink}) {
         <Typography gutterBottom variant="h5" component="h2">
           <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
         </Typography>
-        <Typography component="p" className="mt-3">
-          {post.content}
+        <Typography component="p" className="mt-3 textPreview">
+          {post.excerpt}
         </Typography>
         <Typography
           color="textSecondary"

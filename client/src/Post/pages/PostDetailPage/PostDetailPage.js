@@ -1,5 +1,7 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
+import "./PostDetailPage.css";
+
 // Import Actions
 import {fetchPost} from "../../PostActions";
 // Import Selectors
@@ -22,7 +24,10 @@ export function PostDetailPage() {
         <div className="col-12">
           <h1>{post.title}</h1>
           <p>By {post.name}</p>
-          <p>{post.content}</p>
+          <div
+            className="postDetail"
+            dangerouslySetInnerHTML={{__html: post.content}}
+          />
         </div>
       </div>
     </div>
