@@ -50,7 +50,7 @@ const PostListPage = () => {
             <PostCreateWidget addPost={handleAddPost} />
           </div>
           <div className="col-md-6">
-            {posts && (
+            {!!posts?.length && (
               <PostList handleDeletePost={handleDeletePost} posts={posts} />
             )}
           </div>
