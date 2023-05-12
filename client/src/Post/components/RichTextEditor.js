@@ -1,8 +1,10 @@
 import React, {useState, useRef} from "react";
 import ImageList from "./ImageList";
 import Modal from "@material-ui/core/Modal";
+import Button from "@material-ui/core/Button";
 import ModalContent from "../../util/components/ModalContent";
 import {stateToHTML} from "draft-js-export-html";
+import "./RichTextEditor.css";
 
 import {Editor, EditorState, RichUtils, AtomicBlockUtils} from "draft-js";
 
@@ -60,21 +62,23 @@ const RichTextEditor = ({images, setContent}) => {
 
   return (
     <div>
-      {!!images.length && (
-        <div>
-          <button onClick={handleCustomButtonClick}>Select Image</button>
-        </div>
-      )}
-      <div>
-        <button onClick={() => handleToolbarButtonClick("BOLD")}>Bold</button>
-        <button onClick={() => handleToolbarButtonClick("ITALIC")}>
-          Italic
-        </button>
-        <button onClick={() => handleToolbarButtonClick("UNDERLINE")}>
-          Underline
-        </button>
+      <div className="buttons">
+        <Button onClick={() => handleToolbarButtonClick("BOLD")}>
+          <i className="bi bi-type-bold"></i>
+        </Button>
+        <Button onClick={() => handleToolbarButtonClick("ITALIC")}>
+          <i className="bi bi-type-italic"></i>
+        </Button>
+        <Button onClick={() => handleToolbarButtonClick("UNDERLINE")}>
+          <i className="bi bi-type-underline"></i>
+        </Button>
+        {!!images.length && (
+          <Button onClick={handleCustomButtonClick}>
+            <i className="bi bi-file-image"></i>
+          </Button>
+        )}
       </div>
-      <div style={{border: "1px solid green"}}>
+      <div className="editorArea">
         <Editor
           ref={editorRef}
           editorState={editorState}
