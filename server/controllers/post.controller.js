@@ -30,12 +30,20 @@ addPost = async (req, res) => {
   if (!req.body.post || !req.body.post.title || !req.body.post.content) {
     return res.status(400).end();
   }
+  const maxLength = 500;
+
+  const removeAllHtmlTags = (content) =>
+    sanitizeHtml(content, {allowedTags: []});
 
   const newPost = new Post(req.body.post);
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
-  newPost.content = sanitizeHtml(newPost.content);
+  newPost.excerpt = removeAllHtmlTags(newPost.content).slice(0, maxLength);
+
+  newPost.content = sanitizeHtml(newPost.content, {
+    allowedTags: ["p", "b", "u", "em", "strong", "img", "figure"],
+  });
 
   newPost.slug = slug(newPost.title.toLowerCase(), {lowercase: true});
   newPost.cuid = cuid();
