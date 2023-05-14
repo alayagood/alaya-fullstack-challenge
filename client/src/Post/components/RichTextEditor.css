@@ -1,0 +1,16 @@
+.buttons {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 5px;
+}
+
+.buttons > * {
+  border: 1px solid red;
+}
+
+.editorArea {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  background-color: rgba(0, 0, 0, 0.09);
+  padding: 10px;
+  min-height: 300px;
+}
