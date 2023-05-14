@@ -1,10 +1,8 @@
 import React from "react";
-import {render, waitFor, fireEvent, screen} from "@testing-library/react";
+import {render, fireEvent, screen} from "@testing-library/react";
 
 import {MemoryRouter, Router} from "react-router-dom";
 import {createMemoryHistory} from "history";
-import {useFormik} from "formik";
-import * as Yup from "yup";
 import callApi from "../../util/apiCaller";
 import Login from "./Login";
 import {act} from "react-dom/test-utils";

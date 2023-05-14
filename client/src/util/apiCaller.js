@@ -1,6 +1,6 @@
 import fetch from "isomorphic-fetch";
 
-export const API_URL = "http://localhost:3000/api";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default async function request(endpoint, method = "get", body) {
   const url = `${API_URL}/${endpoint}`;

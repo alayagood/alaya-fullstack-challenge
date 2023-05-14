@@ -5,13 +5,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const app = express();
-const apiPort = 3000;
+const apiPort = process.env.API_PORT;
 const db = require("./db");
 const posts = require("./routes/post.routes");
 const access = require("./routes/access.routes");
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cors({credentials: true, origin: "http://localhost:8000"}));
+app.use(cors({credentials: true, origin: process.env.APP_SERVER}));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
