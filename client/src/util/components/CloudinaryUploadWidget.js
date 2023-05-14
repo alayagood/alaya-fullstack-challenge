@@ -40,8 +40,8 @@ const UploadWidget = ({children, onUpload}) => {
     // about unsigned uploads at: https://cloudinary.com/documentation/upload_images#unsigned_upload
 
     const options = {
-      cloudName: "ddjqymjs1", // Ex: mycloudname
-      uploadPreset: "vgi8md6n", // Ex: myuploadpreset
+      cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
+      uploadPreset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
       sources: [
         "local",
         "url",
