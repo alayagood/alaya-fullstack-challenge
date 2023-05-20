@@ -15,7 +15,7 @@ const authenticate = async (req, res) => {
 
     // Validate username
     if (!user)
-      return res.status(403).json({
+      return res.status(404).json({
         success: false,
         message: "Unknown user",
       });
@@ -44,12 +44,20 @@ const createUser = async (req, res) => {
 
   // Basic validation
   if (!user?.username || !user?.password)
-    return res.status(403).json({
+    return res.status(400).json({
       success: false,
       message: "Missing username and/or password",
     });
 
   try {
+    // Check for existing user
+    const existingUser = User.findOne({ username: user.usernane }).exec();
+    if (existingUser)
+      return res.status(409).json({
+        success: false,
+        message: "Username already exists",
+      });
+
     // Create new user
     const newUser = new User({ ...user, id: cuid() });
     newUser.save();
