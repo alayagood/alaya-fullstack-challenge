@@ -2,6 +2,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
+
 import { useForm } from "../../../hooks/useForm";
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +25,7 @@ const UserLoginPage = () => {
     isFormDisabled,
     hasError,
     errorMessage,
-  } = useForm((formData) => {
+  } = useForm(function submitForm(formData) {
     console.log(formData);
   }, requiredFields);
 
@@ -36,6 +37,7 @@ const UserLoginPage = () => {
     >
       <h3>Login</h3>
       <TextField
+        autoFocus
         variant="filled"
         label="Username"
         name="username"

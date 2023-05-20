@@ -1,6 +1,11 @@
 import { useState } from "react";
 
-export const useForm = (onSubmit, requiredFields, initialState) => {
+export const useForm = (
+  onSubmit,
+  requiredFields,
+  validateForm,
+  initialState
+) => {
   const [formData, setFormData] = useState(initialState || {});
   const [error, setError] = useState(null);
 
@@ -18,11 +23,19 @@ export const useForm = (onSubmit, requiredFields, initialState) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      if (isFormDisabled) {
-        console.error("Attempted to submit invalid form data", formData);
+    if (validateForm) {
+      const validation = validateForm(formData);
+      if (typeof validation === "string") {
+        setError(validation);
         return;
       }
+    }
+    try {
+      if (isFormDisabled) {
+        console.error("Invalid form data", formData);
+        return;
+      }
+      setError(null);
       onSubmit(formData);
     } catch (err) {
       console.error(err);
@@ -37,6 +50,6 @@ export const useForm = (onSubmit, requiredFields, initialState) => {
     handleSubmit,
     isFormDisabled,
     hasError: !!error,
-    error,
+    errorMessage: error,
   };
 };
