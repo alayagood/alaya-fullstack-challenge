@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
+import { useForm } from "../../../hooks/useForm";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,32 +15,18 @@ const useStyles = makeStyles((theme) => ({
 
 const UserLoginPage = () => {
   const classes = useStyles();
-  const [formValues, setFormValues] = useState({});
-  const [error, setError] = useState(null);
 
   const requiredFields = ["username", "password"];
 
-  const handleChange = (evt) => {
-    const value = evt.target.value;
-    setFormValues({
-      ...formValues,
-      [evt.target.name]: value,
-    });
-  };
-
-  const isFormDisabled = requiredFields.reduce((hasAllValues, key) => {
-    const hasValue = !!formValues?.[key]?.length;
-    return hasAllValues && hasValue;
-  }, true);
-
-  const handleSubmit = useCallback(() => {
-    if (isFormDisabled) return;
-    console.log(formValues);
-  }, [formValues, isFormDisabled]);
-
-  const handleError = (err) => {
-    setError(err);
-  };
+  const {
+    handleInputChange,
+    handleSubmit,
+    isFormDisabled,
+    hasError,
+    errorMessage,
+  } = useForm((formData) => {
+    console.log(formData);
+  }, requiredFields);
 
   return (
     <form
@@ -52,14 +39,16 @@ const UserLoginPage = () => {
         variant="filled"
         label="Username"
         name="username"
-        onChange={handleChange}
+        required
+        onChange={handleInputChange}
       />
       <TextField
         type="password"
         variant="filled"
         label="Password"
         name="password"
-        onChange={handleChange}
+        required
+        onChange={handleInputChange}
       />
       <Button
         type="submit"
@@ -70,7 +59,7 @@ const UserLoginPage = () => {
       >
         Login
       </Button>
-      {!!error && <div className="mt-4 text-danger">{error}</div>}
+      {hasError && <div className="mt-4 text-danger">{errorMessage}</div>}
     </form>
   );
 };
