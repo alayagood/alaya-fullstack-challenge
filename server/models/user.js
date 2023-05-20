@@ -9,7 +9,7 @@ const userSchema = new Schema({
 });
 
 // Handle user save (eg. password hashing)
-userSchema.pre("save", async (next) => {
+userSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password") || user.isNew) {
     try {
@@ -26,12 +26,8 @@ userSchema.pre("save", async (next) => {
 });
 
 // Password validation method
-userSchema.method("isCorrectPassword", async (password, onError) => {
-  try {
-    return await bcrypt.compare(password, this.password);
-  } catch (error) {
-    onError(error);
-  }
+userSchema.method("isCorrectPassword", async function (password) {
+  return await bcrypt.compare(password, this.password);
 });
 
 const User = mongoose.model("User", userSchema);

@@ -21,7 +21,6 @@ const authenticate = async (req, res) => {
       });
 
     // Validate password
-    console.log(user);
     const isCorrectPassword = await user.isCorrectPassword(password);
     if (!isCorrectPassword)
       return res.status(403).json({

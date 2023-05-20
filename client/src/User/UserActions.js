@@ -1,6 +1,7 @@
 import callApi from "../util/apiCaller";
 
 export const SET_USER = "SET_USER";
+export const SET_ERROR = "SET_ERROR";
 const TOKEN_KEY = "token";
 
 export function getToken() {
@@ -14,7 +15,14 @@ function setToken(token) {
 export function setUser(user) {
   return {
     type: SET_USER,
-    payload: { user },
+    payload: user,
+  };
+}
+
+export function setError(error) {
+  return {
+    type: SET_ERROR,
+    payload: error,
   };
 }
 
@@ -30,7 +38,7 @@ export function authenticateUser(user) {
       dispatch(setUser({ id, username }));
     } catch (err) {
       console.error(err);
-      // dispatch error action here
+      dispatch(setError("TODO: get error from response"));
     }
   };
 }
@@ -47,7 +55,7 @@ export function createNewUser(user) {
       dispatch(setUser({ id, username }));
     } catch (err) {
       console.error(err);
-      // dispatch error action here
+      dispatch(setError("TODO: get error from response"));
     }
   };
 }

@@ -1,13 +1,16 @@
-import { SET_USER } from "./UserActions";
+import { SET_USER, SET_ERROR } from "./UserActions";
 
 const initialState = {
-  user: null,
+  account: null,
+  error: null,
 };
 
 const UserReducer = (state = initialState, action) => {
   switch (action) {
     case SET_USER:
-      return action.payload;
+      return { account: action.payload, error: null };
+    case SET_ERROR:
+      return { account: null, error: action.payload };
   }
   return state;
 };
