@@ -39,8 +39,18 @@ function App(props) {
                     exact
                     component={PostDetailPage}
                   />
-                  <Route path="/login" exact component={UserLoginPage} />
-                  <Route path="/signup" exact component={UserSignupPage} />
+                  <ProtectedRoute
+                    inverse
+                    path="/login"
+                    exact
+                    component={UserLoginPage}
+                  />
+                  <ProtectedRoute
+                    inverse
+                    path="/signup"
+                    exact
+                    component={UserSignupPage}
+                  />
                 </Switch>
               </BrowserRouter>
             </Provider>

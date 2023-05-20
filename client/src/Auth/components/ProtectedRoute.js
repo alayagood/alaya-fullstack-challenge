@@ -4,16 +4,18 @@ import PropTypes from "prop-types";
 
 import { useAuth } from "./AuthProvider";
 
-const ProtectedRoute = ({ path, exact, component }) => {
+const ProtectedRoute = ({ path, exact, component, inverse }) => {
   const { isLoggedIn } = useAuth();
-  if (!isLoggedIn) return <Redirect to="/login" />;
+  if (inverse && isLoggedIn) return <Redirect to="/" />;
+  if (!inverse && !isLoggedIn) return <Redirect to="/login" />;
   return <Route path={path} exact={exact} component={component} />;
 };
 
 ProtectedRoute.propTypes = {
-  path: PropTypes.string,
+  component: PropTypes.elementType.isRequired,
+  path: PropTypes.string.isRequired,
+  inverse: PropTypes.bool,
   exact: PropTypes.bool,
-  component: PropTypes.elementType,
 };
 
 export default ProtectedRoute;
