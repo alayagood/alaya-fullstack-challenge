@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
@@ -65,6 +66,9 @@ const UserLoginPage = () => {
         Login
       </Button>
       {hasError && <div className="mt-4 text-danger">{errorMessage}</div>}
+      <div className="mt-4">
+        No account yet? <Link to="/signup">Sign up</Link>
+      </div>
     </form>
   );
 };
