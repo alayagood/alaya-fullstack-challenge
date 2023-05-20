@@ -1,9 +1,11 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useForm } from "../../../hooks/useForm";
+import { createNewUser } from "../../UserActions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const UserSignupPage = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const requiredFields = ["username", "password", "passwordVerify"];
 
@@ -27,15 +30,20 @@ const UserSignupPage = () => {
     errorMessage,
   } = useForm(
     function submitForm(formData) {
-      console.log(formData);
+      dispatch(createNewUser(formData));
     },
     requiredFields,
     function validateForm(formData) {
       const { password, passwordVerify } = formData;
       if (password !== passwordVerify) return "Passwords do not match";
-      if (password.length < 6)
+      if (password.length < 4)
         return "Password should be at least 6 characters"; // TODO: backend validation
       return true;
+    },
+    {
+      username: "test",
+      password: "test",
+      passwordVerify: "test",
     }
   );
 
@@ -47,6 +55,7 @@ const UserSignupPage = () => {
     >
       <h3>Sign up</h3>
       <TextField
+        defaultValue="test"
         autoFocus
         variant="filled"
         label="Username"
@@ -55,6 +64,7 @@ const UserSignupPage = () => {
         onChange={handleInputChange}
       />
       <TextField
+        defaultValue="test"
         type="password"
         variant="filled"
         label="Password"
@@ -63,6 +73,7 @@ const UserSignupPage = () => {
         onChange={handleInputChange}
       />
       <TextField
+        defaultValue="test"
         type="password"
         variant="filled"
         label="Password (again)"

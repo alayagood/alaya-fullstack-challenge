@@ -1,19 +1,10 @@
-const jwt = require("jsonwebtoken");
 const express = require("express");
-const { getUser } = require("../controllers/user.controller");
+const UserController = require("../controllers/user.controller");
 
 const router = express.Router();
 
-router.post("/login", async (req, res) => {
-  const user = getUser();
+router.post("/users/authenticate", UserController.authenticate);
 
-  // Create JWT token
-  const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-  res.json({
-    message: 'Authenticated! Use this token in the "Authorization" header',
-    token: token,
-  });
-});
+router.post("/users/create", UserController.createUser);
 
 module.exports = router;

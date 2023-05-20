@@ -3,10 +3,9 @@ const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  id: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  created_at: { type: Date, default: Date.now },
 });
 
 // Handle user save (eg. password hashing)
