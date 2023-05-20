@@ -40,10 +40,10 @@ const authenticate = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { user } = req.body;
+  const { username, password } = req.body;
 
   // Basic validation
-  if (!user?.username || !user?.password)
+  if (!username || !password)
     return res.status(400).json({
       success: false,
       message: "Missing username and/or password",
@@ -51,7 +51,7 @@ const createUser = async (req, res) => {
 
   try {
     // Check for existing user
-    const existingUser = User.findOne({ username: user.usernane }).exec();
+    const existingUser = User.findOne({ username }).exec();
     if (existingUser)
       return res.status(409).json({
         success: false,
@@ -59,7 +59,7 @@ const createUser = async (req, res) => {
       });
 
     // Create new user
-    const newUser = new User({ ...user, id: cuid() });
+    const newUser = new User({ username, password, id: cuid() });
     newUser.save();
 
     // Respond with new token

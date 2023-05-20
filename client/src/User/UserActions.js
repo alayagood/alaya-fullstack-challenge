@@ -1,25 +1,53 @@
 import callApi from "../util/apiCaller";
 
-export const ADD_USER = "ADD_USER";
+export const SET_USER = "SET_USER";
+const TOKEN_KEY = "token";
+
+export function getToken() {
+  return window.localStorage.getItem(TOKEN_KEY);
+}
+
+function setToken(token) {
+  return window.localStorage.setItem(TOKEN_KEY, token);
+}
 
 export function setUser(user) {
-  // Set JWT
   return {
-    type: ADD_USER,
-    user,
+    type: SET_USER,
+    payload: { user },
+  };
+}
+
+export function authenticateUser(user) {
+  return async (dispatch) => {
+    try {
+      const res = await callApi("users/authenticate", "post", {
+        username: user.username,
+        password: user.password,
+      });
+      const { id, username, token } = res;
+      setToken(token);
+      dispatch(setUser({ id, username }));
+    } catch (err) {
+      console.error(err);
+      // dispatch error action here
+    }
   };
 }
 
 export function createNewUser(user) {
-  console.log("addUserRequest");
   return async (dispatch) => {
-    const res = await callApi("users/create", "post", {
-      user: {
+    try {
+      const res = await callApi("users/create", "post", {
         username: user.username,
         password: user.password,
-      },
-    });
-    console.log(res);
-    dispatch(setUser(res.user));
+      });
+      const { id, username, token } = res;
+      setToken(token);
+      dispatch(setUser({ id, username }));
+    } catch (err) {
+      console.error(err);
+      // dispatch error action here
+    }
   };
 }
