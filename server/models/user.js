@@ -26,13 +26,13 @@ userSchema.pre("save", async (next) => {
 });
 
 // Password validation method
-userSchema.methods.isCorrectPassword = async (password, onError) => {
+userSchema.method("isCorrectPassword", async (password, onError) => {
   try {
     return await bcrypt.compare(password, this.password);
   } catch (error) {
     onError(error);
   }
-};
+});
 
 const User = mongoose.model("User", userSchema);
 

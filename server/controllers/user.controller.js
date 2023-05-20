@@ -11,7 +11,7 @@ const authenticate = async (req, res) => {
 
   try {
     // Find user
-    const user = User.findOne({ username }).exec();
+    const user = await User.findOne({ username }).exec();
 
     // Validate username
     if (!user)
@@ -21,7 +21,8 @@ const authenticate = async (req, res) => {
       });
 
     // Validate password
-    const isCorrectPassword = user.isCorrectPassword(password);
+    console.log(user);
+    const isCorrectPassword = await user.isCorrectPassword(password);
     if (!isCorrectPassword)
       return res.status(403).json({
         success: false,
@@ -35,6 +36,7 @@ const authenticate = async (req, res) => {
       token: createJwt(user.id),
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).send(err);
   }
 };
@@ -51,7 +53,7 @@ const createUser = async (req, res) => {
 
   try {
     // Check for existing user
-    const existingUser = User.findOne({ username }).exec();
+    const existingUser = await User.findOne({ username }).exec();
     if (existingUser)
       return res.status(409).json({
         success: false,
@@ -69,6 +71,7 @@ const createUser = async (req, res) => {
       token: createJwt(newUser.cuid),
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).send(err);
   }
 };

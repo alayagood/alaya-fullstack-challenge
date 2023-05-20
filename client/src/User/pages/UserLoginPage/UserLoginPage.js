@@ -1,9 +1,11 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useForm } from "../../../hooks/useForm";
+import { authenticateUser } from "../../UserActions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UserLoginPage = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
 
   const requiredFields = ["username", "password"];
@@ -26,7 +29,7 @@ const UserLoginPage = () => {
     hasError,
     errorMessage,
   } = useForm(function submitForm(formData) {
-    console.log(formData);
+    dispatch(authenticateUser(formData));
   }, requiredFields);
 
   return (
