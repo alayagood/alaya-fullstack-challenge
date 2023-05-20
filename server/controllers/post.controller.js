@@ -1,7 +1,9 @@
-const Post = require('../models/post');
-const cuid = require('cuid');
-const slug = require('limax');
-const sanitizeHtml = require('sanitize-html');
+const Post = require("../models/post");
+const cuid = require("cuid");
+const slug = require("limax");
+const sanitizeHtml = require("sanitize-html");
+
+// TODO: add middleware for authenticating user JWT
 
 /**
  * Get all posts
@@ -9,13 +11,15 @@ const sanitizeHtml = require('sanitize-html');
  * @param res
  * @returns void
  */
-getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ posts });
-  });
+const getPosts = async (req, res) => {
+  Post.find()
+    .sort("-dateAdded")
+    .exec((err, posts) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      res.json({ posts });
+    });
 };
 
 /**
@@ -24,7 +28,7 @@ getPosts = async (req, res) => {
  * @param res
  * @returns void
  */
-addPost = async (req, res) => {
+const addPost = async (req, res) => {
   if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
     res.status(403).end();
   }
@@ -52,7 +56,7 @@ addPost = async (req, res) => {
  * @param res
  * @returns void
  */
-getPost = async (req, res) => {
+const getPost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
@@ -67,7 +71,7 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
+const deletePost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
@@ -83,5 +87,5 @@ module.exports = {
   getPosts,
   addPost,
   getPost,
-  deletePost
+  deletePost,
 };
