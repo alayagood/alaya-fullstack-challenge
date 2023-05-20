@@ -6,11 +6,11 @@ const initialState = {
 };
 
 const UserReducer = (state = initialState, action) => {
-  switch (action) {
+  switch (action.type) {
     case SET_USER:
-      return { account: action.payload, error: null };
+      return { account: action.user, error: null };
     case SET_ERROR:
-      return { account: null, error: action.payload };
+      return { account: null, error: action.error };
   }
   return state;
 };

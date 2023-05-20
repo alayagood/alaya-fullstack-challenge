@@ -33,6 +33,7 @@ const authenticate = async (req, res) => {
       success: true,
       username: user.username,
       token: createJwt(user.id),
+      id: user.id,
     });
   } catch (err) {
     console.error(err);
@@ -68,6 +69,7 @@ const createUser = async (req, res) => {
       success: true,
       username: newUser.username,
       token: createJwt(newUser.cuid),
+      id: newUser.id,
     });
   } catch (err) {
     console.error(err);

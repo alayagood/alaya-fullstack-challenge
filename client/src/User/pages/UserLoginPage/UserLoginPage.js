@@ -31,9 +31,14 @@ const UserLoginPage = () => {
     isFormDisabled,
     hasError,
     errorMessage,
-  } = useForm(function submitForm(formData) {
-    dispatch(authenticateUser(formData));
-  }, requiredFields);
+  } = useForm(
+    function submitForm(formData) {
+      dispatch(authenticateUser(formData));
+    },
+    requiredFields,
+    undefined,
+    { username: "test", password: "test" }
+  );
 
   return (
     <form
@@ -43,6 +48,7 @@ const UserLoginPage = () => {
     >
       <h3>Login</h3>
       <TextField
+        defaultValue="test"
         autoFocus
         variant="filled"
         label="Username"
@@ -51,6 +57,7 @@ const UserLoginPage = () => {
         onChange={handleInputChange}
       />
       <TextField
+        defaultValue="test"
         type="password"
         variant="filled"
         label="Password"

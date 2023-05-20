@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Provider } from "react-redux";
-import { Route, BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 
 import AuthProvider from "./Auth/components/AuthProvider";

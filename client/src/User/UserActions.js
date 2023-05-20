@@ -15,14 +15,14 @@ function setToken(token) {
 export function setUser(user) {
   return {
     type: SET_USER,
-    payload: user,
+    user,
   };
 }
 
 export function setError(error) {
   return {
     type: SET_ERROR,
-    payload: error,
+    error,
   };
 }
 
