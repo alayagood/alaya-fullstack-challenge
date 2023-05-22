@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const cuid = require("cuid");
 const User = require("../models/user");
 require("dotenv").config();
 
@@ -31,7 +30,7 @@ const authenticate = async (req, res) => {
     // Respond with new token
     return res.json({
       success: true,
-      token: createJwt({ username: user.username, id: user.id }),
+      token: createJwt({ username: user.username, id: user._id }),
     });
   } catch (err) {
     console.error(err);
@@ -59,13 +58,13 @@ const createUser = async (req, res) => {
       });
 
     // Create new user
-    const newUser = new User({ username, password, id: cuid() });
+    const newUser = new User({ username, password });
     newUser.save();
 
     // Respond with new token
     return res.json({
       success: true,
-      token: createJwt({ username: newUser.username, id: newUser.id }),
+      token: createJwt({ username: newUser.username, id: newUser._id }),
     });
   } catch (err) {
     console.error(err);

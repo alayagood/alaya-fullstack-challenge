@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const { hashPassword, validatePassword } = require("../utils/password");
 
 const userSchema = new Schema({
-  id: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 });

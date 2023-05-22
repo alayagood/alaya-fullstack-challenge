@@ -3,8 +3,6 @@ const cuid = require("cuid");
 const slug = require("limax");
 const sanitizeHtml = require("sanitize-html");
 
-// TODO: add middleware for authenticating user JWT
-
 /**
  * Get all posts
  * @param req
@@ -42,9 +40,12 @@ const addPost = async (req, res) => {
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
+  newPost.userID = req.session.id;
   newPost.save((err, saved) => {
     if (err) {
+      console.error(err);
       res.status(500).send(err);
+      return;
     }
     res.json({ post: saved });
   });
@@ -76,6 +77,9 @@ const deletePost = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
+
+    // Permit only post owner to delete it
+    if (post.userID != req.session.id) return res.status(403).end();
 
     post.remove(() => {
       res.status(200).end();
