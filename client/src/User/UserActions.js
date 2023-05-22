@@ -1,21 +1,13 @@
 import callApi from "../util/apiCaller";
+import { getUserInfo, setToken, unsetToken } from "../util/token";
 
 export const SET_USER = "SET_USER";
 export const SET_ERROR = "SET_ERROR";
-const TOKEN_KEY = "token";
 
-export function getToken() {
-  return window.localStorage.getItem(TOKEN_KEY);
-}
-
-function setToken(token) {
-  return window.localStorage.setItem(TOKEN_KEY, token);
-}
-
-export function setUser(user) {
+export function setUser(info) {
   return {
     type: SET_USER,
-    user,
+    info,
   };
 }
 
@@ -33,14 +25,19 @@ export function authenticateUser(user) {
         username: user.username,
         password: user.password,
       });
-      const { id, username, token } = res;
+      const { token } = res;
       setToken(token);
-      dispatch(setUser({ id, username }));
+      dispatch(setUser(getUserInfo(token)));
     } catch (err) {
       console.error(err);
       dispatch(setError("TODO: get error from response"));
     }
   };
+}
+
+export function logoutUser() {
+  unsetToken();
+  return setUser(null);
 }
 
 export function createNewUser(user) {
@@ -50,9 +47,9 @@ export function createNewUser(user) {
         username: user.username,
         password: user.password,
       });
-      const { id, username, token } = res;
+      const { token } = res;
       setToken(token);
-      dispatch(setUser({ id, username }));
+      dispatch(setUser(getUserInfo(token)));
     } catch (err) {
       console.error(err);
       dispatch(setError("TODO: get error from response"));

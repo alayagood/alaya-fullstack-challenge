@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Switch } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 
-import AuthProvider from "./Auth/components/AuthProvider";
 import PostListPage from "./Post/pages/PostListPage/PostListPage";
 import PostDetailPage from "./Post/pages/PostDetailPage/PostDetailPage";
 import UserLoginPage from "./User/pages/UserLoginPage/UserLoginPage";
@@ -25,39 +24,37 @@ const theme = createTheme({
 
 function App(props) {
   return (
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <Provider store={props.store}>
         <div className="w-100">
           <Navbar />
           <div className="w-100 pt-5 mt-5">
-            <Provider store={props.store}>
-              <BrowserRouter>
-                <Switch>
-                  <ProtectedRoute path="/" exact component={PostListPage} />
-                  <ProtectedRoute
-                    path="/posts/:cuid/:slug"
-                    exact
-                    component={PostDetailPage}
-                  />
-                  <ProtectedRoute
-                    inverse
-                    path="/login"
-                    exact
-                    component={UserLoginPage}
-                  />
-                  <ProtectedRoute
-                    inverse
-                    path="/signup"
-                    exact
-                    component={UserSignupPage}
-                  />
-                </Switch>
-              </BrowserRouter>
-            </Provider>
+            <BrowserRouter>
+              <Switch>
+                <ProtectedRoute path="/" exact component={PostListPage} />
+                <ProtectedRoute
+                  path="/posts/:cuid/:slug"
+                  exact
+                  component={PostDetailPage}
+                />
+                <ProtectedRoute
+                  inverse
+                  path="/login"
+                  exact
+                  component={UserLoginPage}
+                />
+                <ProtectedRoute
+                  inverse
+                  path="/signup"
+                  exact
+                  component={UserSignupPage}
+                />
+              </Switch>
+            </BrowserRouter>
           </div>
         </div>
-      </ThemeProvider>
-    </AuthProvider>
+      </Provider>
+    </ThemeProvider>
   );
 }
 

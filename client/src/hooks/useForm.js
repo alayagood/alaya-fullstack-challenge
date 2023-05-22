@@ -8,6 +8,7 @@ export const useForm = (
 ) => {
   const [formData, setFormData] = useState(initialState || {});
   const [error, setError] = useState(null);
+  // TODO: add loading state
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

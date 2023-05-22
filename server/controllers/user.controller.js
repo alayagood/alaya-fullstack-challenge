@@ -3,8 +3,8 @@ const cuid = require("cuid");
 const User = require("../models/user");
 require("dotenv").config();
 
-const createJwt = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+const createJwt = (payload) =>
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
 const authenticate = async (req, res) => {
   const { username, password } = req.body;
@@ -31,9 +31,7 @@ const authenticate = async (req, res) => {
     // Respond with new token
     return res.json({
       success: true,
-      username: user.username,
-      token: createJwt(user.id),
-      id: user.id,
+      token: createJwt({ username: user.username, id: user.id }),
     });
   } catch (err) {
     console.error(err);
@@ -67,9 +65,7 @@ const createUser = async (req, res) => {
     // Respond with new token
     return res.json({
       success: true,
-      username: newUser.username,
-      token: createJwt(newUser.cuid),
-      id: newUser.id,
+      token: createJwt({ username: newUser.username, id: newUser.id }),
     });
   } catch (err) {
     console.error(err);

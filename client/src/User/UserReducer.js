@@ -1,18 +1,20 @@
+import { getUserInfo } from "../util/token";
 import { SET_USER, SET_ERROR } from "./UserActions";
 
 const initialState = {
-  account: null,
+  info: getUserInfo(),
   error: null,
 };
 
 const UserReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER:
-      return { account: action.user, error: null };
+      return { info: action.info, error: null };
     case SET_ERROR:
-      return { account: null, error: action.error };
+      return { info: null, error: action.error };
+    default:
+      return state;
   }
-  return state;
 };
 
 export default UserReducer;
