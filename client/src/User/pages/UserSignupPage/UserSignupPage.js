@@ -33,15 +33,17 @@ const UserSignupPage = () => {
     isFormDisabled,
     handleInputChange,
   } = useForm({
-    handleSubmit: (formData) => {
-      dispatch(createNewUser(formData));
+    handleSubmit: async (formData) => {
+      await dispatch(createNewUser(formData));
     },
     validateForm: (formData) => {
       const { password, passwordVerify } = formData;
       if (password !== passwordVerify) return "Passwords do not match";
       if (password.length < 6)
-        return "Password should be at least 6 characters"; // TODO: backend validation
+        return "Password should be at least 6 characters";
       return true;
+      // TODO: proper password validation
+      // TODO: username validation
     },
     requiredFields,
   });
