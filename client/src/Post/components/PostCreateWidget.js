@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import AddImage from "./AddImage";
+import { addPostRequest } from "../PostActions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,14 +15,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PostCreateWidget = ({ addPost }) => {
+const PostCreateWidget = () => {
+  const dispatch = useDispatch();
   const [state, setState] = useState({});
+  const [uploadRatio, setUploadRatio] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
 
-  const submit = () => {
-    if (state.name && state.title && state.content) {
-      addPost(state);
+  const handleUploadProgress = (progressEvent) => {
+    const { loaded, total } = progressEvent;
+    let percent = Math.floor((loaded * 100) / total);
+    if (percent <= 100) {
+      setUploadRatio(percent);
     }
+  };
+
+  const submit = async () => {
+    if (!state.name || !state.title || !state.content) return;
+    setIsLoading(true);
+    await dispatch(addPostRequest(state, handleUploadProgress));
+    setIsLoading(false);
   };
 
   const updateState = (key, value) => {
@@ -53,12 +67,16 @@ const PostCreateWidget = ({ addPost }) => {
       <TextField
         variant="filled"
         multiline
-        minRows="4"
+        rows="4"
         label="Post content"
         name="content"
         onChange={handleChange}
       />
-      <AddImage setSelectedImage={(image) => updateState("image", image)} />
+      <AddImage
+        setSelectedImage={(image) => updateState("image", image)}
+        isLoading={isLoading}
+        uploadRatio={uploadRatio}
+      />
       <Button
         className="mt-4"
         variant="contained"
@@ -72,8 +90,6 @@ const PostCreateWidget = ({ addPost }) => {
   );
 };
 
-PostCreateWidget.propTypes = {
-  addPost: PropTypes.func.isRequired,
-};
+PostCreateWidget.propTypes = {};
 
 export default PostCreateWidget;

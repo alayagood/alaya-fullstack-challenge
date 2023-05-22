@@ -14,9 +14,9 @@ export function addPost(post) {
   };
 }
 
-export function addPostRequest(post) {
+export function addPostRequest(post, handleUploadProgress) {
   return async (dispatch) => {
-    const imageURL = await uploadImage(post.image);
+    const imageURL = await uploadImage(post.image, handleUploadProgress);
     return callApi("posts", "post", {
       post: {
         name: post.name,
