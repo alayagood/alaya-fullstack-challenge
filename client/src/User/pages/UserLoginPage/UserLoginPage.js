@@ -26,23 +26,22 @@ const UserLoginPage = () => {
   const requiredFields = ["username", "password"];
 
   const {
-    handleInputChange,
-    handleSubmit,
-    isFormDisabled,
+    onSubmit,
     hasError,
     errorMessage,
-  } = useForm(
-    function submitForm(formData) {
+    isFormDisabled,
+    handleInputChange,
+  } = useForm({
+    handleSubmit: (formData) => {
       dispatch(authenticateUser(formData));
     },
     requiredFields,
-    undefined
-  );
+  });
 
   return (
     <form
       disabled={isFormDisabled}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       className={`${classes.root} d-flex flex-column my-4 mx-auto`}
     >
       <h3>Login</h3>

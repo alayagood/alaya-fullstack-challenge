@@ -26,29 +26,29 @@ const UserSignupPage = () => {
   const requiredFields = ["username", "password", "passwordVerify"];
 
   const {
-    handleInputChange,
-    handleSubmit,
-    isFormDisabled,
+    onSubmit,
     hasError,
     errorMessage,
-  } = useForm(
-    function submitForm(formData) {
+    isFormDisabled,
+    handleInputChange,
+  } = useForm({
+    handleSubmit: (formData) => {
       dispatch(createNewUser(formData));
     },
-    requiredFields,
-    function validateForm(formData) {
+    validateForm: (formData) => {
       const { password, passwordVerify } = formData;
       if (password !== passwordVerify) return "Passwords do not match";
-      if (password.length < 4)
+      if (password.length < 6)
         return "Password should be at least 6 characters"; // TODO: backend validation
       return true;
-    }
-  );
+    },
+    requiredFields,
+  });
 
   return (
     <form
       disabled={isFormDisabled}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       className={`${classes.root} d-flex flex-column my-4 mx-auto`}
     >
       <h3>Sign up</h3>

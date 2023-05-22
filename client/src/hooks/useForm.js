@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export const useForm = (
-  onSubmit,
+export const useForm = ({
+  handleSubmit,
   requiredFields,
   validateForm,
-  initialState
-) => {
+  initialState,
+}) => {
   const [formData, setFormData] = useState(initialState || {});
   const [error, setError] = useState(null);
   // TODO: add loading state
@@ -22,7 +22,7 @@ export const useForm = (
     return isDisabled;
   })();
 
-  const handleSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     if (validateForm) {
       const validation = validateForm(formData);
@@ -37,7 +37,7 @@ export const useForm = (
         return;
       }
       setError(null);
-      onSubmit(formData);
+      handleSubmit(formData);
     } catch (err) {
       console.error(err);
       const errMsg = null; // TODO: get message from response
@@ -48,7 +48,7 @@ export const useForm = (
   return {
     formData,
     handleInputChange,
-    handleSubmit,
+    onSubmit,
     isFormDisabled,
     hasError: !!error,
     errorMessage: error,
