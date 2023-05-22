@@ -36,8 +36,7 @@ const UserLoginPage = () => {
       dispatch(authenticateUser(formData));
     },
     requiredFields,
-    undefined,
-    { username: "test", password: "test" }
+    undefined
   );
 
   return (
@@ -48,7 +47,6 @@ const UserLoginPage = () => {
     >
       <h3>Login</h3>
       <TextField
-        defaultValue="test"
         autoFocus
         variant="filled"
         label="Username"
@@ -57,7 +55,6 @@ const UserLoginPage = () => {
         onChange={handleInputChange}
       />
       <TextField
-        defaultValue="test"
         type="password"
         variant="filled"
         label="Password"

@@ -1,5 +1,5 @@
-import callApi from "../util/apiCaller";
-import { getUserInfo, setToken, unsetToken } from "../util/token";
+import callApi from "../shared/util/apiCaller";
+import { getUserInfo, setToken, unsetToken } from "../shared/util/token";
 
 export const SET_USER = "SET_USER";
 export const SET_ERROR = "SET_ERROR";
@@ -18,6 +18,11 @@ export function setError(error) {
   };
 }
 
+export function logoutUser() {
+  unsetToken();
+  return setUser(null);
+}
+
 export function authenticateUser(user) {
   return async (dispatch) => {
     try {
@@ -25,19 +30,19 @@ export function authenticateUser(user) {
         username: user.username,
         password: user.password,
       });
-      const { token } = res;
+      const { token, success } = res;
+      if (!success) {
+        dispatch(setError(res.message));
+        return;
+      }
       setToken(token);
       dispatch(setUser(getUserInfo(token)));
     } catch (err) {
       console.error(err);
-      dispatch(setError("TODO: get error from response"));
+      // TODO: add Sentry logging
+      dispatch(setError("Uncaught error"));
     }
   };
-}
-
-export function logoutUser() {
-  unsetToken();
-  return setUser(null);
 }
 
 export function createNewUser(user) {
@@ -47,12 +52,17 @@ export function createNewUser(user) {
         username: user.username,
         password: user.password,
       });
-      const { token } = res;
+      const { token, success } = res;
+      if (!success) {
+        dispatch(setError(res.message));
+        return;
+      }
       setToken(token);
       dispatch(setUser(getUserInfo(token)));
     } catch (err) {
       console.error(err);
-      dispatch(setError("TODO: get error from response"));
+      // TODO: add Sentry logging
+      dispatch(setError("Uncaught error"));
     }
   };
 }

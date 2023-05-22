@@ -24,6 +24,7 @@ export const getUserInfo = (jwt) => {
 
 export const isTokenExpired = (token) => {
   const data = getTokenPayload(token);
+  if (!data) return true;
   const expireTime = data.exp * 1000;
   return Date.now() >= expireTime;
 };

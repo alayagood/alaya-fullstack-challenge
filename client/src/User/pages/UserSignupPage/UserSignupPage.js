@@ -42,11 +42,6 @@ const UserSignupPage = () => {
       if (password.length < 4)
         return "Password should be at least 6 characters"; // TODO: backend validation
       return true;
-    },
-    {
-      username: "test",
-      password: "test",
-      passwordVerify: "test",
     }
   );
 
@@ -58,7 +53,6 @@ const UserSignupPage = () => {
     >
       <h3>Sign up</h3>
       <TextField
-        defaultValue="test"
         autoFocus
         variant="filled"
         label="Username"
@@ -67,7 +61,6 @@ const UserSignupPage = () => {
         onChange={handleInputChange}
       />
       <TextField
-        defaultValue="test"
         type="password"
         variant="filled"
         label="Password"
@@ -76,7 +69,6 @@ const UserSignupPage = () => {
         onChange={handleInputChange}
       />
       <TextField
-        defaultValue="test"
         type="password"
         variant="filled"
         label="Password (again)"

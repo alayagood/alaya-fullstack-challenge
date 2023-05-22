@@ -1,4 +1,4 @@
-import { getUserInfo } from "../util/token";
+import { getUserInfo } from "../shared/util/token";
 import { SET_USER, SET_ERROR } from "./UserActions";
 
 const initialState = {

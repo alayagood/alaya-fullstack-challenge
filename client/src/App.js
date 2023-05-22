@@ -8,7 +8,7 @@ import PostListPage from "./Post/pages/PostListPage/PostListPage";
 import PostDetailPage from "./Post/pages/PostDetailPage/PostDetailPage";
 import UserLoginPage from "./User/pages/UserLoginPage/UserLoginPage";
 import UserSignupPage from "./User/pages/UserSignupPage/UserSignupPage";
-import ProtectedRoute from "./Auth/components/ProtectedRoute";
+import ProtectedRoute from "./shared/components/ProtectedRoute";
 import Navbar from "./Nav/components/Navbar";
 
 import "bootstrap/dist/css/bootstrap.min.css";
