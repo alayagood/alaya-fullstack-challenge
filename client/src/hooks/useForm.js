@@ -8,7 +8,7 @@ export const useForm = ({
 }) => {
   const [formData, setFormData] = useState(initialState || {});
   const [error, setError] = useState(null);
-  // TODO: add loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,12 +22,14 @@ export const useForm = ({
     return isDisabled;
   })();
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     if (validateForm) {
       const validation = validateForm(formData);
       if (typeof validation === "string") {
         setError(validation);
+        setIsLoading(false);
         return;
       }
     }
@@ -37,19 +39,21 @@ export const useForm = ({
         return;
       }
       setError(null);
-      handleSubmit(formData);
+      await handleSubmit(formData);
     } catch (err) {
       console.error(err);
-      const errMsg = null; // TODO: get message from response
-      setError(errMsg || "Something went wrong");
+      // TODO: add Sentry logging
+      setError("Uncaught error");
     }
+    setIsLoading(false);
   };
 
   return {
     formData,
-    handleInputChange,
     onSubmit,
+    isLoading,
     isFormDisabled,
+    handleInputChange,
     hasError: !!error,
     errorMessage: error,
   };

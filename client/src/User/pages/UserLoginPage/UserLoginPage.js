@@ -28,12 +28,13 @@ const UserLoginPage = () => {
   const {
     onSubmit,
     hasError,
+    isLoading,
     errorMessage,
     isFormDisabled,
     handleInputChange,
   } = useForm({
-    handleSubmit: (formData) => {
-      dispatch(authenticateUser(formData));
+    handleSubmit: async (formData) => {
+      await dispatch(authenticateUser(formData));
     },
     requiredFields,
   });
@@ -61,15 +62,16 @@ const UserLoginPage = () => {
         required
         onChange={handleInputChange}
       />
-      <Button
-        type="submit"
-        className="mt-4"
-        variant="contained"
-        color="primary"
-        disabled={isFormDisabled}
-      >
-        Login
-      </Button>
+      <div className={`loader-button mt-4 ${isLoading ? "on" : ""}`}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={isFormDisabled || isLoading}
+        >
+          Login
+        </Button>
+      </div>
       {hasError && <div className="mt-4 text-danger">{errorMessage}</div>}
       {!!user.error && <div className="mt-4 text-danger">{user.error}</div>}
       <div className="mt-4">

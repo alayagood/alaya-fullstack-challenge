@@ -28,6 +28,7 @@ const UserSignupPage = () => {
   const {
     onSubmit,
     hasError,
+    isLoading,
     errorMessage,
     isFormDisabled,
     handleInputChange,
@@ -76,15 +77,16 @@ const UserSignupPage = () => {
         required
         onChange={handleInputChange}
       />
-      <Button
-        type="submit"
-        className="mt-4"
-        variant="contained"
-        color="primary"
-        disabled={isFormDisabled}
-      >
-        Register
-      </Button>
+      <div className={`loader-button mt-4 ${isLoading ? "on" : ""}`}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={isFormDisabled || isLoading}
+        >
+          Register
+        </Button>
+      </div>
       {hasError && <div className="mt-4 text-danger">{errorMessage}</div>}
       {!!user.error && <div className="mt-4 text-danger">{user.error}</div>}
       <div className="mt-4">
