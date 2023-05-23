@@ -16,15 +16,24 @@ export function addPost(post) {
 
 export function addPostRequest(post, handleUploadProgress) {
   return async (dispatch) => {
-    const imageURL = await uploadImage(post.image, handleUploadProgress);
-    return callApi("posts", "post", {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-        image: imageURL,
-      },
-    }).then((res) => dispatch(addPost(res.post)));
+    try {
+      let imageURL;
+      if (post.image)
+        imageURL = await uploadImage(post.image, handleUploadProgress);
+      const res = await callApi("posts", "post", {
+        post: {
+          name: post.name,
+          title: post.title,
+          content: post.content,
+          image: imageURL,
+        },
+      });
+      dispatch(addPost(res.post));
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
   };
 }
 

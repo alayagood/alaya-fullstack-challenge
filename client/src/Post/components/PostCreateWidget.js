@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Alert from "../../shared/components/Alert/index";
 import { makeStyles } from "@material-ui/core/styles";
-import AddImage from "./AddImage";
+import AddImage from "./AddImage/index";
 import { addPostRequest } from "../PostActions";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +20,17 @@ const PostCreateWidget = () => {
   const [state, setState] = useState({});
   const [uploadRatio, setUploadRatio] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const classes = useStyles();
+
+  useEffect(() => {
+    if (success) setShowSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+      setShowSuccess(false);
+    }, 2000);
+  }, [success]);
 
   const handleUploadProgress = (progressEvent) => {
     const { loaded, total } = progressEvent;
@@ -33,7 +43,9 @@ const PostCreateWidget = () => {
   const submit = async () => {
     if (!state.name || !state.title || !state.content) return;
     setIsLoading(true);
-    await dispatch(addPostRequest(state, handleUploadProgress));
+    const success = await dispatch(addPostRequest(state, handleUploadProgress));
+    console.log(success);
+    if (success) setSuccess(true);
     setIsLoading(false);
   };
 
@@ -51,21 +63,22 @@ const PostCreateWidget = () => {
 
   return (
     <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
-      <h3>Create new post</h3>
+      <h3>New post</h3>
       <TextField
-        variant="filled"
+        variant="outlined"
+        autoFocus
         label="Author name"
         name="name"
         onChange={handleChange}
       />
       <TextField
-        variant="filled"
+        variant="outlined"
         label="Post title"
         name="title"
         onChange={handleChange}
       />
       <TextField
-        variant="filled"
+        variant="outlined"
         multiline
         rows="4"
         label="Post content"
@@ -86,6 +99,7 @@ const PostCreateWidget = () => {
       >
         Submit
       </Button>
+      {showSuccess && <Alert severity="success">Your post was submitted</Alert>}
     </div>
   );
 };
