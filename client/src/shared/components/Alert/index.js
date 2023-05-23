@@ -6,9 +6,9 @@ import styles from "./styles.module.css";
 // Taken from:
 // https://mui.com/material-ui/react-alert/
 
-const Alert = ({ children }) => {
+const Alert = ({ children, className }) => {
   return (
-    <div className={styles.container} role="alert">
+    <div className={`${styles.container} ${className}`} role="alert">
       <svg
         className="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1cw4hi4"
         focusable="false"
@@ -25,6 +25,7 @@ const Alert = ({ children }) => {
 
 Alert.propTypes = {
   children: PropTypes.node,
+  className: PropTypes.string,
 };
 
 export default Alert;

@@ -1,0 +1,53 @@
+.card {
+  margin-bottom: 8px;
+  background: #fff;
+  color: #333;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #eee;
+  display: flex;
+}
+.card:hover {
+  text-decoration: none;
+  color: #333;
+  border-color: #ccc;
+}
+.card:hover .image {
+  opacity: 1;
+}
+.content {
+  font-size: 0.8rem;
+}
+.image {
+  flex: none;
+  width: 100px;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center center;
+  opacity: 0.8;
+  transition: all 0.2s;
+}
+.image img {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 10px;
+  font-size: 0.5em;
+}
+.body:hover .actions {
+  opacity: 1;
+  transition-delay: 0.5s;
+}
+.actions {
+  opacity: 0;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  transition: all 0.5s;
+}

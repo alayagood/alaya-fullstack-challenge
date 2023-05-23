@@ -3,17 +3,8 @@ import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Alert from "../../shared/components/Alert/index";
-import { makeStyles } from "@material-ui/core/styles";
 import AddImage from "./AddImage/index";
 import { addPostRequest } from "../PostActions";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-    },
-  },
-}));
 
 const PostCreateWidget = () => {
   const dispatch = useDispatch();
@@ -22,7 +13,6 @@ const PostCreateWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const classes = useStyles();
 
   useEffect(() => {
     if (success) setShowSuccess(true);
@@ -62,44 +52,51 @@ const PostCreateWidget = () => {
   };
 
   return (
-    <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
-      <h3>New post</h3>
+    <div className={`d-flex flex-column my-4 w-100`}>
+      <h3 className="h4 mb-3">New post</h3>
       <TextField
-        variant="outlined"
         autoFocus
-        label="Author name"
         name="name"
+        className="mb-3"
+        variant="outlined"
+        label="Author name"
         onChange={handleChange}
       />
       <TextField
-        variant="outlined"
-        label="Post title"
         name="title"
+        className="mb-3"
+        label="Post title"
+        variant="outlined"
         onChange={handleChange}
       />
       <TextField
-        variant="outlined"
-        multiline
         rows="4"
-        label="Post content"
+        multiline
         name="content"
+        className="mb-3"
+        variant="outlined"
+        label="Post content"
         onChange={handleChange}
       />
       <AddImage
-        setSelectedImage={(image) => updateState("image", image)}
         isLoading={isLoading}
         uploadRatio={uploadRatio}
+        setSelectedImage={(image) => updateState("image", image)}
       />
       <Button
-        className="mt-4"
-        variant="contained"
         color="primary"
+        className="mt-3"
+        variant="contained"
         onClick={() => submit()}
         disabled={!state.name || !state.title || !state.content}
       >
         Submit
       </Button>
-      {showSuccess && <Alert severity="success">Your post was submitted</Alert>}
+      {showSuccess && (
+        <Alert severity="success" className="mt-3">
+          Your post was submitted
+        </Alert>
+      )}
     </div>
   );
 };

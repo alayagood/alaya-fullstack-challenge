@@ -1,37 +1,46 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Card } from "@material-ui/core";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
+
+import styles from "./styles.module.css";
 
 function PostListItem({ post, onDelete }) {
   return (
-    <Card className="w-100 my-4">
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
+    <Link className={styles.card} to={`/posts/${post.cuid}/${post.slug}`}>
+      {!!post.image && (
+        <div
+          className={styles.image}
+          style={{ backgroundImage: `url(${post.image})` }}
+        />
+      )}
+      <div className={styles.body}>
+        <Typography gutterBottom variant="h6" component="h4">
+          {post.title}
         </Typography>
-        <Typography component="p" className="mt-3">
-          {post.content}
-        </Typography>
+        <div className={styles.content}>{post.content}</div>
         <Typography
           color="textSecondary"
-          component="p"
+          component="div"
           className="mt-3 font-italic"
         >
           From {post.name}
         </Typography>
-        {!!post.image && <img src={post.image} style={{ maxHeight: 100 }} />}
-      </CardContent>
-      <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
-      </CardActions>
-    </Card>
+        <div className={styles.actions}>
+          <Button
+            size="small"
+            color="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              onDelete();
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Link>
   );
 }
 
