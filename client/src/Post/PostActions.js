@@ -14,6 +14,7 @@ export function addPost(post) {
 }
 
 export function addPostRequest(post) {
+  const token =  localStorage.getItem('token');
   return (dispatch) => {
     return callApi('posts', 'post', {
       post: {
@@ -21,7 +22,7 @@ export function addPostRequest(post) {
         title: post.title,
         content: post.content,
       },
-    }).then(res => dispatch(addPost(res.post)));
+    }, {'content-type': 'application/json', 'authorization': token}).then((res) => {if(res.post){dispatch(addPost(res.post))}return res;});
   };
 }
 
@@ -54,7 +55,14 @@ export function deletePost(cuid) {
 }
 
 export function deletePostRequest(cuid) {
+  const token =  localStorage.getItem('token');
+  var header = {};
+  if(!token){
+    header = { 'content-type': 'application/json'}
+  } else {
+    header = { 'content-type': 'application/json', 'authorization': token};
+  }
   return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
+    return callApi(`posts/${cuid}`, 'delete',{}, header).then((res) => {if(!res){dispatch(deletePost(cuid))} return res;});
   };
 }

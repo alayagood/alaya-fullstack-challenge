@@ -2,6 +2,7 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const jwt = require('jsonwebtoken');
 
 /**
  * Get all posts
@@ -72,10 +73,17 @@ deletePost = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
+    const token = req.headers['authorization'];
+    if(token){
+      const validUser =  jwt.verify(token, "TOP_SECRET");
 
-    post.remove(() => {
-      res.status(200).end();
-    });
+      if(post.name === validUser.validUser.usersname){
+        post.remove(() => {
+          res.status(200).end();
+      });
+      }else{
+        res.status(403).end();
+      }}
   });
 };
 

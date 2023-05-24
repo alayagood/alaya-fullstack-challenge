@@ -19,7 +19,6 @@ const PostCreateWidget = ({ addPost }) => {
     const classes = useStyles();
 
 
-
   const submit = () => {
     if (state.name && state.title && state.content) {
       addPost(state);
