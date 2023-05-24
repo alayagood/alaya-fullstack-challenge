@@ -3,80 +3,89 @@ const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
 
+// Handler for database errors
+const handleDBError = (err, res) => {
+  console.error(err);
+  res.status(500).send(err);
+};
+
 /**
  * Get all posts
- * @param req
- * @param res
+ * @param req - the request object
+ * @param res - the response object
  * @returns void
  */
-getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+const getPosts = async (req, res) => {
+  try {
+    const posts = await Post.find().sort('-dateAdded').exec();
     res.json({ posts });
-  });
+  } catch (err) {
+    handleDBError(err, res);
+  }
 };
 
 /**
  * Save a post
- * @param req
- * @param res
+ * @param req - the request object
+ * @param res - the response object
  * @returns void
  */
-addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
+const addPost = async (req, res) => {
+  const { name, title, content } = req.body.post;
+
+  if (!name || !title || !content) {
     res.status(403).end();
+    return;
   }
 
   const newPost = new Post(req.body.post);
 
   // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
+  newPost.title = sanitizeHtml(title);
+  newPost.name = sanitizeHtml(name);
+  newPost.content = sanitizeHtml(content);
 
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+  newPost.slug = slug(title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+
+  try {
+    const saved = await newPost.save();
     res.json({ post: saved });
-  });
+  } catch (err) {
+    handleDBError(err, res);
+  }
 };
 
 /**
  * Get a single post
- * @param req
- * @param res
+ * @param req - the request object
+ * @param res - the response object
  * @returns void
  */
-getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+const getPost = async (req, res) => {
+  try {
+    const post = await Post.findOne({ cuid: req.params.cuid }).exec();
     res.json({ post });
-  });
+  } catch (err) {
+    handleDBError(err, res);
+  }
 };
 
 /**
  * Delete a post
- * @param req
- * @param res
+ * @param req - the request object
+ * @param res - the response object
  * @returns void
  */
-deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
-    }
+const deletePost = async (req, res) => {
+  try {
+    const post = await Post.findOne({ cuid: req.params.cuid }).exec();
 
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+    await post.remove();
+    res.status(200).end();
+  } catch (err) {
+    handleDBError(err, res);
+  }
 };
 
 module.exports = {

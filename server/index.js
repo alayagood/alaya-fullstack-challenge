@@ -1,8 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const apiPort = 3000;
+const apiPort = process.env.PORT || 3000;
 const db = require('./db');
 const posts = require('./routes/post.routes');
 
@@ -14,4 +15,5 @@ app.use('/api', posts);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
+const server = app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
+module.exports = server;
