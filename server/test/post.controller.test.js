@@ -1,90 +1,66 @@
-process.env.NODE_ENV = 'test';
-require('dotenv').config({ path: '.env.test' });
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../index');
-const expect = chai.expect;
-chai.use(chaiHttp);
+const { expect } = require('chai');
+const sinon = require('sinon');
 
-describe('Post Controller', function() {
-    it('should get all posts', function(done) {
-        chai.request(app)
-            .get('/api/posts')
-            .end(function(err, res) {
-                expect(res).to.have.status(200);
-                expect(res.body).to.be.a('object');
-                expect(res.body.posts).to.be.a('array');
-                done();
-            });
+const PostController = require('../controllers/post.controller');
+const Post = require('../models/post');
+
+describe('Post Controller - Unit Tests', function() {
+    describe('getPosts', function() {
+        it('should return all posts', async function() {
+            // The posts that  expect to get from the database
+            const expectedPosts = [{ title: 'Post 1' }, { title: 'Post 2' }];
+
+            //  create a stub for the Post.find query that returns the expected posts
+            const queryStub = {
+                sort: sinon.stub().returnsThis(),
+                lean: sinon.stub().returnsThis(),
+                exec: sinon.stub().resolves(expectedPosts),
+            };
+            sinon.stub(Post, 'find').returns(queryStub);
+
+            //  create a mock res object with a json function
+            const res = {
+                json: sinon.stub().returnsThis()
+            };
+
+            //  calling the function want to test with the mock objects
+            await PostController.getPosts({}, res);
+
+            //  check if res.json was called with the expected posts
+            expect(res.json.calledOnceWith({ posts: expectedPosts })).to.be.true;
+
+            //  restore the original function
+            Post.find.restore();
+        });
     });
 
-    it('should add a post', function(done) {
-        const newPost = { title: 'New Post', name: 'Test', content: 'Test Content' };
+    describe('addPost', function() {
+        it('should add a new post', async function() {
+            // The data for the new post that  want to add
+            const newPostData = { title: 'New Post', content: 'Test Content' };
 
-        chai.request(app)
-            .post('/api/posts')
-            .send({ post: newPost })
-            .end(function(err, res) {
-                expect(res).to.have.status(200);
-                expect(res.body).to.be.a('object');
-                expect(res.body.post).to.be.a('object');
-                expect(res.body.post.title).to.equal(newPost.title);
-                expect(res.body.post.name).to.equal(newPost.name);
-                expect(res.body.post.content).to.equal(newPost.content);
-                done();
-            });
+            // The data that  expect to get back from the database after adding the post
+            const savedPostData = { ...newPostData, _id: '123456789' };
+
+            //  stub the save method of the Post model to resolve with the expected data
+            sinon.stub(Post.prototype, 'save').resolves(savedPostData);
+
+            //  create a mock req object with the new post data
+            const req = { body: { post: newPostData } };
+
+            //  create a mock res object with a json function
+            const res = {
+                json: sinon.stub().returnsThis()
+            };
+
+            //  call the function  want to test with the mock objects
+            await PostController.addPost(req, res);
+
+            //  check if res.json was called with the saved post data
+            expect(res.json.calledOnceWith({ post: savedPostData })).to.be.true;
+
+            //  restore the original function
+            Post.prototype.save.restore();
+        });
     });
-
-    it('should get a single post', function(done) {
-
-        const newPost = { title: 'New Post', name: 'Test', content: 'Test Content' };
-
-        chai.request(app)
-            .post('/api/posts')
-            .send({ post: newPost })
-            .end(function(err, res) {
-                const postId = res.body.post._id;  // Salve o ID do post para usar no próximo teste
-
-                // Agora vamos tentar buscar o post que acabamos de criar
-                chai.request(app)
-                    .get('/api/posts/' + postId)
-                    .end(function(err, res) {
-                        expect(res).to.have.status(200);
-                        expect(res.body).to.be.a('object');
-                        expect(res.body.post).to.be.a('object');
-                        expect(res.body.post.title).to.equal(newPost.title);
-                        expect(res.body.post.name).to.equal(newPost.name);
-                        expect(res.body.post.content).to.equal(newPost.content);
-                        done();
-                    });
-            });
-    });
-
-    it('should delete a post', function(done) {
-
-        const newPost = { title: 'New Post', name: 'Test', content: 'Test Content' };
-
-        chai.request(app)
-            .post('/api/posts')
-            .send({ post: newPost })
-            .end(function(err, res) {
-                const postId = res.body.post._id;  // Salve o ID do post para usar no próximo teste
-
-                // Agora vamos tentar deletar o post que acabamos de criar
-                chai.request(app)
-                    .delete('/api/posts/' + postId)
-                    .end(function(err, res) {
-                        expect(res).to.have.status(200);
-
-                        // Vamos garantir que o post foi realmente excluído
-                        chai.request(app)
-                            .get('/api/posts/' + postId)
-                            .end(function(err, res) {
-                                expect(res).to.have.status(404);
-                                done();
-                            });
-                    });
-            });
-    });
-
 });

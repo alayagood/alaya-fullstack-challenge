@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
@@ -31,12 +32,12 @@ const getPosts = async (req, res) => {
  * @returns void
  */
 const addPost = async (req, res) => {
-  const { name, title, content } = req.body.post;
-
-  if (!name || !title || !content) {
-    res.status(403).end();
-    return;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
+
+  const { name, title, content } = req.body.post;
 
   const newPost = new Post(req.body.post);
 
@@ -65,11 +66,15 @@ const addPost = async (req, res) => {
 const getPost = async (req, res) => {
   try {
     const post = await Post.findOne({ cuid: req.params.cuid }).exec();
+    if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+    }
     res.json({ post });
   } catch (err) {
     handleDBError(err, res);
   }
 };
+
 
 /**
  * Delete a post
@@ -80,7 +85,9 @@ const getPost = async (req, res) => {
 const deletePost = async (req, res) => {
   try {
     const post = await Post.findOne({ cuid: req.params.cuid }).exec();
-
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
     await post.remove();
     res.status(200).end();
   } catch (err) {
