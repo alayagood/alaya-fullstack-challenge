@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';
 // Import Actions
-import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
+import { addPostRequest, deletePostRequest, fetchPosts, addPost } from '../../PostActions';
+import { addCloudinaryImage} from '../../CloudinaryActions'; 
 import Logo from '../../../logo.svg';
 
 const PostListPage = ({ showAddPost }) => {
@@ -23,9 +24,19 @@ const PostListPage = ({ showAddPost }) => {
     }
   };
 
-  const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+  const handleAddPost = (post, image) => {
+    var testPost = {};
+    return dispatch(addPostRequest(post)).then(res => {
+      if(res.post && image){
+        image.name = res.post.image;
+        testPost = res.post;
+        dispatch(addCloudinaryImage(image)).then(res => dispatch(addPost(testPost)));
+      }else if(res.post){
+        dispatch(addPost(res.post));
+      }
+    });
   };
+
 
   return (
     <div className="container">

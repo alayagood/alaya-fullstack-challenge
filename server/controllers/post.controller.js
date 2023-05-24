@@ -38,6 +38,8 @@ addPost = async (req, res) => {
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
+  if(newPost.image)
+    newPost.image = newPost.cuid + '_' + newPost.image;
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
