@@ -38,8 +38,11 @@ addPost = async (req, res) => {
 
     newPost.slug = slug(newPost.title.toLowerCase(), {lowercase: true});
     newPost.cuid = cuid();
+    newPost.userId = req.user._id;
+
     newPost.save((err, saved) => {
         if (err) {
+          console.log(err);
             res.status(500).send(err);
         }
         res.json({post: saved});

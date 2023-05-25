@@ -119,7 +119,7 @@ async function refreshToken(req, res, next) {
 
             const accessToken = generateToken(user._id, process.env.ACCESS_TOKEN_SECRET, calculateExpirationDate(process.env.ACCESS_TOKEN_EXPIRY));
 
-            res.json({accessToken});
+            res.json({data: {accessToken}});
         } catch (error) {
             return res.status(500).json({message: 'An error occurred refreshing the user token'});
         }

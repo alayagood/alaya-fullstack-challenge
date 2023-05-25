@@ -14,6 +14,6 @@ router.route('/login').post(userController.login);
 router.route('/logout').post(authMiddleware.authenticateToken, userController.logout);
 
 // Refresh token
-router.route('/token/refresh').post(authMiddleware.authenticateToken, userController.refreshToken);
+router.route('/token/refresh').post(userController.refreshToken);
 
 module.exports = router;
