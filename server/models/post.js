@@ -8,6 +8,13 @@ const postSchema = new Schema({
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
     dateAdded: { type: 'Date', default: Date.now, required: true },
+    images: [{ 
+        url: { type: 'String', required: true },
+        altText: { type: 'String' },
+        caption: { type: 'String' }
+    }],
+    created_by: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+
 });
 
 module.exports = mongoose.model('Post', postSchema);
