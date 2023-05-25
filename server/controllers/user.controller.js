@@ -66,6 +66,36 @@ async function login(req, res, next) {
     })(req, res, next);
 }
 
+async function logout(req, res, next) {
+    const {refreshToken} = req.body;
+
+    if (!refreshToken) {
+        return res.status(400).json({message: 'Refresh token is required'});
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
+        if (err) {
+            return res.status(401).json({message: 'Invalid refresh token'});
+        }
+
+        const userId = decoded.id;
+
+        try {
+            const user = await userModel.findById(userId);
+
+            if (!user) {
+                return res.status(401).json({message: 'User not found'});
+            }
+
+            await refreshTokenModel.deleteOne({userId});
+
+            res.json({message: 'User logged out'});
+        } catch (error) {
+            return res.status(500).json({message: 'An error occurred logging out the user'});
+        }
+    });
+}
+
 async function refreshToken(req, res, next) {
     const {refreshToken} = req.body;
 
@@ -116,5 +146,6 @@ function calculateExpirationDate(expiresIn) {
 module.exports = {
     signup,
     login,
-    refreshToken
+    refreshToken,
+    logout
 };

@@ -1,19 +1,19 @@
 const express = require('express');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const userController = require('../controllers/user.controller');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/signup', userController.signup);
+// User registration
+router.route('/signup').post(userController.signup);
 
-router.post('/login', userController.login);
-router.get('/profile', authMiddleware.authenticateToken, (req, res) => {
-        res.json({ message: 'You made it to the secure route'})
-    }
-);
+// Uer login
+router.route('/login').post(userController.login);
 
-router.post('/token/refresh', authMiddleware.authenticateToken, userController.refreshToken);
+// User logout
+router.route('/logout').post(authMiddleware.authenticateToken, userController.logout);
+
+// Refresh token
+router.route('/token/refresh').post(authMiddleware.authenticateToken, userController.refreshToken);
 
 module.exports = router;
