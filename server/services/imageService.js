@@ -1,6 +1,6 @@
-const GCSProvider = require('./services/providers/gcsProvider');
-const AWSProvider = require('./services/providers/awsProvider');
-const LocalProvider = require('./services/providers/localProvider');
+const GCSProvider = require('../providers/gcsProvider');
+const AWSProvider = require('../providers/awsProvider');
+const LocalProvider = require('../providers/localProvider');
 
 class ImageService {
   constructor() {
@@ -18,8 +18,7 @@ class ImageService {
     }
 
     try {
-      const imageUrl = await storageProvider.uploadImage(file);
-      return imageUrl;
+      return await storageProvider.uploadImage(file);
     } catch (error) {
       throw new Error('Failed to save image');
     }

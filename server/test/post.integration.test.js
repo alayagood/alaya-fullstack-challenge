@@ -5,23 +5,34 @@ const chaiHttp = require('chai-http');
 const app = require('../index');
 const expect = chai.expect;
 const Post = require('../models/post');
-
+const User = require('../models/user');
 chai.use(chaiHttp);
 
-describe('Post Controller', function() {
+describe('Post Integration Test', function() {
     this.timeout(3000); // set timeout to 5000ms
     let postId;
+    let userId;
+    let agent; // Use agent for session persistence
 
     before(function(done) {
         console.log('clear the database before all tests');
-        Post.deleteMany({})
+        Promise.all([
+            User.deleteMany({}),
+            Post.deleteMany({})
+        ])
             .then(function() {
-                let newPost = new Post({
+                const newUser = new User({ username: 'testuser', password: 'testpassword', email: 'test@example.com' });
+                return newUser.save();
+            })
+            .then(function(savedUser) {
+                userId = savedUser._id;
+                const newPost = new Post({
                     title: 'New Post',
                     name: 'Test',
                     content: 'Test Content',
                     cuid: 'cuid_sample',
-                    slug: 'slug_sample'
+                    slug: 'slug_sample',
+                    createdBy: userId,
                 });
                 return newPost.save();
             })
@@ -33,12 +44,34 @@ describe('Post Controller', function() {
                 console.error(err);
                 done(err);
             });
-     });
+    });
+
+    describe('Login', function() {
+        it('should login and store the session', function(done) {
+            chai.request(app)
+                .post('/api/auth/login')
+                .send({ username: 'testuser', password: 'testpassword' })
+                .end(function(err, res) {
+                    if (err) {
+                        console.error(err);
+                        return done(err);
+                    }
+
+                    expect(res).to.have.status(200);
+
+                    // Store the session in the agent
+                    agent = chai.request.agent(app);
+
+                    done();
+                });
+        });
+    });
 
     describe('Add a post', function() {
         it('should add a post', function(done) {
-            const newPost = { title: 'New Post', name: 'Test', content: 'Test Content' };
-            chai.request(app)
+            const newPost = { title: 'New Post', name: 'Test', content: 'Test Content', createdBy: userId };
+
+            agent
                 .post('/api/posts')
                 .send({ post: newPost })
                 .end(function(err, res) {
@@ -53,6 +86,7 @@ describe('Post Controller', function() {
                     expect(res.body.post.title).to.equal(newPost.title);
                     expect(res.body.post.name).to.equal(newPost.name);
                     expect(res.body.post.content).to.equal(newPost.content);
+                    expect(res.body.post.createdBy).to.equal(userId);
                     done();
                 });
         });
@@ -60,7 +94,7 @@ describe('Post Controller', function() {
 
     describe('Get a single post', function() {
         it('should return a single post', function(done) {
-            chai.request(app)
+            agent
                 .get('/api/posts/cuid_sample')
                 .end(function(err, res) {
                     if (err) {
@@ -74,6 +108,7 @@ describe('Post Controller', function() {
                     expect(res.body.post.title).to.equal('New Post');
                     expect(res.body.post.name).to.equal('Test');
                     expect(res.body.post.content).to.equal('Test Content');
+                    expect(res.body.post.createdBy).to.equal(userId);
                     done();
                 });
         });
@@ -81,7 +116,7 @@ describe('Post Controller', function() {
 
     describe('Delete a post', function() {
         it('should delete a post', function(done) {
-            chai.request(app)
+            agent
                 .delete('/api/posts/cuid_sample')
                 .end(function(err, res) {
                     if (err) {
@@ -91,7 +126,7 @@ describe('Post Controller', function() {
 
                     expect(res).to.have.status(200);
 
-                    chai.request(app)
+                    agent
                         .get('/api/posts/' + postId)
                         .end(function(err, res) {
                             if (err) {
@@ -110,7 +145,7 @@ describe('Post Controller', function() {
         it('should return an error', function(done) {
             const newPost = { title: 'New Post' };
 
-            chai.request(app)
+            agent
                 .post('/api/posts')
                 .send({ post: newPost })
                 .end(function(err, res) {
@@ -128,10 +163,9 @@ describe('Post Controller', function() {
         });
     });
 
-
     describe('Get all posts', function() {
         it('should return all posts', function(done) {
-            chai.request(app)
+            agent
                 .get('/api/posts')
                 .end(function(err, res) {
                     if (err) {
@@ -147,4 +181,3 @@ describe('Post Controller', function() {
         });
     });
 });
-

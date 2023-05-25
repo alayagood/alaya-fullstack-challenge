@@ -1,66 +1,67 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-
+const { validationResult } = require('express-validator');
 const PostController = require('../controllers/post.controller');
+const PostRepository = require('../repositories/post.repository');
 const Post = require('../models/post');
+const PostImageService = require('../services/postImageService');
+const slug = require('limax');
+const cuid = require('cuid');
+const sanitizeHtml = require('sanitize-html');
 
 describe('Post Controller - Unit Tests', function() {
+    let postRepository, postImageService, postController, req, res, postStub;
+
+    beforeEach(function() {
+        postRepository = new PostRepository();
+        postImageService = new PostImageService();
+        postController = new PostController(postRepository, postImageService);
+        req = { body: { post: {} }, user: {} };
+        res = { json: sinon.stub().returnsThis(), status: sinon.stub().returnsThis() };
+
+        postStub = sinon.stub(Post.prototype, 'save');
+        sinon.stub(sanitizeHtml, 'sanitizeHtml').callsFake(str => str);
+        sinon.stub(slug, 'slug').callsFake(str => str);
+        sinon.stub(cuid, 'cuid').callsFake(() => 'ck9lzgufo0003rqxs6u3y3kcm');
+    });
+
+    afterEach(function() {
+        postStub.restore();
+        sanitizeHtml.sanitizeHtml.restore();
+        slug.slug.restore();
+        cuid.cuid.restore();
+    });
+
     describe('getPosts', function() {
         it('should return all posts', async function() {
-            // The posts that  expect to get from the database
             const expectedPosts = [{ title: 'Post 1' }, { title: 'Post 2' }];
 
-            //  create a stub for the Post.find query that returns the expected posts
-            const queryStub = {
-                sort: sinon.stub().returnsThis(),
-                lean: sinon.stub().returnsThis(),
-                exec: sinon.stub().resolves(expectedPosts),
-            };
-            sinon.stub(Post, 'find').returns(queryStub);
+            sinon.stub(postRepository, 'getAllPosts').resolves(expectedPosts);
 
-            //  create a mock res object with a json function
-            const res = {
-                json: sinon.stub().returnsThis()
-            };
+            await postController.getPosts(req, res);
 
-            //  calling the function want to test with the mock objects
-            await PostController.getPosts({}, res);
-
-            //  check if res.json was called with the expected posts
             expect(res.json.calledOnceWith({ posts: expectedPosts })).to.be.true;
 
-            //  restore the original function
-            Post.find.restore();
+            postRepository.getAllPosts.restore();
         });
     });
 
     describe('addPost', function() {
         it('should add a new post', async function() {
-            // The data for the new post that  want to add
-            const newPostData = { title: 'New Post', content: 'Test Content' };
+            const newPostData = { title: 'New Post', content: 'Test Content', name: 'New Name', image: 'Test Image' };
+            const savedPostData = { ...newPostData, _id: '123456789', slug: 'new-post', cuid: 'ck9lzgufo0003rqxs6u3y3kcm', createdBy: req.user };
 
-            // The data that  expect to get back from the database after adding the post
-            const savedPostData = { ...newPostData, _id: '123456789' };
+            req.body.post = newPostData;
+            req.validationErrors = sinon.stub().returns(false);
 
-            //  stub the save method of the Post model to resolve with the expected data
-            sinon.stub(Post.prototype, 'save').resolves(savedPostData);
+            postStub.resolves(savedPostData);
+            sinon.stub(postController.postImageService, 'saveImage').resolves('imageUrl');
 
-            //  create a mock req object with the new post data
-            const req = { body: { post: newPostData } };
+            await postController.addPost(req, res);
 
-            //  create a mock res object with a json function
-            const res = {
-                json: sinon.stub().returnsThis()
-            };
-
-            //  call the function  want to test with the mock objects
-            await PostController.addPost(req, res);
-
-            //  check if res.json was called with the saved post data
             expect(res.json.calledOnceWith({ post: savedPostData })).to.be.true;
 
-            //  restore the original function
-            Post.prototype.save.restore();
+            postController.postImageService.saveImage.restore();
         });
     });
 });

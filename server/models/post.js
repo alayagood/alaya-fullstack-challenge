@@ -13,7 +13,7 @@ const postSchema = new Schema({
         altText: { type: 'String' },
         caption: { type: 'String' }
     }],
-    created_by: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 
 });
 

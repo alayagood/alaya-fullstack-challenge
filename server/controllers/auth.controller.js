@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const UserModel = require('../models/user');
 require('dotenv').config();
 
 // Hashing salt rounds
@@ -28,33 +29,27 @@ class UserService extends IUserService {
   }
 }
 
-// Controller for handling authentication requests
 class AuthController {
-  constructor(userService) {
-    this.userService = userService;
+  constructor() {
+    this.userService = new UserService(UserModel);
   }
 
-  // Method for registering a new user
-  async register(req, res) {
+  register = async (req, res) => {
     try {
       const { username, password, email } = req.body;
 
-      // Check if required fields are present in the request body
       if (!username || !password || !email) {
         return res.status(400).json({ message: 'Missing required fields' });
       }
 
-      // Hash the password using bcrypt
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      // Create a new user using the user service
       const newUser = await this.userService.createUser({
         username,
         password: hashedPassword,
         email,
       });
 
-      // Sign a JWT token with the user id and return it
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
 
       res.json({ token });
@@ -62,29 +57,24 @@ class AuthController {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
     }
-  }
+  };
 
-  // Method for logging in a user
-  async login(req, res) {
+  login = async (req, res) => {
     try {
       const { username, password } = req.body;
 
-      // Find the user by username using the user service
       const user = await this.userService.findUserByUsername(username);
 
-      // Check if user exists
       if (!user) {
         return res.status(401).json({ message: 'Invalid username or password' });
       }
 
-      // Check if password is correct using bcrypt
       const isValidPassword = await bcrypt.compare(password, user.password);
 
       if (!isValidPassword) {
         return res.status(401).json({ message: 'Invalid username or password' });
       }
 
-      // Sign a JWT token with the user id and return it
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
       res.json({ token });
@@ -92,7 +82,7 @@ class AuthController {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
     }
-  }
+  };
 }
 
-module.exports = { AuthController, IUserService, UserService };
+module.exports = new AuthController();

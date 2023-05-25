@@ -1,3 +1,4 @@
+const passport = require('passport');
 const User = require('../models/user');
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 require('dotenv').config();
@@ -10,19 +11,19 @@ const jwtOptions = {
 const jwtStrategy = new JwtStrategy(jwtOptions, (payload, done) => {
   // Verify the payload of the token and find the corresponding user in the database
   User.findById(payload.id)
-    .then(user => {
-      if (user) {
-        // User found, authentication successful
-        return done(null, user);
-      } else {
-        // User not found, authentication failed
-        return done(null, false);
-      }
-    })
-    .catch(error => {
-      // Error occurred while finding the user in the database
-      return done(error, false);
-    });
+      .then(user => {
+        if (user) {
+          // User found, authentication successful
+          return done(null, user);
+        } else {
+          // User not found, authentication failed
+          return done(null, false);
+        }
+      })
+      .catch(error => {
+        // Error occurred while finding the user in the database
+        return done(error, false);
+      });
 });
 
 passport.use(jwtStrategy);

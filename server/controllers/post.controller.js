@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const PostRepository = require('../repositories/postRepository');
+const PostRepository = require('../repositories/post.repository');
 const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
@@ -18,9 +18,9 @@ class PostController {
    * @param res - the response object
    * @returns void
    */
-  async getPosts(req, res) {
+  getPosts = async (req, res) => {
     try {
-      const posts = await this.postRepository.getAllPosts();
+      const posts = await this.postRepository.findAll();
       res.json({ posts });
     } catch (err) {
       this.handleDBError(err, res);
@@ -33,7 +33,7 @@ class PostController {
    * @param res - the response object
    * @returns void
    */
-  async addPost(req, res) {
+  addPost = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -75,7 +75,7 @@ class PostController {
    * @param res - the response object
    * @returns void
    */
-  async getPost(req, res) {
+  getPost = async (req, res) => {
     try {
       const post = await this.postRepository.getPostByCuid(req.params.cuid);
       if (!post) {
@@ -93,7 +93,7 @@ class PostController {
    * @param res - the response object
    * @returns void
    */
-  async deletePost(req, res) {
+  deletePost = async (req, res) => {
     try {
       const post = await this.postRepository.getPostByCuid(req.params.cuid);
       if (!post) {
@@ -115,10 +115,10 @@ class PostController {
    * @param res - the response object
    * @returns void
    */
-  handleDBError(err, res) {
+  handleDBError = (err, res) => {
     console.error(err);
     res.status(500).send(err);
   }
 }
 
-module.exports = PostController;
+module.exports = new PostController();
