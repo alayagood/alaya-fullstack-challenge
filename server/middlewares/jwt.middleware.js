@@ -31,8 +31,7 @@ const jwtStrategy = new JwtStrategy(jwtOptions, (payload, done) => {
 passport.use(jwtStrategy);
 
 const jwtMiddleware = (req, res, next) => {
-    //const token = req.headers.authorization;
-    //console.log('Received token:', token);
+
     passport.authenticate('jwt', { session: false }, (err, user) => {
         if (err) {
             console.error('Error during authentication:', err);

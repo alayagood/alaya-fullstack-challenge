@@ -10,7 +10,12 @@ class AuthService {
 
     // Generate a JWT token
     generateToken(userId) {
-        return jwt.sign({ id: userId }, process.env.JWT_SECRET);
+        const payload = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+        };
+        return jwt.sign(payload, process.env.JWT_SECRET);
     }
 
     // Register a new user
@@ -46,6 +51,15 @@ class AuthService {
                 throw error;
             }
             throw new Error('Failed to login');
+        }
+    }
+
+    getUserFromToken(token) {
+        try {
+            return jwt.verify(token, process.env.JWT_SECRET);
+        } catch (error) {
+            console.error('Failed to decode token:', error);
+            return null;
         }
     }
 }

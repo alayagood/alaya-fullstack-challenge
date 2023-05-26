@@ -3,7 +3,7 @@ const router = express.Router();
 const AuthController = require('../controllers/auth.controller');
 const { validateUserRegistration, validateUserLogin } = require('../validators/user.validator');
 const { validationResult } = require('express-validator');
-
+const jwtMiddleware = require('../middlewares/jwt.middleware');
 // Middleware to handle validation errors
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
@@ -32,6 +32,13 @@ authRouter.post(
     validateUserLogin,
     handleValidationErrors,
     authController.login.bind(authController)
+);
+
+// Get logged in user route
+authRouter.get(
+    '/me',
+    jwtMiddleware,
+    authController.getLoggedInUser.bind(authController)
 );
 
 // Use authRouter for all routes starting with /auth

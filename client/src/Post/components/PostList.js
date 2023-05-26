@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { NotificationManager } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 // Import Components
 import PostListItem from './PostListItem';
 

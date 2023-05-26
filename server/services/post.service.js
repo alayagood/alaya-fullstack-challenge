@@ -1,5 +1,5 @@
 const PostRepository = require('../repositories/post.repository');
-const PostImageService = require('/post-image.service');
+const PostImageService = require('./post-image.service');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');

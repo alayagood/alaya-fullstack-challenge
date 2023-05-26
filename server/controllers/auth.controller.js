@@ -41,6 +41,18 @@ class AuthController {
       res.status(500).json({ error: error.message });
     }
   }
+  async getLoggedInUser(req, res) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      console.log('token', token)
+
+      const user = authService.getUserFromToken(token);
+
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get logged in user' });
+    }
+  }
 }
 
 module.exports = AuthController;
