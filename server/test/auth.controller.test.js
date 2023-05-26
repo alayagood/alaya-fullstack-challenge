@@ -1,78 +1,55 @@
-const chai = require('chai');
-const bcrypt = require('bcrypt');
+const { expect } = require('chai');
 const sinon = require('sinon');
-const jwt = require('jsonwebtoken');
-
-const authController = require('../controllers/auth.controller');
-const { expect } = chai;
+const AuthController = require('../controllers/auth.controller');
+const AuthService = require('../services/auth.service');
 
 describe('AuthController', () => {
-    describe('#register', () => {
-        it('should register a new user', async () => {
-            // Mock the user service
-            authController.userService.createUser = sinon.stub().resolves({
-                _id: '12345',
-                username: 'testuser',
-                password: 'testpassword',
-                email: 'test@email.com',
-            });
-
-            // Mock the JWT sign method
-            sinon.stub(jwt, 'sign').returns('fakejwttoken');
-
-            // Mock request and response objects
-            const req = {
-                body: {
-                    username: 'testuser',
-                    password: 'testpassword',
-                    email: 'test@email.com',
-                },
+    describe('register', () => {
+        it('should register a new user and return a token', async () => {
+            const mockAuthService = {
+                registerUser: sinon.fake.resolves({ _id: '123', username: 'john' }),
+                generateToken: sinon.fake.returns('token'),
             };
-            const res = {
-                json: sinon.spy(),
-                status: sinon.stub().returnsThis(),
-            };
+
+            const authController = new AuthController();
+
+            sinon.stub(AuthService.prototype, 'registerUser').callsFake(mockAuthService.registerUser);
+            sinon.stub(AuthService.prototype, 'generateToken').callsFake(mockAuthService.generateToken);
+
+            const req = { body: { username: 'john', password: 'password', email: 'john@example.com' } };
+            const res = { json: sinon.fake() };
 
             await authController.register(req, res);
 
-            // Assert that the response was a JSON object with a token
+            expect(mockAuthService.registerUser.calledOnce).to.be.true;
+            expect(mockAuthService.generateToken.calledOnce).to.be.true;
             expect(res.json.calledOnce).to.be.true;
-            expect(res.json.firstCall.args[0]).to.have.property('token', 'fakejwttoken');
+            expect(res.json.firstCall.args[0]).to.deep.equal({ token: 'token' });
+
+            sinon.restore();
         });
     });
-    describe('#login', () => {
-        it('should log in a user', async () => {
-            // Mock the user service
-            authController.userService.findUserByUsername = sinon.stub().resolves({
-                _id: '12345',
-                username: 'testuser',
-                password: await bcrypt.hash('testpassword', 10), // Hashed password
-                email: 'test@email.com',
-            });
 
-            // Mock the bcrypt compare method
-            sinon.stub(bcrypt, 'compare').resolves(true);
-
-            // Mock the JWT sign method
-            sinon.stub(jwt, 'sign').returns('fakejwttoken');
-
-            // Mock request and response objects
-            const req = {
-                body: {
-                    username: 'testuser',
-                    password: 'testpassword',
-                },
+    describe('login', () => {
+        it('should login an existing user and return a token', async () => {
+            const mockAuthService = {
+                login: sinon.fake.resolves('token'),
             };
-            const res = {
-                json: sinon.spy(),
-                status: sinon.stub().returnsThis(),
-            };
+
+            const authController = new AuthController();
+
+            sinon.stub(AuthService.prototype, 'login').callsFake(mockAuthService.login);
+
+            const req = { body: { username: 'john', password: 'password' } };
+            const res = { json: sinon.fake() };
 
             await authController.login(req, res);
 
-            // Assert that the response was a JSON object with a token
+            expect(mockAuthService.login.calledOnce).to.be.true;
             expect(res.json.calledOnce).to.be.true;
-            expect(res.json.firstCall.args[0]).to.have.property('token', 'fakejwttoken');
+            expect(res.json.firstCall.args[0]).to.deep.equal({ token: 'token' });
+
+            sinon.restore();
         });
     });
 });

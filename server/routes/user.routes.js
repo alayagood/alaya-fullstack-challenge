@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/auth.controller');
+const AuthController = require('../controllers/auth.controller');
 const { validateUserRegistration, validateUserLogin } = require('../validators/user.validator');
 const { validationResult } = require('express-validator');
 
@@ -15,12 +15,15 @@ const handleValidationErrors = (req, res, next) => {
 
 const authRouter = express.Router();
 
+// Create an instance of AuthController
+const authController = new AuthController();
+
 // Register route
 authRouter.post(
     '/register',
     validateUserRegistration,
     handleValidationErrors,
-    authController.register
+    authController.register.bind(authController)
 );
 
 // Login route
@@ -28,7 +31,7 @@ authRouter.post(
     '/login',
     validateUserLogin,
     handleValidationErrors,
-    authController.login
+    authController.login.bind(authController)
 );
 
 // Use authRouter for all routes starting with /auth
