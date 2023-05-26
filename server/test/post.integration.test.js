@@ -9,13 +9,14 @@ const User = require('../models/user');
 chai.use(chaiHttp);
 
 describe('Post Integration Test', function() {
-    this.timeout(3000); // set timeout to 5000ms
+    this.timeout(3000); // Set timeout to 3000ms (3 seconds)
     let postId;
     let userId;
     let agent; // Use agent for session persistence
+    let accessToken; // Store the access token
 
     before(function(done) {
-        console.log('clear the database before all tests');
+        console.log('Clearing the database before all tests');
         Promise.all([
             User.deleteMany({}),
             Post.deleteMany({})
@@ -47,7 +48,7 @@ describe('Post Integration Test', function() {
     });
 
     describe('Login', function() {
-        it('should login and store the session', function(done) {
+        beforeEach(function(done) {
             chai.request(app)
                 .post('/api/auth/login')
                 .send({ username: 'testuser', password: 'testpassword' })
@@ -58,12 +59,18 @@ describe('Post Integration Test', function() {
                     }
 
                     expect(res).to.have.status(200);
-
-                    // Store the session in the agent
                     agent = chai.request.agent(app);
+
+                    // Get the access token from the response
+                    accessToken = res.body.token;
 
                     done();
                 });
+        });
+
+        it('should login and store the session', function(done) {
+            // The login process is executed before each test
+            done();
         });
     });
 
@@ -73,6 +80,7 @@ describe('Post Integration Test', function() {
 
             agent
                 .post('/api/posts')
+                .set('Authorization', 'Bearer ' + accessToken) // Set the Authorization header
                 .send({ post: newPost })
                 .end(function(err, res) {
                     if (err) {
@@ -96,6 +104,7 @@ describe('Post Integration Test', function() {
         it('should return a single post', function(done) {
             agent
                 .get('/api/posts/cuid_sample')
+                .set('Authorization', 'Bearer ' + accessToken) // Set the Authorization header
                 .end(function(err, res) {
                     if (err) {
                         console.error(err);
@@ -118,6 +127,7 @@ describe('Post Integration Test', function() {
         it('should delete a post', function(done) {
             agent
                 .delete('/api/posts/cuid_sample')
+                .set('Authorization', 'Bearer ' + accessToken) // Set the Authorization header
                 .end(function(err, res) {
                     if (err) {
                         console.error(err);
@@ -128,6 +138,7 @@ describe('Post Integration Test', function() {
 
                     agent
                         .get('/api/posts/' + postId)
+                        .set('Authorization', 'Bearer ' + accessToken) // Set the Authorization header
                         .end(function(err, res) {
                             if (err) {
                                 console.error(err);
@@ -147,6 +158,7 @@ describe('Post Integration Test', function() {
 
             agent
                 .post('/api/posts')
+                .set('Authorization', 'Bearer ' + accessToken) // Set the Authorization header
                 .send({ post: newPost })
                 .end(function(err, res) {
                     if (err) {
@@ -167,6 +179,7 @@ describe('Post Integration Test', function() {
         it('should return all posts', function(done) {
             agent
                 .get('/api/posts')
+                .set('Authorization', 'Bearer ' + accessToken) // Set the Authorization header
                 .end(function(err, res) {
                     if (err) {
                         console.error(err);

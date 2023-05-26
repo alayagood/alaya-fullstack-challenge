@@ -11,7 +11,7 @@ class PostRepository {
   }
 
   // Fetch a post by its cuid from the database
-  async findById(cuid) {
+  async findByCuid(cuid) {
     try {
       return await Post.findOne({cuid}).exec();
     } catch (error) {
@@ -25,6 +25,7 @@ class PostRepository {
       const newPost = new Post(postData);
       return await newPost.save();
     } catch (error) {
+      console.log(error)
       throw new Error('Failed to save the post to the database');
     }
   }
@@ -57,7 +58,7 @@ class PostRepository {
   }
 
   // Delete a post by its ID
-  async deletePost(postId) {
+  async delete(postId) {
     try {
       await Post.findByIdAndDelete(postId).exec();
     } catch (error) {
@@ -65,7 +66,7 @@ class PostRepository {
     }
   }
 
-  async findPostsByUser(userId) {
+  async findByUser(userId) {
     return Post.find({ createdBy: userId });
   }
 }

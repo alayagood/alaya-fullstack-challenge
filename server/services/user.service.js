@@ -11,7 +11,7 @@ class UserService {
     async createUser(user) {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
-        return await this.userRepository.createUser(user);
+        return await this.userRepository.create(user);
     }
 
     async validatePassword(password, user) {
@@ -19,19 +19,19 @@ class UserService {
     }
 
     async findUserByUsername(username) {
-        return this.userRepository.findUserByUsername(username);
+        return this.userRepository.findByUsername(username);
     }
 
     async findUserByEmail(email) {
-        return this.userRepository.findUserByEmail(email);
+        return this.userRepository.findByEmail(email);
     }
     async getUserPosts(userId) {
-        const user = await this.userRepository.findUserById(userId);
+        const user = await this.userRepository.findById(userId);
         if (!user) {
             throw new Error('User not found');
         }
 
-        return await this.postRepository.findPostsByUser(userId);
+        return await this.postRepository.findByUser(userId);
     }
 }
 

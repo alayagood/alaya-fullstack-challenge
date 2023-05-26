@@ -1,6 +1,16 @@
+const ImageService = require("./image.service");
+require('dotenv').config();
 class PostImageService {
-    constructor(imageService) {
-      this.imageService = imageService;
+    constructor(provider = 'default') {
+        if(provider === 'default') {
+            provider = process.env.DEFAULT_IMAGE;
+        }
+        const implementedProviders = ['gcs', 'aws', 'local'];
+        if (!implementedProviders.includes(provider)) {
+            throw new Error('Invalid or unsupported provider');
+        }
+        this.provider = provider;
+        this.imageService = new ImageService();
     }
   
     /**
@@ -13,9 +23,6 @@ class PostImageService {
     async addImageToPost(postId, imageFile, provider) {
       try {
         const imageUrl = await this.imageService.saveImage(imageFile, provider);
-        // Additional logic to associate the image URL with the corresponding post
-        // and persist this information in the database
-        // ...
         return imageUrl;
       } catch (error) {
         throw new Error('Failed to add image to post');
