@@ -1,5 +1,5 @@
 const { Storage } = require('@google-cloud/storage');
-const ImageUtils = require('../utils/ImageUtils');
+const ImageUtils = require('../utils/image.utils');
 require('dotenv').config();
 const path = require('path');
 

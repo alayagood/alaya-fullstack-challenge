@@ -64,6 +64,10 @@ class PostRepository {
       throw new Error('Failed to delete post');
     }
   }
+
+  async findPostsByUser(userId) {
+    return Post.find({ createdBy: userId });
+  }
 }
 
 module.exports = PostRepository;

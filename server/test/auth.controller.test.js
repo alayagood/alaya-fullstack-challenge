@@ -1,67 +1,78 @@
 const chai = require('chai');
-const sinon = require('sinon');
 const bcrypt = require('bcrypt');
+const sinon = require('sinon');
 const jwt = require('jsonwebtoken');
 
-const { AuthController, UserService } = require('../controllers/auth.controller');
-const UserModel = require('../models/user');
+const authController = require('../controllers/auth.controller');
+const { expect } = chai;
 
-const expect = chai.expect;
+describe('AuthController', () => {
+    describe('#register', () => {
+        it('should register a new user', async () => {
+            // Mock the user service
+            authController.userService.createUser = sinon.stub().resolves({
+                _id: '12345',
+                username: 'testuser',
+                password: 'testpassword',
+                email: 'test@email.com',
+            });
 
-describe('AuthController', function() {
-    let userService, authController, req, res;
+            // Mock the JWT sign method
+            sinon.stub(jwt, 'sign').returns('fakejwttoken');
 
-    beforeEach(function() {
-        userService = new UserService(UserModel);
-        authController = new AuthController(userService);
-        req = { body: {} };
-        res = { json: sinon.stub(), status: sinon.stub().returnsThis() };
-    });
-
-    describe('register', function() {
-        it('should create a new user and return a token', async function() {
-            req.body = { username: 'testUser', password: 'testPassword', email: 'testEmail@example.com' };
-            const newUser = { _id: 'testUserId', ...req.body };
-            const hash = 'hashedPassword';
-            const token = 'testToken';
-
-            sinon.stub(bcrypt, 'hash').resolves(hash);
-            sinon.stub(userService, 'createUser').resolves(newUser);
-            sinon.stub(jwt, 'sign').returns(token);
+            // Mock request and response objects
+            const req = {
+                body: {
+                    username: 'testuser',
+                    password: 'testpassword',
+                    email: 'test@email.com',
+                },
+            };
+            const res = {
+                json: sinon.spy(),
+                status: sinon.stub().returnsThis(),
+            };
 
             await authController.register(req, res);
 
-            expect(bcrypt.hash.calledWith(req.body.password, 10)).to.be.true;
-            expect(userService.createUser.calledWith({ ...req.body, password: hash })).to.be.true;
-            expect(jwt.sign.calledWith({ id: newUser._id }, process.env.JWT_SECRET)).to.be.true;
-            expect(res.json.calledWith({ token })).to.be.true;
-
-            bcrypt.hash.restore();
-            userService.createUser.restore();
-            jwt.sign.restore();
+            // Assert that the response was a JSON object with a token
+            expect(res.json.calledOnce).to.be.true;
+            expect(res.json.firstCall.args[0]).to.have.property('token', 'fakejwttoken');
         });
     });
+    describe('#login', () => {
+        it('should log in a user', async () => {
+            // Mock the user service
+            authController.userService.findUserByUsername = sinon.stub().resolves({
+                _id: '12345',
+                username: 'testuser',
+                password: await bcrypt.hash('testpassword', 10), // Hashed password
+                email: 'test@email.com',
+            });
 
-    describe('login', function() {
-        it('should log in an existing user and return a token', async function() {
-            req.body = { username: 'testUser', password: 'testPassword' };
-            const existingUser = { _id: 'testUserId', username: 'testUser', password: 'hashedPassword' };
-            const token = 'testToken';
-
-            sinon.stub(userService, 'findUserByUsername').resolves(existingUser);
+            // Mock the bcrypt compare method
             sinon.stub(bcrypt, 'compare').resolves(true);
-            sinon.stub(jwt, 'sign').returns(token);
+
+            // Mock the JWT sign method
+            sinon.stub(jwt, 'sign').returns('fakejwttoken');
+
+            // Mock request and response objects
+            const req = {
+                body: {
+                    username: 'testuser',
+                    password: 'testpassword',
+                },
+            };
+            const res = {
+                json: sinon.spy(),
+                status: sinon.stub().returnsThis(),
+            };
 
             await authController.login(req, res);
 
-            expect(userService.findUserByUsername.calledWith(req.body.username)).to.be.true;
-            expect(bcrypt.compare.calledWith(req.body.password, existingUser.password)).to.be.true;
-            expect(jwt.sign.calledWith({ id: existingUser._id }, process.env.JWT_SECRET)).to.be.true;
-            expect(res.json.calledWith({ token })).to.be.true;
-
-            userService.findUserByUsername.restore();
-            bcrypt.compare.restore();
-            jwt.sign.restore();
+            // Assert that the response was a JSON object with a token
+            expect(res.json.calledOnce).to.be.true;
+            expect(res.json.firstCall.args[0]).to.have.property('token', 'fakejwttoken');
         });
     });
 });

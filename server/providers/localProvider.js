@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const ImageUtils = require('../utils/ImageUtils');
+const ImageUtils = require('../utils/image.utils');
 
 class LocalProvider {
   constructor() {

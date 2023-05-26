@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const ImageUtils = require('../utils/ImageUtils');
+const ImageUtils = require('../utils/image.utils');
 require('dotenv').config();
 
 class AWSProvider {

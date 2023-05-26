@@ -4,7 +4,7 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
-const PostImageService = require('../services/postImageService');
+const PostImageService = require('../services/post-image.service');
 
 class PostController {
   constructor() {
