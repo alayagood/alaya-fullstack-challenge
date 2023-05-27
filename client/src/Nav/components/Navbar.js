@@ -20,10 +20,12 @@ const theme = createTheme({
 });
 
 function Navbar() {
-    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
 
     const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         dispatch(logout());
     };
 
@@ -35,7 +37,7 @@ function Navbar() {
                         <Button color="inherit" startIcon={<FontAwesomeIcon icon={faHome} />} href="/">Home</Button>
                     </Typography>
                     <Typography variant="h6">
-                        {isAuthenticated ? (
+                        {user ? (
                             <Button color="inherit" onClick={handleLogout}>
                                 Logout <FontAwesomeIcon icon={faSignOutAlt} style={{ marginLeft: '0.5rem' }} />
                             </Button>

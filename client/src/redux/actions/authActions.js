@@ -10,6 +10,9 @@ export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAILURE = 'REGISTER_FAILURE';
+export const SET_USER = 'SET_USER';
+
+export const SET_TOKEN = 'SET_TOKEN';
 
 // Action creators
 export function loginRequest() {
@@ -17,7 +20,20 @@ export function loginRequest() {
         type: LOGIN_REQUEST,
     };
 }
-
+export function setUser(user) {
+    localStorage.setItem('user', user);
+    return {
+        type: SET_USER,
+        payload: user,
+    };
+}
+export function setToken(token) {
+    localStorage.setItem('token', token);
+    return {
+        type: SET_TOKEN,
+        payload: token,
+    };
+}
 export function loginSuccess(token) {
     localStorage.setItem('token', token);
     return {
@@ -43,6 +59,7 @@ export function logoutRequest() {
 
 export function logoutSuccess() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     return {
         type: LOGOUT_SUCCESS,
     };
@@ -85,9 +102,13 @@ export function login(credentials) {
 
         try {
             const response  = await callApi('auth/login', 'post', credentials);
-
             if (response.data && response.data.token) {
                 dispatch(loginSuccess(response.data.token));
+                dispatch(setToken(response.data.token));
+                const user = await callApi('auth/me', 'get');
+                if (user.data) {
+                    dispatch(setUser(JSON.stringify(user.data)));
+                }
                 return { result: true, payload: response.data.token};
             } else {
                 const errors = response.return.errors[0].msg ? response.return.errors[0].msg : 'Failed to login';
@@ -95,6 +116,7 @@ export function login(credentials) {
                 return { result: false, payload: errors };
             }
         } catch (error) {
+            console.log('error login', error)
             dispatch(loginFailure('Failed to authenticate'));
             return { result: false, error: error };
         }
@@ -107,13 +129,7 @@ export function logout() {
         dispatch(logoutRequest());
 
         try {
-            const { data, errors } = await callApi('auth/logout', 'post');
-
-            if (data) {
-                dispatch(logoutSuccess());
-            } else {
-                dispatch(logoutFailure(errors));
-            }
+            dispatch(logoutSuccess());
         } catch (error) {
             dispatch(logoutFailure(['Failed to logout']));
         }

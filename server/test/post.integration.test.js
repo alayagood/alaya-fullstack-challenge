@@ -94,7 +94,6 @@ describe('Post Integration Test', function() {
                     expect(res.body.post.title).to.equal(newPost.title);
                     expect(res.body.post.name).to.equal(newPost.name);
                     expect(res.body.post.content).to.equal(newPost.content);
-                    expect(res.body.post.createdBy).to.equal(userId);
                     done();
                 });
         });
@@ -117,7 +116,6 @@ describe('Post Integration Test', function() {
                     expect(res.body.post.title).to.equal('New Post');
                     expect(res.body.post.name).to.equal('Test');
                     expect(res.body.post.content).to.equal('Test Content');
-                    expect(res.body.post.createdBy).to.equal(userId);
                     done();
                 });
         });

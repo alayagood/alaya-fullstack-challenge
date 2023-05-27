@@ -10,10 +10,17 @@ const jwtOptions = {
     secretOrKey: process.env.JWT_SECRET,
 };
 
+/**
+ * JWT authentication strategy
+ *
+ * @param {Object} payload - The payload of the JWT token
+ * @param {Function} done - The callback function for the authentication process
+ * @returns {void}
+ */
 const jwtStrategy = new JwtStrategy(jwtOptions, (payload, done) => {
     // Verify the payload of the token and find the corresponding user in the database
     userRepository.findById(payload.id)
-        .then(user => {
+        .then((user) => {
             if (user) {
                 // User found, authentication successful
                 return done(null, user);
@@ -22,7 +29,7 @@ const jwtStrategy = new JwtStrategy(jwtOptions, (payload, done) => {
                 return done(null, false);
             }
         })
-        .catch(error => {
+        .catch((error) => {
             // Error occurred while finding the user in the database
             return done(error, false);
         });
@@ -30,8 +37,15 @@ const jwtStrategy = new JwtStrategy(jwtOptions, (payload, done) => {
 
 passport.use(jwtStrategy);
 
+/**
+ * Middleware for JWT authentication
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @param {Function} next - The next middleware function
+ * @returns {void}
+ */
 const jwtMiddleware = (req, res, next) => {
-
     passport.authenticate('jwt', { session: false }, (err, user) => {
         if (err) {
             console.error('Error during authentication:', err);

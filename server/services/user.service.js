@@ -18,13 +18,6 @@ class UserService {
         return await bcrypt.compare(password, user.password);
     }
 
-    async findUserByUsername(username) {
-        return this.userRepository.findByUsername(username);
-    }
-
-    async findUserByEmail(email) {
-        return this.userRepository.findByEmail(email);
-    }
     async getUserPosts(userId) {
         const user = await this.userRepository.findById(userId);
         if (!user) {

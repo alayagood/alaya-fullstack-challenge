@@ -1,67 +1,72 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const { validationResult } = require('express-validator');
 const PostController = require('../controllers/post.controller');
+const PostService = require('../services/post.service');
 const PostRepository = require('../repositories/post.repository');
-const Post = require('../models/post');
-const PostImageService = require('../services/post-image.service');
-const slug = require('limax');
-const cuid = require('cuid');
-const sanitizeHtml = require('sanitize-html');
 
 describe('Post Controller - Unit Tests', function() {
-    let postRepository, postImageService, postController, req, res, postStub;
+    let postService, postRepository, postController, req, res;
 
     beforeEach(function() {
+        postService = new PostService();
         postRepository = new PostRepository();
-        postImageService = new PostImageService();
-        postController = new PostController(postRepository, postImageService);
-        req = { body: { post: {} }, user: {} };
-        res = { json: sinon.stub().returnsThis(), status: sinon.stub().returnsThis() };
+        postController = new PostController();
 
-        postStub = sinon.stub(Post.prototype, 'save');
-        sinon.stub(sanitizeHtml, 'sanitizeHtml').callsFake(str => str);
-        sinon.stub(slug, 'slug').callsFake(str => str);
-        sinon.stub(cuid, 'cuid').callsFake(() => 'ck9lzgufo0003rqxs6u3y3kcm');
-    });
+        req = {
+            body: { post: {} },
+            user: {},
+            params: { cuid: 'testcuid' }
+        };
+        res = {
+            json: sinon.stub().returnsThis(),
+            status: sinon.stub().returnsThis(),
+            send: sinon.stub().returnsThis(),
+            sendStatus: sinon.stub().returnsThis()
+        };
 
-    afterEach(function() {
-        postStub.restore();
-        sanitizeHtml.sanitizeHtml.restore();
-        slug.slug.restore();
-        cuid.cuid.restore();
+        // Overriding the PostController's dependencies with the stubs
+        postController.postService = postService;
+        postController.postRepository = postRepository;
     });
 
     describe('getPosts', function() {
         it('should return all posts', async function() {
             const expectedPosts = [{ title: 'Post 1' }, { title: 'Post 2' }];
 
-            sinon.stub(postRepository, 'getAllPosts').resolves(expectedPosts);
+            sinon.stub(postRepository, 'findAll').resolves(expectedPosts);
 
             await postController.getPosts(req, res);
 
             expect(res.json.calledOnceWith({ posts: expectedPosts })).to.be.true;
 
-            postRepository.getAllPosts.restore();
+            postRepository.findAll.restore();
         });
     });
 
     describe('addPost', function() {
         it('should add a new post', async function() {
-            const newPostData = { title: 'New Post', content: 'Test Content', name: 'New Name', image: 'Test Image' };
-            const savedPostData = { ...newPostData, _id: '123456789', slug: 'new-post', cuid: 'ck9lzgufo0003rqxs6u3y3kcm', createdBy: req.user };
+            const newPostData = {
+                title: 'New Post',
+                content: 'Test Content',
+                name: 'New Name',
+                image: 'Test Image'
+            };
+            const savedPostData = {
+                ...newPostData,
+                _id: '123456789',
+                createdBy: req.user._id
+            };
 
             req.body.post = newPostData;
-            req.validationErrors = sinon.stub().returns(false);
-
-            postStub.resolves(savedPostData);
-            sinon.stub(postController.postImageService, 'saveImage').resolves('imageUrl');
+            sinon.stub(postService, 'addPost').resolves(savedPostData);
 
             await postController.addPost(req, res);
 
             expect(res.json.calledOnceWith({ post: savedPostData })).to.be.true;
 
-            postController.postImageService.saveImage.restore();
+            postService.addPost.restore();
         });
     });
+
+    // Similar assertions can be made for the methods `getPost` and `deletePost`
 });

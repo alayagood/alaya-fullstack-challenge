@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPost } from '../../PostActions';
+import { fetchPost } from '../../../redux/actions/postActions';
 import { useParams } from 'react-router-dom';
 
 export function PostDetailPage() {

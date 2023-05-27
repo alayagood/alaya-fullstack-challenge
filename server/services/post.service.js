@@ -12,11 +12,17 @@ class PostService {
 
     /**
      * Add a new post
+     *
      * @param {Object} postData - The data of the post to be added
      * @returns {Promise<Object>} - The newly added post
+     * @throws {Error} If there is an error while saving the post
      */
     async addPost(postData) {
         const { name, title, content, image, createdBy } = postData;
+
+        const sanitizedTitle = sanitizeHtml(title);
+        const sanitizedName = sanitizeHtml(name);
+        const sanitizedContent = sanitizeHtml(content);
 
         const newPost = {
             ...postData,
@@ -26,21 +32,41 @@ class PostService {
             images: []
         };
 
-        // Let's sanitize inputs
-        newPost.title = sanitizeHtml(title);
-        newPost.name = sanitizeHtml(name);
-        newPost.content = sanitizeHtml(content);
-
-        // Check if an image was passed
         if (image) {
-            // Save the image using the PostImageService
             const imageUrl = await this.postImageService.saveImage(image, 'default');
             newPost.images.push({ url: imageUrl });
         }
 
-        return await this.postRepository.save(newPost);
+        try {
+            return await this.postRepository.save(newPost);
+        } catch (error) {
+            throw new Error('Failed to add the post');
+        }
     }
 
+    /**
+     * Delete a post
+     *
+     * @param {string} cuid - The cuid of the post to be deleted
+     * @param {Object} user - The user object representing the current user
+     * @throws {Error} If the post is not found or the user is unauthorized
+     */
+    async deletePost(cuid, user) {
+        const post = await this.postRepository.findByCuid(cuid);
+
+        if (!post || !user) {
+            throw new Error('Post not found');
+        }
+        if (post.createdBy.toString() !== user._id.toString()) {
+            throw new Error('Unauthorized to delete the post');
+        }
+
+        try {
+            await this.postRepository.deleteByCuid(post.cuid);
+        } catch (error) {
+            throw new Error('Failed to delete the post');
+        }
+    }
 }
 
 module.exports = PostService;

@@ -1,4 +1,4 @@
-import { API_URL } from '../../util/apiCaller';
+import callApi from '../../util/apiCaller';
 
 // Export Constants
 export const ADD_POST = 'ADD_POST';
@@ -16,23 +16,16 @@ export function addPost(post) {
 export function addPostRequest(post) {
     return async (dispatch) => {
         try {
-            const response = await fetch(`${API_URL}/posts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await callApi('posts', 'post', {
+                post: {
+                    name: post.name,
+                    title: post.title,
+                    content: post.content,
                 },
-                body: JSON.stringify({ post }),
             });
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch(addPost(data.post));
-                return data;
-            } else {
-                throw new Error(data.message);
-            }
+            dispatch(addPost(response.data.post));
         } catch (error) {
-            throw new Error('Failed to add post');
+            console.error('Failed to add post:', error);
         }
     };
 }
@@ -47,17 +40,10 @@ export function addPosts(posts) {
 export function fetchPosts() {
     return async (dispatch) => {
         try {
-            const response = await fetch(`${API_URL}/posts`);
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch(addPosts(data.posts));
-                return data;
-            } else {
-                throw new Error(data.message);
-            }
+            const response = await callApi('posts');
+            dispatch(addPosts(response.data.posts));
         } catch (error) {
-            throw new Error('Failed to fetch posts');
+            console.error('Failed to fetch posts:', error);
         }
     };
 }
@@ -65,17 +51,10 @@ export function fetchPosts() {
 export function fetchPost(cuid) {
     return async (dispatch) => {
         try {
-            const response = await fetch(`${API_URL}/posts/${cuid}`);
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch(addPost(data.post));
-                return data;
-            } else {
-                throw new Error(data.message);
-            }
+            const response = await callApi(`posts/${cuid}`);
+            dispatch(addPost(response.data.post));
         } catch (error) {
-            throw new Error('Failed to fetch post');
+            console.error('Failed to fetch post:', error);
         }
     };
 }
@@ -88,20 +67,15 @@ export function deletePost(cuid) {
 }
 
 export function deletePostRequest(cuid) {
-    return async (dispatch) => {
-        try {
-            const response = await fetch(`${API_URL}/posts/${cuid}`, {
-                method: 'DELETE',
-            });
-
-            if (response.ok) {
+    return (dispatch) => {
+        return callApi(`posts/${cuid}`, 'delete')
+            .then(() => {
                 dispatch(deletePost(cuid));
-                return;
-            } else {
+                return { success: true };
+            })
+            .catch((error) => {
+                console.error('Failed to delete post:', error);
                 throw new Error('Failed to delete post');
-            }
-        } catch (error) {
-            throw new Error('Failed to delete post');
-        }
+            });
     };
 }

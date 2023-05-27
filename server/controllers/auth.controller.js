@@ -3,7 +3,13 @@ const AuthService = require('../services/auth.service');
 const authService = new AuthService();
 
 class AuthController {
-  // Register a new user
+  /**
+   * Register a new user
+   *
+   * @param {Object} req - The request object
+   * @param {Object} res - The response object
+   * @returns {void}
+   */
   async register(req, res) {
     try {
       const { username, password, email } = req.body;
@@ -24,7 +30,13 @@ class AuthController {
     }
   }
 
-  // Login a user
+  /**
+   * Login a user
+   *
+   * @param {Object} req - The request object
+   * @param {Object} res - The response object
+   * @returns {void}
+   */
   async login(req, res) {
     try {
       const { username, password } = req.body;
@@ -41,13 +53,18 @@ class AuthController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  /**
+   * Get the logged-in user
+   *
+   * @param {Object} req - The request object
+   * @param {Object} res - The response object
+   * @returns {void}
+   */
   async getLoggedInUser(req, res) {
     try {
       const token = req.headers.authorization.split(' ')[1];
-      console.log('token', token)
-
-      const user = authService.getUserFromToken(token);
-
+      const user = await authService.getUserFromToken(token);
       res.json(user);
     } catch (error) {
       res.status(500).json({ error: 'Failed to get logged in user' });

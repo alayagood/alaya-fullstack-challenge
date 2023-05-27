@@ -34,9 +34,6 @@ class PostController {
   addPost = async (req, res) => {
     try {
       const { name, title, content, image } = req.body.post;
-      console.log(req.body.post)
-      console.log(req.user)
-
       const newPost = {
         name,
         title,
@@ -78,17 +75,11 @@ class PostController {
    */
   deletePost = async (req, res) => {
     try {
-      const post = await this.postRepository.findByCuid(req.params.cuid);
-      if (!post) {
-        return res.status(404).json({ error: 'Post not found' });
-      }
-      if (post.createdBy !== req.user._id) {
-        return res.status(403).json({ error: 'Unauthorized' });
-      }
-      await this.postRepository.deletePost(post);
-      res.status(200).end();
-    } catch (err) {
-      this.handleDBError(err, res);
+      const user = req.user;
+      await this.postService.deletePost(req.params.cuid, user);
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 
