@@ -49,15 +49,18 @@ describe('Post Controller - Unit Tests', function() {
                 title: 'New Post',
                 content: 'Test Content',
                 name: 'New Name',
-                image: 'Test Image'
             };
             const savedPostData = {
                 ...newPostData,
                 _id: '123456789',
-                createdBy: req.user._id
+                createdBy: req.user._id,
             };
 
-            req.body.post = newPostData;
+            req.body = {
+                post: JSON.stringify(newPostData),
+            };
+            req.file = {}; // Simulated file object
+
             sinon.stub(postService, 'addPost').resolves(savedPostData);
 
             await postController.addPost(req, res);
@@ -67,6 +70,7 @@ describe('Post Controller - Unit Tests', function() {
             postService.addPost.restore();
         });
     });
+
 
     // Similar assertions can be made for the methods `getPost` and `deletePost`
 });

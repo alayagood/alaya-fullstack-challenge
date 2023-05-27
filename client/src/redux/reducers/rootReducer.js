@@ -7,9 +7,6 @@ const rootReducer = combineReducers({
     auth: authReducer,
 });
 const debugRootReducer = (state, action) => {
-    console.log('Current State:', state);
-    console.log('Action:', action);
-
     return rootReducer(state, action);
 };
 

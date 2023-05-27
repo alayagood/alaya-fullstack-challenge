@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPost } from '../../../redux/actions/postActions';
 import { useParams } from 'react-router-dom';
 
-export function PostDetailPage() {
+function PostDetailPage() {
   const { cuid } = useParams();
-  const post = useSelector(state =>
-      state.posts.data.find(currentPost => currentPost.cuid === cuid)
-  );
   const dispatch = useDispatch();
+  const post = useSelector((state) =>
+      state.posts.data.find((currentPost) => currentPost.cuid === cuid)
+  );
 
   useEffect(() => {
     if (!post) {
@@ -16,18 +16,33 @@ export function PostDetailPage() {
     }
   }, [cuid, dispatch, post]);
 
-  return post ? (
+  return (
       <div className="container">
-        <div className="row">
-          <div className="col-12">
-            <h1>{post.title}</h1>
-            <p>By {post.name}</p>
-            <p>{post.content}</p>
-          </div>
-        </div>
+        {post ? (
+            <div className="row">
+              <div className="col-12">
+                <h1>{post.title}</h1>
+                <p>By {post.name}</p>
+                <p>{post.content}</p>
+                {post.images && post.images.length > 0 && (
+                    <div>
+                      <h3>Images</h3>
+                      {post.images.map((image) => (
+                          <img
+                              key={image._id}
+                              src={image.url}
+                              alt={image.name}
+                              style={{ maxWidth: '100%', marginBottom: '10px' }}
+                          />
+                      ))}
+                    </div>
+                )}
+              </div>
+            </div>
+        ) : (
+            <div>Loading</div>
+        )}
       </div>
-  ) : (
-      <div>Loading</div>
   );
 }
 

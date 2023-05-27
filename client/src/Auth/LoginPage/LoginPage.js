@@ -21,12 +21,11 @@ function LoginPage() {
 
         try {
             const response = await dispatch(login(credentials));
-            console.log('login',response);
             if (typeof (response.result) !== 'undefined' && response.result === true) {
                 NotificationManager.success('Login successful');
                 history.push('/');
             } else {
-                NotificationManager.error(response.payload);
+                NotificationManager.error('Failed to authenticate');
             }
         } catch (error) {
             NotificationManager.error('Failed to authenticate');

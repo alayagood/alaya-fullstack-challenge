@@ -1,9 +1,7 @@
 export const API_URL = 'http://localhost:3000/api';
 
 const callApi = async (endpoint, method = 'get', body) => {
-    const headers = {
-        'Content-Type': 'application/json',
-    };
+    const headers = {};
 
     const token = localStorage.getItem('token');
     if (token) {
@@ -16,7 +14,12 @@ const callApi = async (endpoint, method = 'get', body) => {
     };
 
     if (body) {
-        requestOptions.body = JSON.stringify(body);
+        if (body instanceof FormData) {
+            requestOptions.body = body;
+        } else {
+            headers['Content-Type'] = 'application/json';
+            requestOptions.body = JSON.stringify(body);
+        }
     }
 
     try {
@@ -30,25 +33,20 @@ const callApi = async (endpoint, method = 'get', body) => {
 
                 try {
                     data = await response.json();
-                    console.log('API response:', data);
                     return { data, errors: null };
                 } catch (error) {
-                    console.error('Failed to parse JSON:', error);
                     throw new Error('Failed to parse JSON');
                 }
             } else {
                 const data = await response.text();
-                console.log('API response:', data);
                 return { data, errors: null };
             }
         } else {
             throw new Error(await response.text() || 'Failed to make the API call');
         }
     } catch (error) {
-        console.error('Failed to make the API call:', error);
         throw new Error('Failed to make the API call');
     }
-
 };
 
 export default callApi;

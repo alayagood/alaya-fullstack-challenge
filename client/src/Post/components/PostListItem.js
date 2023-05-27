@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Card } from '@material-ui/core';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
+import { Card, CardContent, Typography, CardActions, Button, CardMedia } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 
 function PostListItem({ post, onDelete }) {
@@ -17,14 +13,17 @@ function PostListItem({ post, onDelete }) {
 
   const isCurrentUserPost = currentUser && post.createdBy === currentUser._id;
 
+  const firstImageUrl = post.images && post.images.length > 0 ? post.images[0].url : null;
+
   return (
       <Card className="w-100 my-4">
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            <Link to={`/posts/${post.cuid}/${post.slug}`} >
-              {post.title}
-            </Link>
+            <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
           </Typography>
+          {firstImageUrl && (
+              <CardMedia component="img" src={firstImageUrl} alt={post.title} height="200" />
+          )}
           <Typography component="p" className="mt-3">
             {post.content}
           </Typography>
@@ -51,6 +50,12 @@ PostListItem.propTypes = {
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
     createdBy: PropTypes.string.isRequired,
+    images: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.string.isRequired,
+          url: PropTypes.string.isRequired,
+        })
+    ),
   }).isRequired,
   onDelete: PropTypes.func.isRequired,
 };

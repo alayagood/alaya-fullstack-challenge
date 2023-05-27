@@ -11,14 +11,12 @@ const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOGIN_REQUEST:
         case REGISTER_REQUEST:
-            console.log('LOGIN/REGISTER REQUEST:', state, action);
             return {
                 ...state,
                 loading: true,
             };
         case LOGIN_SUCCESS:
         case REGISTER_SUCCESS:
-            console.log('LOGIN/REGISTER SUCCESS:', state, action);
             return {
                 ...state,
                 loading: false,
@@ -36,7 +34,6 @@ const authReducer = (state = initialState, action) => {
             };
         case LOGIN_FAILURE:
         case REGISTER_FAILURE:
-            console.log('LOGIN/REGISTER FAILURE:', state, action);
             return {
                 ...state,
                 loading: false,
@@ -44,13 +41,11 @@ const authReducer = (state = initialState, action) => {
                 error: action.payload,
             };
         case LOGOUT_REQUEST:
-            console.log('LOGOUT:', state, action);
             return {
                 ...state,
                 loading: true,
             };
         case LOGOUT_SUCCESS:
-            console.log('LOGOUT SUCCESS:', state, action);
             return {
                 ...state,
                 loading: false,
@@ -59,7 +54,6 @@ const authReducer = (state = initialState, action) => {
                 error: null,
             };
         case LOGOUT_FAILURE:
-            console.log('LOGOUT FAILURE:', state, action);
             return {
                 ...state,
                 loading: false,

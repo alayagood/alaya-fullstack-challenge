@@ -33,7 +33,8 @@ class PostController {
    */
   addPost = async (req, res) => {
     try {
-      const { name, title, content, image } = req.body.post;
+      const { name, title, content } = JSON.parse(req.body.post);
+      const image = req.file;
       const newPost = {
         name,
         title,

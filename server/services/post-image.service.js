@@ -22,13 +22,13 @@ class PostImageService {
      */
     async addImageToPost(postId, imageFile, provider) {
       try {
-        const imageUrl = await this.imageService.saveImage(imageFile, provider);
-        return imageUrl;
+          return await this.imageService.saveImage(imageFile, provider);
       } catch (error) {
+          console.log(error);
         throw new Error('Failed to add image to post');
       }
     }
-  
+
     /**
      * Remove an image from a post
      * @param {string} postId - The ID of the post

@@ -16,16 +16,20 @@ export function addPost(post) {
 export function addPostRequest(post) {
     return async (dispatch) => {
         try {
-            const response = await callApi('posts', 'post', {
-                post: {
-                    name: post.name,
-                    title: post.title,
-                    content: post.content,
-                },
-            });
+            const formData = new FormData();
+            formData.append('image', post.image);
+            formData.append('post', JSON.stringify({
+                name: post.name,
+                title: post.title,
+                content: post.content,
+            }));
+
+            const response = await callApi('posts', 'post', formData);
             dispatch(addPost(response.data.post));
+            return { success: true };
         } catch (error) {
             console.error('Failed to add post:', error);
+            return { success: false };
         }
     };
 }

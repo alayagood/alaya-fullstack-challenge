@@ -30,7 +30,7 @@ function App(props) {
     useEffect(() => {
         const userFromLocalStorage = localStorage.getItem('user');
         const tokenFromLocalStorage = localStorage.getItem('token');
-        console.log('userFromLocalStorage', userFromLocalStorage);
+
         if (userFromLocalStorage && !currentUser) {
             dispatch(setUser(userFromLocalStorage));
         }

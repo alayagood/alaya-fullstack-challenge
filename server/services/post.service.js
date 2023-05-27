@@ -3,11 +3,12 @@ const PostImageService = require('./post-image.service');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const ImageService = require("./image.service");
 
 class PostService {
     constructor() {
         this.postRepository = new PostRepository();
-        this.postImageService = new PostImageService();
+        this.imageService = new ImageService();
     }
 
     /**
@@ -33,8 +34,13 @@ class PostService {
         };
 
         if (image) {
-            const imageUrl = await this.postImageService.saveImage(image, 'default');
-            newPost.images.push({ url: imageUrl });
+            try {
+                const imageUrl = await this.imageService.saveImage(image, 'default');
+                newPost.images.push({ url: imageUrl });
+            }catch (error) {
+                console.log(error);
+                throw new Error('Failed to save image and add to post');
+            }
         }
 
         try {

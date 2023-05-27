@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
 const PostController = require('../controllers/post.controller');
 const { validationResult } = require('express-validator');
@@ -7,6 +8,9 @@ const { validatePostFields } = require('../validators/post.validator');
 
 // Create an instance of PostController
 const postController = new PostController();
+
+// Configure multer for parsing multipart/form-data
+const upload = multer();
 
 /**
  * Get all posts
@@ -30,6 +34,7 @@ router.get('/posts/:cuid', postController.getPost);
  *
  * @route POST /api/posts
  * @middleware jwtMiddleware - JWT authentication middleware
+ * @middleware multer - Multer middleware for parsing multipart/form-data
  * @middleware validatePostFields - Express validator middleware to validate post fields
  * @param {Object} req - The request object
  * @param {Object} res - The response object
@@ -39,6 +44,7 @@ router.get('/posts/:cuid', postController.getPost);
 router.post(
     '/posts',
     jwtMiddleware,
+    upload.single('image'),
     validatePostFields,
     (req, res, next) => {
         const errors = validationResult(req);

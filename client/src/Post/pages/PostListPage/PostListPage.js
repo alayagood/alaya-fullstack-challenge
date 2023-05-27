@@ -54,7 +54,7 @@ const PostListPage = ({ showAddPost }) => {
 };
 
 PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
+  showAddPost: PropTypes.bool
 };
 
 export default PostListPage;
