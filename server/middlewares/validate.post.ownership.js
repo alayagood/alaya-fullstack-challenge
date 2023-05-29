@@ -5,18 +5,17 @@ const validate = async (req, res, next) => {
     const userId = req.user._id;
 
     try {
-        const post = await Post.findOne({cuid});
+        const post = await Post.findOne({cuid: cuid});
         if (!post) {
             return res.status(404).json({message: 'Post not found'});
         }
 
-        if (post.userId.toString() !== userId.toString()) {
+        if (post.userId?.toString() !== userId.toString()) {
             return res.status(403).json({message: 'Unauthorized'});
         }
 
         next();
     } catch (err) {
-        console.log(err);
         return res.status(500).json({message: 'An error occurred trying to validate the post'});
     }
 };

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
+import useAuth from "../../hooks/useAuth";
+import {Link} from "react-router-dom";
 // Import Style
 
 const useStyles = makeStyles(theme => ({
@@ -17,6 +19,7 @@ const PostCreateWidget = ({ addPost }) => {
 
     const [state, setState] = useState({});
     const classes = useStyles();
+    const isAuthenticated = useAuth();
 
 
 
@@ -40,9 +43,12 @@ const PostCreateWidget = ({ addPost }) => {
         <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
         <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
         <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
+        {isAuthenticated ?
         <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
             Submit
         </Button>
+            : <p className="mt-4">You need to be <Link to={'sign-in'}>Sign in</Link> in to create a post</p>
+        }
     </div>
   );
 };
