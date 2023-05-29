@@ -5,7 +5,7 @@ const userResource = require('./resources/user.resource');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
-signup = async function (req, res) {
+async function signup(req, res) {
     const {fullName, email, password} = req.body;
     const errors = {};
 
