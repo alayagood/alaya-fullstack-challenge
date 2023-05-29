@@ -1,6 +1,6 @@
 import {
     SIGN_IN_SUCCESS,
-    SIGN_UP,
+    SIGN_UP_SUCCESS,
     REFRESH_TOKEN,
     SET_ERROR,
     SIGN_IN_FAILURE,
@@ -8,10 +8,15 @@ import {
 } from './UserAction';
 
 // Initial State
-const initialState = {user: {token: {access_token: null, refresh_token: null}, isAuthenticated: false}, error: null};
+const initialState = {
+    user: {
+        token: {access_token: null, refresh_token: null},
+        isAuthenticated: false,
+        registrationCompleted: false
+    }, error: null
+};
 
 const UserReducer = (state = initialState, action) => {
-
     switch (action.type) {
         case SIGN_IN_SUCCESS:
             return {
@@ -21,9 +26,10 @@ const UserReducer = (state = initialState, action) => {
                 error: null,
             };
 
-        case SIGN_UP :
+        case SIGN_UP_SUCCESS :
             return {
-                data: action.data,
+                ...state,
+                registrationCompleted: action.user?? false,
             };
 
         case REFRESH_TOKEN :

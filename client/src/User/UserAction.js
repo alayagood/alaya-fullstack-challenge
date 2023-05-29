@@ -1,8 +1,8 @@
 import callApi from '../util/apiCaller';
-import {setApplicationError} from "../components/application/AppActions";
+import {setApplicationError, setNotificationMessage} from "../components/application/AppActions";
 
 // Export Constants
-export const SIGN_UP = 'SIGN_UP';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const REFRESH_TOKEN = 'REFRESH_TOKEN';
@@ -10,9 +10,9 @@ export const SET_ERROR = 'SET_ERROR';
 export const SIGN_IN_FAILURE = 'SIGN_IN_FAILURE';
 
 // Export Actions
-export function signUp(user) {
+export function signUpSuccess(user) {
     return {
-        type: SIGN_UP,
+        type: SIGN_UP_SUCCESS,
         user,
     };
 }
@@ -56,7 +56,8 @@ export function signUpRequest(user) {
             if (response.error) {
                 dispatch(setError(response.error));
             } else {
-                dispatch(signUp(response.data));
+                dispatch(signUpSuccess(response.data));
+                dispatch(setNotificationMessage('Congratulations! You are now registered. You can proceed to sign in.'));
             }
         } catch (error) {
             dispatch(setApplicationError(error));

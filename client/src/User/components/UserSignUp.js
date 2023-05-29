@@ -6,19 +6,28 @@ import Link from '@material-ui/core/Link';
 import Button from "@material-ui/core/Button";
 import {signUpRequest, setError} from "../UserAction";
 import {useDispatch, useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
 
 const SignUp = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const error = useSelector((state) => state.user?.error);
+    const isRegistrationCompleted = useSelector((state) => state.user?.registrationCompleted);
 
     useEffect(() => {
         return () => {
             dispatch(setError(null));
         };
     }, [dispatch]);
+
+    useEffect(() => {
+        if (isRegistrationCompleted) {
+            history.push('/sign-in');
+        }
+    }, [isRegistrationCompleted]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -65,7 +74,7 @@ const SignUp = () => {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <Button type="submit" variant="contained" fullWidth>
+                                <Button className="mt-4" variant="contained" color="primary" disabled={!fullName || !email || !password} type="submit" fullWidth>
                                     Sign Up
                                 </Button>
                             </Grid>

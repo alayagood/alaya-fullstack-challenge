@@ -1,5 +1,5 @@
 import callApi from '../util/apiCaller';
-import {setApplicationError} from "../components/application/AppActions";
+import {setApplicationError, setNotificationMessage} from "../components/application/AppActions";
 
 // Export Constants
 export const ADD_POST = 'ADD_POST';
@@ -25,7 +25,10 @@ export function addPostRequest(post) {
                 }
             },
             token.accessToken
-        ).then(res => dispatch(addPost(res.post)));
+        ).then((res) => {
+            dispatch(addPost(res.post));
+            dispatch(setNotificationMessage('Post created successfully.'));
+        });
     };
 }
 
@@ -61,7 +64,10 @@ export function deletePostRequest(cuid) {
     return (dispatch, getState) => {
         const token = getState().user.token;
         return callApi(`posts/${cuid}`, 'delete', null, token.accessToken)
-            .then(() => dispatch(deletePost(cuid)))
+            .then(() => {
+                dispatch(deletePost(cuid))
+                dispatch(setNotificationMessage('The post has been deleted successfully.'));
+            })
             .catch((error) => {
                 dispatch(setApplicationError(error));
             })

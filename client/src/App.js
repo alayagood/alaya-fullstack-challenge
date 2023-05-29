@@ -10,6 +10,7 @@ import Navbar from './Nav/components/Navbar';
 import UserSignIn from "./User/components/UserSignIn";
 import UserSignUp from "./User/components/UserSignUp";
 import AppErrorNotification from "./components/application/components/AppErrorNotification";
+import AppFlashMessage from "./components/application/components/AppFlashMessage";
 
 const theme = createTheme({
     palette: {
@@ -25,6 +26,7 @@ function App(props) {
             <div className="w-100">
                 <div className="w-100 pt-5 mt-5">
                     <AppErrorNotification/>
+                    <AppFlashMessage/>
                     <BrowserRouter>
                         <Navbar/>
                         <Switch>
