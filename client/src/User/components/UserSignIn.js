@@ -7,19 +7,27 @@ import Button from "@material-ui/core/Button";
 import {signInRequest} from "../UserAction";
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const UserSignIn = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const isAuthenticated = useSelector((state) => state?.user?.isAuthenticated);
+    const isAuthenticated = useAuth();
+    const error = useSelector((state) => state.user?.errors);
 
     useEffect(() => {
         if (isAuthenticated) {
             history.push('/');
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (error) {
+            console.log('Error:', error); // Handle the error as needed (e.g., display an error message)
+        }
+    }, [error]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,6 +39,7 @@ const UserSignIn = () => {
             <div className="row">
                 <div className="col-8">
                     <Typography variant="h4">Sign In</Typography>
+                    {error && <Typography color="error">{error}</Typography>}
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -41,6 +50,7 @@ const UserSignIn = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                     fullWidth
                                     required
+                                    error={error !== null}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -51,10 +61,11 @@ const UserSignIn = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                     fullWidth
                                     required
+                                    error={error !== null}
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <Button type="submit" variant="contained" fullWidth>
+                                <Button  variant="contained" color="primary" disabled={!email || !password} type="submit" variant="contained" fullWidth>
                                     Sign In
                                 </Button>
                             </Grid>

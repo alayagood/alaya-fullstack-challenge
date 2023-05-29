@@ -15,19 +15,12 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const error = useSelector((state) => state.user?.error);
-    const isRegistrationCompleted = useSelector((state) => state.user?.registrationCompleted);
 
     useEffect(() => {
         return () => {
             dispatch(setError(null));
         };
     }, [dispatch]);
-
-    useEffect(() => {
-        if (isRegistrationCompleted) {
-            history.push('/sign-in');
-        }
-    }, [isRegistrationCompleted]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -71,6 +64,8 @@ const SignUp = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                     fullWidth
                                     required
+                                    error={error !== null && error?.password}
+                                    helperText={error?.password}
                                 />
                             </Grid>
                             <Grid item xs={12}>

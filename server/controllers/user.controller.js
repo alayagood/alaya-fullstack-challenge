@@ -15,10 +15,14 @@ signup = async function (req, res) {
 
     if (!email) {
         errors.email = 'Email is required';
+    } else if (!isValidEmail(email)) {
+        errors.email = 'Invalid email format';
     }
 
     if (!password) {
         errors.password = 'Password is required';
+    } else if (password.length < 7) {
+        errors.password = 'Password must be at least 7 characters long';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -43,7 +47,7 @@ signup = async function (req, res) {
 async function login(req, res, next) {
     passport.authenticate('local', {session: false}, async (err, user, info) => {
         if (err || !user) {
-            return res.status(401).json({message: info.message});
+            return res.status(422).json({message: info.message});
         }
 
         try {
@@ -75,7 +79,7 @@ async function logout(req, res, next) {
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
         if (err) {
-            return res.status(401).json({message: 'Invalid refresh token'});
+            return res.status(422).json({message: 'Invalid refresh token'});
         }
 
         const userId = decoded.id;
@@ -84,7 +88,7 @@ async function logout(req, res, next) {
             const user = await userModel.findById(userId);
 
             if (!user) {
-                return res.status(401).json({message: 'User not found'});
+                return res.status(422).json({message: 'User not found'});
             }
 
             await refreshTokenModel.deleteOne({userId});
@@ -105,7 +109,7 @@ async function refreshToken(req, res, next) {
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
         if (err) {
-            return res.status(401).json({message: 'Invalid refresh token'});
+            return res.status(422).json({message: 'Invalid refresh token'});
         }
 
         const userId = decoded.id;
@@ -114,7 +118,7 @@ async function refreshToken(req, res, next) {
             const user = await userModel.findById(userId);
 
             if (!user) {
-                return res.status(401).json({message: 'User not found'});
+                return res.status(422).json({message: 'User not found'});
             }
 
             const accessToken = generateToken(user._id, process.env.ACCESS_TOKEN_SECRET, calculateExpirationDate(process.env.ACCESS_TOKEN_EXPIRY));
@@ -141,6 +145,11 @@ function calculateExpirationDate(expiresIn) {
     const expirationUTC = currentUTC + expiresIn * 60000;
 
     return new Date(expirationUTC);
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
 
 module.exports = {

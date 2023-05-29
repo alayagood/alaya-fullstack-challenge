@@ -13,6 +13,13 @@ export default async (response, dispatch) => {
                     break;
                 case 403:
                     return Promise.reject({status, message: "Unauthorized"});
+                case 422:
+                    const responseJson = await response.json();
+                    return {
+                        status,
+                        message: responseJson.message,
+                        errors: responseJson.errors
+                    };
                 case 500:
                     return Promise.reject({status, message: "Server error"});
                 default:

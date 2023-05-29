@@ -14,7 +14,7 @@ const AppErrorNotification = () => {
     };
 
     return (
-            error?.message && (
+            error?.message ? (
                 <Tooltip title="Unexpected error" open={Boolean(error?.message)}>
                     <div className="app-error-notification">
                         <div className="app-error-notification__content">
@@ -25,7 +25,7 @@ const AppErrorNotification = () => {
                         </div>
                     </div>
                 </Tooltip>
-            )
+            ) : null
     );
 };
 export default AppErrorNotification;

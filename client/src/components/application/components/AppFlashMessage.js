@@ -1,10 +1,10 @@
 import FlashMessage from 'react-flash-message';
-import {useDispatch, useSelector} from "react-redux";
-import React, {useEffect} from "react";
-import {setNotificationMessage} from "../AppActions";
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { setNotificationMessage } from '../AppActions';
 
 const AppFlashMessage = () => {
-    const notificationMessage = useSelector((state) => state?.app?.notificationMessage);
+    const { notificationMessage } = useSelector((state) => state.app);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -18,13 +18,14 @@ const AppFlashMessage = () => {
     }, [notificationMessage, dispatch]);
 
     return (
-        notificationMessage && (
-            <FlashMessage duration={5000} persistOnHover={true}>
+        notificationMessage ?
+                (<FlashMessage duration={5000} persistOnHover={true}>
                 <div className="flash-message success">
                     <p>{notificationMessage}</p>
                 </div>
-            </FlashMessage>
-        )
+            </FlashMessage>)
+        : null
     );
 };
+
 export default AppFlashMessage;

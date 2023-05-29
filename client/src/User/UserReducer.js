@@ -9,11 +9,10 @@ import {
 
 // Initial State
 const initialState = {
-    user: {
-        token: {access_token: null, refresh_token: null},
-        isAuthenticated: false,
-        registrationCompleted: false
-    }, error: null
+    token: {access_token: null, refresh_token: null},
+    isAuthenticated: false,
+    registrationCompleted: false,
+    errors: null
 };
 
 const UserReducer = (state = initialState, action) => {
@@ -23,13 +22,13 @@ const UserReducer = (state = initialState, action) => {
                 ...state,
                 token: action.token,
                 isAuthenticated: true,
-                error: null,
+                errors: null,
             };
 
         case SIGN_UP_SUCCESS :
             return {
                 ...state,
-                registrationCompleted: action.user?? false,
+                registrationCompleted: action.user ?? false,
             };
 
         case REFRESH_TOKEN :
@@ -39,21 +38,19 @@ const UserReducer = (state = initialState, action) => {
 
         case LOGOUT_SUCCESS :
             return {
-                ...state,
-                token: null,
-                isAuthenticated: false
+                ...initialState,
             };
         case SET_ERROR:
             return {
                 ...state,
-                error: action.error
+                ...initialState,
+                errors: action.error,
             };
         case SIGN_IN_FAILURE:
             return {
                 ...state,
-                token: null,
-                isAuthenticated: false,
-                error: action.error
+                ...initialState,
+                errors: action.error,
             };
 
         default:

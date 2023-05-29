@@ -3,7 +3,6 @@ import {CLEAR_NOTIFICATION_MESSAGE, SET_APPLICATION_ERROR, SET_NOTIFICATION_MESS
 const initialState = {app: {notificationMessage: null}, error: {message: null, status: null}};
 
 const AppReducer = (state = initialState, action) => {
-    console.log("AppReducer", action);
     switch (action.type) {
         case SET_APPLICATION_ERROR:
             return {
