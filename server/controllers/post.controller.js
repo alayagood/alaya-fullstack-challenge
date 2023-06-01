@@ -14,7 +14,7 @@ getPosts = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
-    res.json({ posts });
+    res.json({posts});
   });
 };
 
@@ -36,13 +36,13 @@ addPost = async (req, res) => {
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
 
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
+  newPost.slug = slug(newPost.title.toLowerCase(), {lowercase: true});
   newPost.cuid = cuid();
   newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
     }
-    res.json({ post: saved });
+    res.json({post: saved});
   });
 };
 
@@ -53,11 +53,11 @@ addPost = async (req, res) => {
  * @returns void
  */
 getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({cuid: req.params.cuid}).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
     }
-    res.json({ post });
+    res.json({post});
   });
 };
 
@@ -68,7 +68,7 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+  Post.findOne({cuid: req.params.cuid}).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
     }
