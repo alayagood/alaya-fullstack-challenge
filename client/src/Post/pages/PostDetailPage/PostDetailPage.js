@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPost } from '../../PostActions';
 // Import Selectors
 import { useParams } from 'react-router-dom';
+import ImageManager from '../../../components/ImageManager'
 
 export function PostDetailPage() {
 
@@ -25,6 +26,7 @@ export function PostDetailPage() {
             <p>By {post.name}</p>
             <p>{post.content}</p>
           </div>
+          <ImageManager postCuid={post.cuid}/>
         </div>
       </div>)
     : (<div>Loading</div>)

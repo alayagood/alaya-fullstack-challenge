@@ -3,14 +3,15 @@ const Image = require('../models/image')
 const imageResource = require('./resources/image.response')
 const addImageToPost = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.body.image) {
       return res.status(400).json({ error: 'No image file provided' })
     }
+    const fileStr = req.body.image;
     const folderPath = `${postImageFolder}\/${req.post.cuid}`
-    const result = await cloudinary.uploader.upload(req.file.path, {
+    const result = await cloudinary.uploader.upload(fileStr, {
       folder: folderPath,
     })
-    console.log('result', result)
+
     const newImage = new Image({
       imageUrl: result.secure_url,
       postId: req.post._id,
@@ -29,6 +30,7 @@ const addImageToPost = async (req, res) => {
 
 const deleteImageFromPost = async (req, res, next) => {
   try {
+    console.log('req.image', req.image);
     await cloudinary.uploader.destroy(req.image.publicId)
 
     await Image.findByIdAndDelete(req.image._id)
@@ -42,8 +44,8 @@ const deleteImageFromPost = async (req, res, next) => {
 
 const getImagesFromPost = async (req, res, next) => {
   try {
-    const { folderPath } = req.post.cuid
     const { page, limit } = req.query
+    const folderPath = `${postImageFolder}\/${req.post.cuid}`
 
     const options = {
       type: 'upload',
@@ -53,9 +55,9 @@ const getImagesFromPost = async (req, res, next) => {
 
     const result = await cloudinary.api.resources(options)
 
-    const imageUrls = result.resources.map((image) => image.secure_url)
+    const images = result.resources.map((image) => imageResource.response(image))
 
-    return res.status(200).json({ imageUrls, nextCursor: result.next_cursor })
+    return res.status(200).json({ data: {images}, metadata: {nextCursor: result.next_cursor }})
   } catch (error) {
     console.error('Error retrieving images:', error)
     return res.status(500).json({ error: 'Failed to retrieve images' })

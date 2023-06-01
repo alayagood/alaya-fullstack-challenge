@@ -6,8 +6,7 @@ const imageSchema = new mongoose.Schema({
     required: true,
   },
   postId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post',
+    type: String,
     required: true,
   },
   assetId: {
@@ -18,8 +17,6 @@ const imageSchema = new mongoose.Schema({
   },
 });
 
-const Image = mongoose.models.Image
-  ? mongoose.model('Image')
-  : mongoose.model('Image', imageSchema);
+const Image = mongoose.model('Image', imageSchema);
 
 module.exports = Image;
