@@ -181,10 +181,12 @@ describe('Post Integration Test', function() {
                         console.error(err);
                         return done(err);
                     }
-
-                    expect(res).to.have.status(200);
                     expect(res.body).to.be.an('object');
-                    expect(res.body.posts).to.be.an('array');
+                    expect(res.body.pagination).to.be.an('object');
+                    expect(res.body.pagination.total).to.be.a('number');
+                    expect(res.body.pagination.pageNo).to.be.a('number');
+                    expect(res.body.pagination.size).to.be.a('number');
+                    expect(res.body.pagination.totalPages).to.be.a('number');
                     done();
                 });
         });

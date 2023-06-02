@@ -17,9 +17,12 @@ class PostController {
    * @returns void
    */
   getPosts = async (req, res) => {
+    const pageNo = parseInt(req.query.pageNo) || 1;
+    const size = parseInt(req.query.size) || 10;
+
     try {
-      const posts = await this.postRepository.findAll();
-      res.json({ posts });
+      const result = await this.postService.getPosts(pageNo, size);
+      res.json(result);
     } catch (err) {
       this.handleDBError(err, res);
     }

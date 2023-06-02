@@ -32,16 +32,47 @@ describe('Post Controller - Unit Tests', function() {
     describe('getPosts', function() {
         it('should return all posts', async function() {
             const expectedPosts = [{ title: 'Post 1' }, { title: 'Post 2' }];
+            const totalCount = expectedPosts.length;
+            const pageNo = 1;
+            const size = 10;
 
-            sinon.stub(postRepository, 'findAll').resolves(expectedPosts);
+            // Stub the getPosts method to return posts and total count
+            sinon.stub(postService, 'getPosts').resolves({
+                posts: expectedPosts,
+                pagination: {
+                    total: totalCount,
+                    pageNo,
+                    size,
+                    totalPages: Math.ceil(totalCount / size),
+                },
+            });
+
+            // Mock req object
+            const req = {
+                query: {
+                    pageNo: `${pageNo}`,
+                    size: `${size}`,
+                },
+            };
 
             await postController.getPosts(req, res);
 
-            expect(res.json.calledOnceWith({ posts: expectedPosts })).to.be.true;
+            // Adjust the expected result to match the new return value of getPosts
+            expect(res.json.calledOnceWith({
+                posts: expectedPosts,
+                pagination: {
+                    total: totalCount,
+                    pageNo,
+                    size,
+                    totalPages: Math.ceil(totalCount / size),
+                },
+            })).to.be.true;
 
-            postRepository.findAll.restore();
+            postService.getPosts.restore();
         });
     });
+
+
 
     describe('addPost', function() {
         it('should add a new post', async function() {

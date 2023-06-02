@@ -198,7 +198,7 @@ describe('Post Repository', function () {
             };
 
             const createdPost = await postRepository.save(post);
-            const deletedPost = await postRepository.delete(createdPost._id);
+            const deletedPost = await postRepository.deleteById(createdPost._id);
 
             expect(deletedPost).to.be.an('object');
             expect(deletedPost.name).to.equal(post.name);
@@ -214,7 +214,7 @@ describe('Post Repository', function () {
 
         it('should return null if post is not found', async function () {
             const invalidPostId = Types.ObjectId();
-            const deletedPost = await postRepository.delete(invalidPostId);
+            const deletedPost = await postRepository.deleteById(invalidPostId);
             expect(deletedPost).to.be.null;
         });
     });

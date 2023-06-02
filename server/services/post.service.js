@@ -12,6 +12,37 @@ class PostService {
     }
 
     /**
+     * Fetch posts from the database with pagination
+     *
+     * @param {number} [pageNo=1] - The current page number, defaults to 1
+     * @param {number} [size=10] - The number of posts per page, defaults to 10
+     *
+     * @returns {Promise<Object>} An object containing:
+     * - `posts` - An array of posts for the current page
+     * - `pagination` - An object containing pagination details:
+     *   - `total` - The total number of posts
+     *   - `pageNo` - The current page number
+     *   - `size` - The number of posts per page
+     *   - `totalPages` - The total number of pages
+     *
+     * @throws {Error} If failed to fetch posts from the database
+     */
+    async getPosts(pageNo = 1, size = 10) {
+        const postResult = await this.postRepository.findAll(pageNo, size);
+        const totalPages = Math.ceil(postResult.total / size);
+
+        return {
+            posts: postResult.posts,
+            pagination: {
+                total: postResult.total,
+                pageNo,
+                size,
+                totalPages,
+            },
+        };
+    }
+
+    /**
      * Add a new post
      *
      * @param {Object} postData - The data of the post to be added
