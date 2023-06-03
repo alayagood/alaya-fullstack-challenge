@@ -1,6 +1,10 @@
 const UserModel = require('../models/user');
+const BaseRepository = require('./base.repository');
 
-class UserRepository {
+class UserRepository extends BaseRepository{
+    constructor() {
+        super(UserModel);
+    }
     /**
      * Create a new user
      *
@@ -32,15 +36,6 @@ class UserRepository {
         return UserModel.findOne({ email });
     }
 
-    /**
-     * Find a user by ID
-     *
-     * @param {string} userId - The ID of the user to search for
-     * @returns {Promise<Object>} - The found user (excluding password and __v fields)
-     */
-    async findById(userId) {
-        return UserModel.findById(userId).select('-password -__v');
-    }
 }
 
 module.exports = UserRepository;

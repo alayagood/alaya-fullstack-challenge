@@ -1,5 +1,4 @@
 const PostRepository = require('../repositories/post.repository');
-const PostImageService = require('./post-image.service');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
@@ -66,7 +65,7 @@ class PostService {
 
         if (image) {
             try {
-                const imageUrl = await this.imageService.saveImage(image, 'default');
+                const imageUrl = await this.imageService.saveImage(image);
                 newPost.images.push({ url: imageUrl });
             }catch (error) {
                 console.log(error);
