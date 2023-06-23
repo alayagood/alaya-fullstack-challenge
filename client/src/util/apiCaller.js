@@ -1,23 +1,23 @@
-import fetch from 'isomorphic-fetch';
+import fetch from "isomorphic-fetch";
 
-export const API_URL = 'http://localhost:3000/api';
+export const API_URL = "http://localhost:3000";
 
-export default async (endpoint, method = 'get', body) => {
-  return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
+export default async (api = "api", endpoint, method = "get", body) =>
+  fetch(`${API_URL}/${api}/${endpoint}`, {
+    headers: { "content-type": "application/json" },
     method,
+    credentials: "include",
     body: JSON.stringify(body),
   })
-  .then(response => response.json().then(json => ({ json, response })))
-  .then(({ json, response }) => {
-    if (!response.ok) {
-      return Promise.reject(json);
-    }
+    .then((response) => response.json().then((json) => ({ json, response })))
+    .then(({ json, response }) => {
+      if (!response.ok) {
+        return Promise.reject(json);
+      }
 
-    return json;
-  })
-  .then(
-    response => response,
-    error => error
-  );
-}
+      return json;
+    })
+    .then(
+      (response) => response,
+      (error) => error
+    );
