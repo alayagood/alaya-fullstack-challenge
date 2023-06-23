@@ -1,0 +1,8 @@
+{
+    "post": {
+        "name": "Author",
+        "title": "Post title 1",
+        "content": "Post text 1",
+        "cuid": "postId1"
+    }
+}

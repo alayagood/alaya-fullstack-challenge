@@ -1,0 +1,16 @@
+{
+    "posts": [
+        {
+            "name": "Author",
+            "title": "Post title 1",
+            "content": "Post text 1",
+            "cuid": "postId1"
+        },
+        {
+            "name": "Author",
+            "title": "Post title 2",
+            "content": "Post text 2",
+            "cuid": "postId2"
+        }
+    ]
+}

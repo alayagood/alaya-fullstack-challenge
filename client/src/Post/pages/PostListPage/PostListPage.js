@@ -23,8 +23,8 @@ const PostListPage = ({ showAddPost }) => {
     }
   };
 
-  const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+  const handleAddPost = (post, jwt) => {
+    dispatch(addPostRequest(post, jwt));
   };
 
   return (

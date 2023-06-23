@@ -13,7 +13,7 @@ export function addPost(post) {
   };
 }
 
-export function addPostRequest(post) {
+export function addPostRequest(post, jwt) {
   return (dispatch) => {
     return callApi('posts', 'post', {
       post: {
@@ -21,7 +21,7 @@ export function addPostRequest(post) {
         title: post.title,
         content: post.content,
       },
-    }).then(res => dispatch(addPost(res.post)));
+    }, jwt).then(res => dispatch(addPost(res.post)));
   };
 }
 

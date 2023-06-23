@@ -1,0 +1,29 @@
+version: "2"
+services:
+  client:
+    image: "node:16"
+    user: "node"
+    working_dir: /home/node/app
+    volumes:
+      - ./client:/home/node/app
+    ports:
+      - "8000:8000"
+    command: "npm start"
+    depends_on:
+      - server
+  server:
+    image: "node:16"
+    user: "node"
+    working_dir: /home/node/app
+    volumes:
+      - ./server:/home/node/app
+    ports:
+      - "3000:3000"
+    command: "node index.js"
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+

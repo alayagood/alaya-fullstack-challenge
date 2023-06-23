@@ -5,6 +5,8 @@ import './App.css';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import PostListPage from './Post/pages/PostListPage/PostListPage';
 import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
+import LoginPage from './Login/pages/LoginPage'
+import SignupPage from './Signup/pages/SignupPage'
 import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,23 +21,25 @@ const theme = createMuiTheme({
 });
 
 function App(props) {
-  return (
-      <ThemeProvider theme={theme}>
-          <div className="w-100">
-              <Navbar />
-              <div className="w-100 pt-5 mt-5">
-                  <Provider store={props.store}>
-                    <BrowserRouter>
-                      <Switch>
-                          <Route path="/" exact component={PostListPage} />
-                          <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
-                      </Switch>
-                    </BrowserRouter>
-                  </Provider>
-              </div>
-          </div>
-      </ThemeProvider>
-);
+    return (
+        <ThemeProvider theme={theme}>
+            <div className="w-100">
+                <div className="w-100 pt-5 mt-5">
+                    <Provider store={props.store}>
+                        <Navbar />
+                        <BrowserRouter>
+                            <Switch>
+                                <Route path="/" exact component={PostListPage} />
+                                <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
+                                <Route path="/login" exact component={LoginPage} />
+                                <Route path="/signup" exact component={SignupPage} />
+                            </Switch>
+                        </BrowserRouter>
+                    </Provider>
+                </div>
+            </div>
+        </ThemeProvider>
+    );
 }
 
 App.propTypes = {
