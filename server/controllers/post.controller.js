@@ -2,6 +2,7 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const token = require('../util/token');
 
 /**
  * Get all posts
@@ -12,7 +13,7 @@ const sanitizeHtml = require('sanitize-html');
 getPosts = async (req, res) => {
   Post.find().sort('-dateAdded').exec((err, posts) => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
     }
     res.json({ posts });
   });
@@ -25,25 +26,24 @@ getPosts = async (req, res) => {
  * @returns void
  */
 addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
-  }
-
-  const newPost = new Post(req.body.post);
-
-  // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
-
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
+  try {
+    if (!req.body.post.title || !req.body.post.content) {
+      return res.status(403).end();
     }
-    res.json({ post: saved });
-  });
+
+    const newPost = req.body.post;
+    // Let's sanitize inputs
+    newPost.name = sanitizeHtml(req.user.username);
+    newPost.title = sanitizeHtml(newPost.title);
+    newPost.content = sanitizeHtml(newPost.content);
+
+    newPost.slug = slug(newPost.title.toLowerCase(), {lowercase: true});
+    newPost.cuid = cuid();
+    const saved = await Post.create(newPost);
+    return res.json({post: saved});
+  } catch(e) {
+    return res.status(500).send(e);
+  }
 };
 
 /**
@@ -55,7 +55,7 @@ addPost = async (req, res) => {
 getPost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
     }
     res.json({ post });
   });
@@ -68,15 +68,28 @@ getPost = async (req, res) => {
  * @returns void
  */
 deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
+  try {
+    const postToDelete = await Post.findOne({ cuid: req.params.cuid });
+
+    if(!postToDelete) {
+      return res.status(404).send({message: 'Post not found.'}).end();
     }
 
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+    const decoded = token.decode(req.headers.authorization);
+    const loggedUser = decoded.user.username;
+
+    const postAuthor = postToDelete.name;
+    if(loggedUser !== postAuthor) {
+      return res.status(403).send({message: 'Not allowed to delete post.' }).end();
+    }
+
+    await postToDelete.delete();
+    return res.status(200).end();
+
+  } catch(e) {
+    return res.status(500).send(e);
+  }
+
 };
 
 module.exports = {

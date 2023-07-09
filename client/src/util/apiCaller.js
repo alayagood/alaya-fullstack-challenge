@@ -2,22 +2,26 @@ import fetch from 'isomorphic-fetch';
 
 export const API_URL = 'http://localhost:3000/api';
 
-export default async (endpoint, method = 'get', body) => {
+export default async (endpoint, method = 'get', body, token) => {
+  const headers = { "content-type": "application/json" };
+  if (token) headers["authorization"] = token;
+
   return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
+    headers: headers,
     method,
     body: JSON.stringify(body),
   })
-  .then(response => response.json().then(json => ({ json, response })))
-  .then(({ json, response }) => {
-    if (!response.ok) {
-      return Promise.reject(json);
-    }
-
-    return json;
-  })
-  .then(
-    response => response,
-    error => error
-  );
+    .then(response =>
+        response.json()
+            .then(json => ({ json, response }))
+            .catch(() => ({ json: {}, response }))
+    )
+    .then(({ json, response }) => {
+      if (!response.ok) {
+        alert("Error  " + json.message);
+        return Promise.reject(json);
+      } else {
+          return json;
+      }
+    });
 }

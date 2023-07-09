@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 // Import Components
 import PostList from '../../components/PostList';
@@ -8,23 +7,24 @@ import PostCreateWidget from '../../components/PostCreateWidget';
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
 import Logo from '../../../logo.svg';
 
-const PostListPage = ({ showAddPost }) => {
+const PostListPage = () => {
 
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts.data);
+  const token = useSelector(state => state.user.token);
 
   useEffect(() => {
     dispatch(fetchPosts());
   },[]);
 
   const handleDeletePost = post => {
-    if (confirm('Do you want to delete this post')) { // eslint-disable-line
-      dispatch(deletePostRequest(post));
+    if (confirm('Do you want to delete this post?')) { // eslint-disable-line
+      dispatch(deletePostRequest(post, token));
     }
   };
 
   const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+    dispatch(addPostRequest(post, token));
   };
 
   return (
@@ -39,19 +39,19 @@ const PostListPage = ({ showAddPost }) => {
       </div>
       <hr />
       <div className="row">
-        <div className="col-6">
-          <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
-        </div>
-        <div className="col-6">
-          <PostList handleDeletePost={handleDeletePost} posts={posts} />
+        <div className="row">
+          { token &&
+              <div className="col-6">
+                <PostCreateWidget addPost={handleAddPost}  />
+              </div>
+          }
+          <div className={`col-${token ? "6" : "12"}`}>
+            <PostList handleDeletePost={handleDeletePost} posts={posts} />
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
 };
 
 
