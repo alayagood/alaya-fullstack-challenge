@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPost } from '../../PostActions';
 // Import Selectors
 import { useParams } from 'react-router-dom';
+import ImageGallery from "../../../Image/components/ImageGallery";
 
 export function PostDetailPage() {
 
@@ -24,6 +25,7 @@ export function PostDetailPage() {
             <h1>{post.title}</h1>
             <p>By {post.name}</p>
             <p>{post.content}</p>
+            <ImageGallery images={post.images} allowExpand={true}/>
           </div>
         </div>
       </div>)

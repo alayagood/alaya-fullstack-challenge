@@ -20,6 +20,7 @@ export function addPostRequest(post) {
         name: post.name,
         title: post.title,
         content: post.content,
+        images: post.images
       },
     }).then(res => dispatch(addPost(res.post)));
   };

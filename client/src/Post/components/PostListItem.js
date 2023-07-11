@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
+import ImageGallery from "../../Image/components/ImageGallery";
 
 function PostListItem({ post, onDelete }) {
   return (
@@ -19,6 +20,7 @@ function PostListItem({ post, onDelete }) {
         <Typography component="p" className="mt-3">
           {post.content}
         </Typography>
+        <ImageGallery images={post.images} allowExpand={true}/>
         <Typography color="textSecondary" component="p" className="mt-3 font-italic">
           From {post.name}
         </Typography>
