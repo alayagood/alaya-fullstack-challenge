@@ -1,0 +1,30 @@
+.labeled-input label{
+  display:inline-block;
+  width:100%;
+  font-weight:bold;
+  font-size: 0.8em;
+  line-height:0.8em;
+  letter-spacing: 0.4px;
+  transition: 1s all ease;
+  padding-left:10px;
+  opacity:0;
+}
+
+.labeled-input.active label{
+  padding-left:0px;
+  opacity:1;
+}
+
+.labeled-input input{
+  display:inline-block;
+  width:10%;
+  opacity:0;
+  transition: 1.5s all ease;
+  padding:5px;
+}
+
+.labeled-input.active input{
+
+  width:100%;
+  opacity:1;
+}
