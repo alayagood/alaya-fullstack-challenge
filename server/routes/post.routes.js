@@ -1,6 +1,9 @@
 const express = require('express');
-const router = express.Router();
+
 const PostController = require('../controllers/post.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
+
+const router = express.Router();
 
 // Get all Posts
 router.route('/posts').get(PostController.getPosts);
@@ -9,9 +12,9 @@ router.route('/posts').get(PostController.getPosts);
 router.route('/posts/:cuid').get(PostController.getPost);
 
 // Add a new Post
-router.route('/posts').post(PostController.addPost);
+router.post('/posts', authMiddleware, PostController.addPost);
 
 // Delete a post by cuid
-router.route('/posts/:cuid').delete(PostController.deletePost);
+router.delete('/posts/:cuid', authMiddleware, PostController.deletePost);
 
 module.exports = router;

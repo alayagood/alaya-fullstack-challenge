@@ -1,17 +1,22 @@
+require('./init/paths').init();
+require('dotenv').config({path: '../.env'});
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+const config = require('config');
+const db = require('db');
+const router = require('routes');
+
 const app = express();
-const apiPort = 3000;
-const db = require('./db');
-const posts = require('./routes/post.routes');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/api', posts);
+app.use('/api', router);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
+app.listen(config.port, () => console.log(`Server running on port ${config.port}`));

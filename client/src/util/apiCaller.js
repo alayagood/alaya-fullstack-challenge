@@ -2,16 +2,26 @@ import fetch from 'isomorphic-fetch';
 
 export const API_URL = 'http://localhost:3000/api';
 
+let authToken = sessionStorage.getItem('authToken');
+
 export default async (endpoint, method = 'get', body) => {
   return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      Authorization: authToken,
+    },
     method,
     body: JSON.stringify(body),
   })
-  .then(response => response.json().then(json => ({ json, response })))
+  .then(response => response.json()
+  .then(json => ({ json, response })))
   .then(({ json, response }) => {
     if (!response.ok) {
       return Promise.reject(json);
+    }
+
+    if(json.authToken){
+      authToken = json.authToken;
     }
 
     return json;
