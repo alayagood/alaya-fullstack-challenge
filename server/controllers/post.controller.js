@@ -32,7 +32,7 @@ addPost = async (req, res) => {
   const newPost = new Post({
     ...req.body.post,
     name: req.user.name,
-    creator: req.user.id,
+    creator: req.user._id,
   });
 
   // Let's sanitize inputs

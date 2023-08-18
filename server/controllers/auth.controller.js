@@ -1,7 +1,7 @@
 const User = require('models/user');
 const { createToken, validatePassword } = require('services/auth.service');
 const { findUser, createUser } = require('services/user.service');
-const { cleanUser } = require('../services/user.service');
+const { cleanUser } = require('services/user.service');
 
 /**
  * @typedef {Object} AuthResponse

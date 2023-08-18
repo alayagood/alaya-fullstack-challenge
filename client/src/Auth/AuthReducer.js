@@ -9,18 +9,18 @@ const initialState = {
 const AuthReducer = (state = initialState, action) => {
   switch (action.type) {
     case SIGH_IN :
-      storeUserData(action.user, action.authToken);
+      storeUserData(action.user._id, action.authToken);
 
       return {
-        user: action.user,
+        user: action.user._id,
         authToken: action.authToken,
       };
 
     case SIGH_UP :
-      storeUserData(action.user, action.authToken);
+      storeUserData(action.user._id, action.authToken);
 
       return {
-        user: action.user,
+        user: action.user._id,
         authToken: action.authToken,
       };
 
