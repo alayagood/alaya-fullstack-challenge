@@ -17,11 +17,3 @@ create-user:
 	mongosh admin -u ${MONGO_ADMIN_USER} -p ${MONGO_ADMIN_PASS} \
 	--eval 'db.getSiblingDB("'${MONGO_DATABASE}'").createUser({ user: "'${MONGO_USER}'", pwd: "'${MONGO_PASS}'", roles: [{ role: "readWrite", db: "'${MONGO_DATABASE}'" }] })'
 
-
-create-collection:
-	docker exec -it mongodb-container mongosh -u ${MONGO_ADMIN_USER} -p ${MONGO_ADMIN_PASS} \
-    --authenticationDatabase admin --eval "use ${MONGO_DATABASE}; db.createCollection('users')"
-
-
-.PHONY: start-mongodb start-mongodb create-collection create-user create-collection
-
