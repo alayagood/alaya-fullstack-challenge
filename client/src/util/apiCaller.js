@@ -1,23 +1,21 @@
 import fetch from 'isomorphic-fetch';
 
-export const API_URL = 'http://localhost:3000/api';
+export const API_URL = 'http://localhost:3001/api';
 
-export default async (endpoint, method = 'get', body) => {
-  return fetch(`${API_URL}/${endpoint}`, {
-    headers: { 'content-type': 'application/json' },
-    method,
-    body: JSON.stringify(body),
-  })
-  .then(response => response.json().then(json => ({ json, response })))
-  .then(({ json, response }) => {
+const apiCaller = async (endpoint, method = 'get', body) => {
+  try {
+    const response = await fetch(`${API_URL}/${endpoint}`, {
+      headers: { 'content-type': 'application/json' },
+      method,
+      body: JSON.stringify(body),
+    });
+    const json = await response.json();
     if (!response.ok) {
-      return Promise.reject(json);
+      throw json;
     }
-
     return json;
-  })
-  .then(
-    response => response,
-    error => error
-  );
-}
+  } catch (error) {
+    return error;
+  }
+};
+export default apiCaller

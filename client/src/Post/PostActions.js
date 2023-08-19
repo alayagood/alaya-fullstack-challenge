@@ -15,7 +15,7 @@ export function addPost(post) {
 
 export function addPostRequest(post) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
+    return callApi('posts', 'POST', {
       post: {
         name: post.name,
         title: post.title,
