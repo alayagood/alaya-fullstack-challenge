@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
@@ -8,7 +8,8 @@ import Button from '@material-ui/core/Button';
 import { logout } from '../../Auth/authActions';
 
 function Navbar() {
-    const userInformation = useSelector((state) => state.auth.user);
+    const userData = useSelector((state) => state.auth.user);
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const dispatch = useDispatch();
 
     const handleLogout = () => {
@@ -24,11 +25,11 @@ function Navbar() {
                     </RouterLink>
                 </Typography>
                 <div style={{ marginLeft: 'auto' }}>
-                    {userInformation ? (
+                    {isLoggedIn && userData ? (
                         <div>
-                            {userInformation && (
+                            {userData && (
                                 <Typography variant="subtitle1" className="text-white">
-                                    Welcome, {userInformation.email}!
+                                    Welcome, {userData.userName}
                                 </Typography>
                             )}
                             <Button onClick={handleLogout} color="inherit">

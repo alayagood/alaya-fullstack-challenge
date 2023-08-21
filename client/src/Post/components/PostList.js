@@ -10,11 +10,13 @@ function PostList(props) {
       <h3 className="mt-4">Posts</h3>
       {
         props.posts && props.posts.map(post => (
+            post && post.cuid ? (
           <PostListItem
             post={post}
             key={post.cuid}
             onDelete={() => props.handleDeletePost(post.cuid)}
           />
+            ): null
         ))
       }
     </div>

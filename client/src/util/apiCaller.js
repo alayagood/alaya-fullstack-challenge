@@ -13,7 +13,12 @@ const apiCaller = async (endpoint, method = 'get', body) => {
       method,
       body: JSON.stringify(body),
     });
+
+    if (response.status !== 200) {
+      throw response
+    }
     const json = await response.json();
+
     if (!response.ok) {
       throw json;
     }
