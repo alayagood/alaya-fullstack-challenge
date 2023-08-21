@@ -42,6 +42,7 @@ addPost = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
+    console.log('retunting', saved)
     res.json({ post: saved });
   });
 };
