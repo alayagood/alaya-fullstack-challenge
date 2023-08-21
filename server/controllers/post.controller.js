@@ -35,6 +35,7 @@ addPost = async (req, res) => {
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
+  newPost.owner = req.user.email;
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
@@ -42,7 +43,6 @@ addPost = async (req, res) => {
     if (err) {
       res.status(500).send(err);
     }
-    console.log('retunting', saved)
     res.json({ post: saved });
   });
 };
@@ -68,17 +68,25 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    if (err) {
-      res.status(500).send(err);
+const deletePost = async (req, res) => {
+  try {
+    const post = await Post.findOne({ cuid: req.params.cuid });
+
+    if (!post) {
+      return res.status(404).send('Post not found');
     }
 
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+    if (req.user.email !== post.owner) {
+      return res.status(401).send('Unauthorized');
+    }
+
+    await post.remove();
+    res.status(200).end();
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
+
 
 module.exports = {
   getPosts,

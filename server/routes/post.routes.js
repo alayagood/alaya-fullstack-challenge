@@ -10,8 +10,13 @@ router.route('/').get(PostController.getPosts);
 // Get one post by cuid
 router.route('/:cuid').get(PostController.getPost);
 
-// Add a new Post ( Protected )
-router.route('/:cuid').delete(PostController.deletePost);
+router.route('/:cuid').delete(
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        PostController.deletePost(req, res)
+    }
+);
+
 
 router.route('/').post(
     passport.authenticate('jwt', { session: false }),

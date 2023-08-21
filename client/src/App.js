@@ -29,7 +29,7 @@ function App(props) {
                           <Navbar />
                           <Switch>
                               <Route path="/" exact component={PostListPage} />
-                              <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
+                              <Route path="/posts/:cuid" exact component={PostDetailPage} />
                               <Route path="/login" exact component={LoginPage} />
                               <Route path="/signup" exact component={SignupPage} />
                           </Switch>

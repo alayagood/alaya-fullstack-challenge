@@ -10,16 +10,13 @@ module.exports = (passport) => {
             {
                 usernameField: "email",
                 passwordField: "password",
+                passReqToCallback: true
             },
-            async ( email, password, cb) => {
+            async (req, email, password, cb) => {
                 try {
-                    // check if user exists
-                    const userExists = await User.findOne({ "email": email });
-                    if (userExists) {
-                        return cb(null, false, { message: 'Incorrect password.' });
-                    }
+                    const userName = req.body.userName
                     // Create a new user with the user data provided
-                    const user = await User.create({ email, password });
+                    const user = await User.create({ email, password, userName });
                     return cb(null, user);
                 } catch (error) {
                     done(error);

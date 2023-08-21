@@ -14,11 +14,18 @@ const initialSavedState = JSON.parse(localStorage.getItem('reduxState')) || init
 const authReducer = (state = initialSavedState, action) => {
     switch (action.type) {
         case SIGNUP_OK:
+            return {
+                ...state,
+                isLoggedIn: false,
+                user: action.payload,
+                error: undefined
+            }
         case LOGIN_OK:
             const loggedInState = {
                 ...state,
                 isLoggedIn: true,
                 user: action.payload,
+                error: undefined
             }
             saveState(loggedInState)
             return loggedInState
@@ -27,7 +34,7 @@ const authReducer = (state = initialSavedState, action) => {
             return {
                 ...state,
                 user: undefined,
-                error: action.payload
+                error: action.payload.message
             }
         case LOGOUT:
             deleteAuthToken()
@@ -41,7 +48,6 @@ const authReducer = (state = initialSavedState, action) => {
         default:
            return state
     }
-
 };
 
 export default authReducer;

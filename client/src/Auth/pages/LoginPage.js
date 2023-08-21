@@ -4,16 +4,19 @@ import { loginRequest } from '../authActions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import useStyles from '../styles/formStyles';
-import {Redirect} from "react-router-dom"; // Update the path if needed
+import {Redirect} from "react-router-dom";
 
 const LoginPage = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const userInformation = useSelector((state) => state.auth.user);
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const error = useSelector((state) => state.auth.error);
 
-    if (userInformation) {
+    const isButtonDisabled = !email || !password;
+
+    if (isLoggedIn) {
         return <Redirect to="/" />;
     }
     const handleLogin = () => {
@@ -25,6 +28,9 @@ const LoginPage = () => {
         <div className={classes.root}>
             <form className={classes.form}>
                 <h2>Log in</h2>
+                {error && (
+                    <p style={{ color: 'red' }}>{error}</p>
+                )}
                 <TextField
                     label="Email Address"
                     variant="outlined"
@@ -40,6 +46,7 @@ const LoginPage = () => {
                     type="password"
                     className={classes.textField}
                     value={password}
+                    autoComplete="new-password"
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <Button
@@ -47,12 +54,12 @@ const LoginPage = () => {
                     fullWidth
                     className={classes.submitButton}
                     onClick={handleLogin}
+                    disabled={isButtonDisabled}
                 >
-                    Sign In
+                    Login
                 </Button>
             </form>
         </div>
     );
 };
-
 export default LoginPage;
