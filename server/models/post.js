@@ -8,6 +8,7 @@ const postSchema = new Schema({
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
     owner: {type: 'string', required: true},
+    imageId: {type: 'string'},
     dateAdded: { type: 'Date', default: Date.now, required: true },
 });
 

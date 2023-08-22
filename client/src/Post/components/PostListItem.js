@@ -6,34 +6,42 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
-import {useSelector} from "react-redux";
+import { useSelector } from 'react-redux';
 
 function PostListItem({ post, onDelete }) {
   const userData = useSelector((state) => state.auth.user) || {};
 
   return (
-    <Card className="w-100 my-4">
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}`} >
-            {post.title}
-          </Link>
-        </Typography>
-        <Typography component="p" className="mt-3">
-          {post.content}
-        </Typography>
-        <Typography color="textSecondary" component="p" className="mt-3 font-italic">
-          From {post.name}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        {post.owner === userData.email &&
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
-        }
-      </CardActions>
-    </Card>
+      <Card className="w-100 my-4">
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="h2">
+            <Link to={`/posts/${post.cuid}`}>
+              {post.title}
+            </Link>
+          </Typography>
+          <Typography component="p" className="mt-3">
+            {post.content}
+          </Typography>
+          {post.image && (
+              <img
+                  src={`data:image/jpeg;base64,${post.image}`}
+                  alt="Post"
+                  className="mt-3"
+                  style={{ maxWidth: '100%' }}
+              />
+          )}
+          <Typography color="textSecondary" component="p" className="mt-3 font-italic">
+            From {post.name}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          {post.owner === userData.email && (
+              <Button size="small" color="secondary" onClick={onDelete}>
+                Delete post
+              </Button>
+          )}
+        </CardActions>
+      </Card>
   );
 }
 
@@ -44,6 +52,7 @@ PostListItem.propTypes = {
     content: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
+    image: PropTypes.string,
   }).isRequired,
   onDelete: PropTypes.func.isRequired,
 };

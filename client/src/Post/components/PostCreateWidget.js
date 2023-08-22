@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, {useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom'; // Import Link
-import { useSelector } from 'react-redux'; // Import useSelector
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -16,15 +16,18 @@ const useStyles = makeStyles(theme => ({
 
 const PostCreateWidget = ({ addPost }) => {
     const [state, setState] = useState({});
+    const imageRef = useRef(null);
+    const image = imageRef.current && imageRef.current.files && imageRef.current.files[0];
+
     const classes = useStyles();
-    const userInformation = useSelector(state => state.auth.user); // Get user information
+    const userInformation = useSelector(state => state.auth.user);
 
     const submit = () => {
         if (state.title && state.content) {
+            state.image = image
             addPost(state);
         }
     };
-
     const handleChange = (evt) => {
         const value = evt.target.value;
         setState({
@@ -33,6 +36,7 @@ const PostCreateWidget = ({ addPost }) => {
         });
     };
 
+
     return (
         <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
             {userInformation ? (
@@ -40,6 +44,7 @@ const PostCreateWidget = ({ addPost }) => {
                     <h3>Create new post</h3>
                     <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
                     <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
+                    <input name={'file'} value={state.image} ref={imageRef} type={'file'} onChange={handleChange}/>
                     <Button className="mt-4" variant="contained" color="primary" onClick={submit} disabled={!state.title || !state.content}>
                         Submit
                     </Button>

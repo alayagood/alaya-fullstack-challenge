@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import configureMockStore from 'redux-mock-store'; // You need to install this package
-import thunk from 'redux-thunk'; // You need to install this package
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import App from './App';
 
 const mockStore = configureMockStore([thunk]);

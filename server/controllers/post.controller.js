@@ -2,40 +2,76 @@ const Post = require('../models/post');
 const cuid = require('cuid');
 const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
+const { MongoClient, ObjectId } = require('mongodb');
+const mongoose = require("mongoose");
 
-/**
- * Get all posts
- * @param req
- * @param res
- * @returns void
- */
-getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
+async function populatePostsWithImages(posts, bucket) {
+  const postsWithImages = [];
+
+  for (const post of posts) {
+    const postWithImage = { ...post.toObject() };
+
+    if (post.imageId) {
+      try {
+        const imageStream = bucket.openDownloadStream(new ObjectId(post.imageId));
+        const chunks = await new Promise((resolve, reject) => {
+          const chunks = [];
+          imageStream.on('data', chunk => chunks.push(chunk));
+          imageStream.on('end', () => resolve(chunks));
+          imageStream.on('error', error => reject(error));
+        });
+
+        const imageBuffer = Buffer.concat(chunks);
+        postWithImage.image = imageBuffer.toString('base64');
+      } catch (error) {
+        console.error('Error reading image stream:', error);
+      }
     }
-    res.json({ posts });
-  });
+
+    postsWithImages.push(postWithImage);
+  }
+
+  return postsWithImages;
+}
+
+
+getPosts = async (req, res) => {
+  try {
+    const posts = await Post.find().sort('-dateAdded').exec();
+    const mongoClient = await MongoClient.connect('mongodb://localhost:2717', { useNewUrlParser: true });
+    const db = mongoClient.db('mymongo');
+    const bucketName = 'photos';
+    const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName });
+
+    const postsWithImages = await populatePostsWithImages(posts, bucket);
+
+    await mongoClient.close();
+    res.json({ posts: postsWithImages });
+  } catch (error) {
+    console.error('Error retrieving posts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
 
 /**
  * Save a post
  * @param req
  * @param res
+ * @param imageId
  * @returns void
  */
-addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
+addPost = async (req, res, imageId = undefined) => {
+  if (!req.body.name || !req.body.title || !req.body.content) {
     res.status(403).end();
   }
-
-  const newPost = new Post(req.body.post);
+  const newPost = new Post(req.body);
 
   // Let's sanitize inputs
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
   newPost.owner = req.user.email;
+  newPost.imageId = imageId;
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
@@ -73,7 +109,7 @@ const deletePost = async (req, res) => {
     const post = await Post.findOne({ cuid: req.params.cuid });
 
     if (!post) {
-      return res.status(404).send('Post not found');
+      return res.status(404).send('Post not foundd');
     }
 
     if (req.user.email !== post.owner) {

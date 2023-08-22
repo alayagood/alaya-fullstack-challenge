@@ -1,4 +1,5 @@
 import callApi from '../util/apiCaller';
+import {getAuthToken} from "../Auth/authService";
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
 export const DELETE_POST = 'DELETE_POST';
@@ -13,13 +14,18 @@ export function addPost(post) {
 
 export function addPostRequest(post, userName) {
   return (dispatch) => {
-    return callApi('posts', 'POST', {
-      post: {
-        name: userName,
-        title: post.title,
-        content: post.content,
-      }
-    }).then(res => dispatch(addPost(res.post)));
+    const formData = new FormData()
+    formData.append('name', userName);
+    formData.append('title', post.content);
+    formData.append('content', post.content);
+    formData.append('image', post.image);
+
+    return callApi('posts', 'post', formData,{
+      body: formData,
+      headers: {'authorization': getAuthToken()},
+    }).then(res => {
+      dispatch(addPost(res.post))
+    });
   };
 }
 

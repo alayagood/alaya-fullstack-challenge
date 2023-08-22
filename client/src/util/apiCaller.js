@@ -3,7 +3,7 @@ import {getAuthToken} from "../Auth/authService";
 
 export const API_URL = 'http://localhost:3001/api';
 
-const apiCaller = async (endpoint, method = 'get', body) => {
+const apiCaller = async (endpoint, method = 'get', body, options) => {
   try {
     const response = await fetch(`${API_URL}/${endpoint}`, {
       headers: {
@@ -12,6 +12,7 @@ const apiCaller = async (endpoint, method = 'get', body) => {
       },
       method,
       body: JSON.stringify(body),
+      ...options
     });
 
     if (response.status !== 200) {

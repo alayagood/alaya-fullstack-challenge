@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import useStyles from '../styles/formStyles';
 import { Link, Redirect } from 'react-router-dom';
-import { validateEmail, validatePassword } from '../helpers/formValidator'; // Update the path if needed
+import { validateEmail, validatePassword } from '../helpers/formValidator';
 
 const SignupPage = () => {
     const classes = useStyles();
@@ -30,7 +30,7 @@ const SignupPage = () => {
         }
         setEmailError('');
         setPasswordError('');
-        const formData = { userName, email, password }; // Include userName
+        const formData = { userName, email, password };
         dispatch(signUpRequest(formData));
         if (userData) {
             setUserName('');

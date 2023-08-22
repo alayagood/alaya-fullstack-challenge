@@ -30,6 +30,7 @@ PostList.propTypes = {
     content: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
+    image: PropTypes.string
   })).isRequired,
   handleDeletePost: PropTypes.func.isRequired,
 };

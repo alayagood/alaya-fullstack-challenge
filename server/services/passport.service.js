@@ -15,7 +15,6 @@ module.exports = (passport) => {
             async (req, email, password, cb) => {
                 try {
                     const userName = req.body.userName
-                    // Create a new user with the user data provided
                     const user = await User.create({ email, password, userName });
                     return cb(null, user);
                 } catch (error) {
