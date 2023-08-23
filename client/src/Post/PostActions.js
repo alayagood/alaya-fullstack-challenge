@@ -1,6 +1,4 @@
 import callApi from '../util/apiCaller';
-
-// Export Constants
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
 export const DELETE_POST = 'DELETE_POST';
@@ -13,14 +11,14 @@ export function addPost(post) {
   };
 }
 
-export function addPostRequest(post) {
+export function addPostRequest(post, userName) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
+    return callApi('posts', 'POST', {
       post: {
-        name: post.name,
+        name: userName,
         title: post.title,
         content: post.content,
-      },
+      }
     }).then(res => dispatch(addPost(res.post)));
   };
 }

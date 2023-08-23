@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// Import Components
 import PostListItem from './PostListItem';
 
 function PostList(props) {
@@ -9,12 +8,14 @@ function PostList(props) {
     <div className="d-flex flex-column w-100">
       <h3 className="mt-4">Posts</h3>
       {
-        props.posts.map(post => (
+        props.posts && props.posts.map(post => (
+            post && post.cuid ? (
           <PostListItem
             post={post}
             key={post.cuid}
             onDelete={() => props.handleDeletePost(post.cuid)}
           />
+            ): null
         ))
       }
     </div>
