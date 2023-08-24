@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';

@@ -3,6 +3,8 @@ import {getAuthToken} from "../Auth/authService";
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
 export const DELETE_POST = 'DELETE_POST';
+export const FETCH_POST_ERR = 'FETCH_POST_ERR';
+export const ADD_POST_ERR = 'ADD_POST_ERR';
 
 // Export Actions
 export function addPost(post) {
@@ -24,7 +26,9 @@ export function addPostRequest(post, userName) {
       body: formData,
       headers: {'authorization': getAuthToken()},
     }).then(res => {
-      dispatch(addPost(res.post))
+        dispatch(addPost(res.post))
+    }).catch(()=> {
+      dispatch(addPostError({ message: 'Could not create the post, please try again later' }));
     });
   };
 }
@@ -40,6 +44,8 @@ export function fetchPosts() {
   return (dispatch) => {
     return callApi('posts').then(res => {
       dispatch(addPosts(res.posts));
+    }).catch(() => {
+      dispatch(fetchPostsError({ message: 'There has been an error, please try again later' }));
     });
   };
 }
@@ -54,6 +60,20 @@ export function deletePost(cuid) {
   return {
     type: DELETE_POST,
     cuid,
+  };
+}
+
+export function addPostError(error) {
+  return {
+    type: ADD_POST_ERR,
+    payload: error,
+  };
+}
+
+export function fetchPostsError(error) {
+  return {
+    type: FETCH_POST_ERR,
+    payload: error,
   };
 }
 

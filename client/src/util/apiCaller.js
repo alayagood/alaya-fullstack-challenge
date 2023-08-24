@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import {getAuthToken} from "../Auth/authService";
+import {getAuthToken} from '../Auth/authService';
 
 export const API_URL = 'http://localhost:3001/api';
 
@@ -7,25 +7,21 @@ const apiCaller = async (endpoint, method = 'get', body, options) => {
   try {
     const response = await fetch(`${API_URL}/${endpoint}`, {
       headers: {
-            'content-type': 'application/json',
-            'authorization': getAuthToken()
+        'content-type': 'application/json',
+        authorization: getAuthToken(),
       },
       method,
       body: JSON.stringify(body),
-      ...options
+      ...options,
     });
-
-    if (response.status !== 200) {
-      throw response
+    const status = response.status;
+    if (status !== 200) {
+      throw response;
     }
-    const json = await response.json();
-
-    if (!response.ok) {
-      throw json;
-    }
-    return json;
-  } catch (error) {
-    return error;
+    return await response.json();
+  } catch (response) {
+    return response;
   }
 };
-export default apiCaller
+
+export default apiCaller;

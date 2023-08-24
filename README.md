@@ -13,7 +13,7 @@ To start the server be sure to have installed mongoDB locally as a service then 
 ```$xslt
     cd server
     npm i
-    node index.js
+    node server.js
 ```
 If you want to restart the server at any change you can also install nodemon and start the server like this
 ```

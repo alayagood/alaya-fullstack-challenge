@@ -4,6 +4,7 @@ const slug = require('limax');
 const sanitizeHtml = require('sanitize-html');
 const { MongoClient, ObjectId } = require('mongodb');
 const mongoose = require("mongoose");
+const mongoConnectString = process.env.MONGO_CONNECT_STRING
 
 async function populatePostsWithImages(posts, bucket) {
   const postsWithImages = [];
@@ -27,19 +28,16 @@ async function populatePostsWithImages(posts, bucket) {
         console.error('Error reading image stream:', error);
       }
     }
-
     postsWithImages.push(postWithImage);
   }
-
   return postsWithImages;
 }
-
 
 getPosts = async (req, res) => {
   try {
     const posts = await Post.find().sort('-dateAdded').exec();
-    const mongoClient = await MongoClient.connect('mongodb://localhost:2717', { useNewUrlParser: true });
-    const db = mongoClient.db('mymongo');
+    const mongoClient = await MongoClient.connect(mongoConnectString, { useNewUrlParser: true });
+    const db = mongoClient.db('alaya-mongo');
     const bucketName = 'photos';
     const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName });
 
@@ -70,16 +68,17 @@ addPost = async (req, res, imageId = undefined) => {
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
+  // use actual user email as owner, not request.body email
   newPost.owner = req.user.email;
   newPost.imageId = imageId;
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
-  newPost.save((err, saved) => {
+  await newPost.save((err, saved) => {
     if (err) {
       res.status(500).send(err);
     }
-    res.json({ post: saved });
+    res.json({post: saved});
   });
 };
 
@@ -117,7 +116,7 @@ const deletePost = async (req, res) => {
     }
 
     await post.remove();
-    res.status(200).end();
+    res.json(200).end();
   } catch (err) {
     res.status(500).send(err.message);
   }

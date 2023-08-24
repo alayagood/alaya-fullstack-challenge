@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const UserController = require("../controllers/user.controller");
 require('../services/passport.service')(passport);
 
+const jwtToken = process.env.JWT_TOKEN
+
 router.route('/signup').post(
     UserController.checkExistingUser,
     passport.authenticate('local-signup', { session: false }),
@@ -18,7 +20,7 @@ router.route('/signup').post(
 router.route('/login').post(
     passport.authenticate('local-login', { session: false }),
     (req, res) => {
-        jwt.sign({user: req.user}, 'secretKey', {expiresIn: '1h'}, (err, token) => {
+        jwt.sign({user: req.user}, jwtToken, {expiresIn: '1h'}, (err, token) => {
             if (err) {
                 return res.json({
                     message: "Failed to login",

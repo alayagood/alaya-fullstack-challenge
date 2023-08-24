@@ -1,6 +1,6 @@
 // authReducers.js
 import {LOGIN_OK, SIGNUP_OK, LOGOUT, SIGNUP_ERR, LOGIN_ERR} from './authActions';
-import { saveState} from "../util/persistentStateHandler";
+import {saveState} from "../util/persistentStateHandler";
 import {deleteAuthToken} from "./authService";
 
 const initialState = {
@@ -17,15 +17,13 @@ const authReducer = (state = initialSavedState, action) => {
             return {
                 ...state,
                 isLoggedIn: false,
-                user: action.payload,
-                error: undefined
+                user: action.payload
             }
         case LOGIN_OK:
             const loggedInState = {
                 ...state,
                 isLoggedIn: true,
-                user: action.payload,
-                error: undefined
+                user: action.payload
             }
             saveState(loggedInState)
             return loggedInState
@@ -34,6 +32,7 @@ const authReducer = (state = initialSavedState, action) => {
             return {
                 ...state,
                 user: undefined,
+                isLoggedIn: false,
                 error: action.payload.message
             }
         case LOGOUT:

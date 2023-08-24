@@ -2,6 +2,7 @@ const LocalStrategy = require("passport-local");
 const { ExtractJwt } = require("passport-jwt")
 const JwtStrategy = require("passport-jwt").Strategy;
 const User = require("../models/user");
+const jwtToken = process.env.JWT_TOKEN
 
 module.exports = (passport) => {
     passport.use(
@@ -48,7 +49,7 @@ module.exports = (passport) => {
         new JwtStrategy(
             {
                 jwtFromRequest: ExtractJwt.fromHeader("authorization"),
-                secretOrKey: "secretKey",
+                secretOrKey: jwtToken,
             },
             async (jwtPayload, done) => {
                 try {

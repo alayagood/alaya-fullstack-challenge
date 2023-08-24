@@ -5,10 +5,10 @@ const passport = require("passport");
 require('../services/passport.service')(passport);
 const multer = require('multer');
 const {GridFsStorage} = require('multer-gridfs-storage');
-const url = 'mongodb://localhost:2717/mymongo';
+const mongoConnectString = process.env.MONGO_CONNECT_STRING
 
 const storage = new GridFsStorage({
-    url,
+    url: mongoConnectString,
     file: (req, file) => {
         //If it is an image, save to photos bucket
         if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
@@ -17,7 +17,7 @@ const storage = new GridFsStorage({
                 filename: `${Date.now()}_${file.originalname}`,
             }
         } else {
-            //if not save to default bucket
+            // if not save to default bucket
             // TODO this could be used to store other files such as pdf
             return `${Date.now()}_${file.originalname}`
         }
