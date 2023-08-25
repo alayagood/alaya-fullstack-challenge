@@ -1,9 +1,10 @@
 import callApi from '../util/apiCaller';
-
-// Export Constants
+import {getAuthToken} from "../Auth/authService";
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
 export const DELETE_POST = 'DELETE_POST';
+export const FETCH_POST_ERR = 'FETCH_POST_ERR';
+export const ADD_POST_ERR = 'ADD_POST_ERR';
 
 // Export Actions
 export function addPost(post) {
@@ -13,15 +14,22 @@ export function addPost(post) {
   };
 }
 
-export function addPostRequest(post) {
+export function addPostRequest(post, userName) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
-    }).then(res => dispatch(addPost(res.post)));
+    const formData = new FormData()
+    formData.append('name', userName);
+    formData.append('title', post.content);
+    formData.append('content', post.content);
+    formData.append('image', post.image);
+
+    return callApi('posts', 'post', formData,{
+      body: formData,
+      headers: {'authorization': getAuthToken()},
+    }).then(res => {
+        dispatch(addPost(res.post))
+    }).catch(()=> {
+      dispatch(addPostError({ message: 'Could not create the post, please try again later' }));
+    });
   };
 }
 
@@ -36,6 +44,8 @@ export function fetchPosts() {
   return (dispatch) => {
     return callApi('posts').then(res => {
       dispatch(addPosts(res.posts));
+    }).catch(() => {
+      dispatch(fetchPostsError({ message: 'There has been an error, please try again later' }));
     });
   };
 }
@@ -50,6 +60,20 @@ export function deletePost(cuid) {
   return {
     type: DELETE_POST,
     cuid,
+  };
+}
+
+export function addPostError(error) {
+  return {
+    type: ADD_POST_ERR,
+    payload: error,
+  };
+}
+
+export function fetchPostsError(error) {
+  return {
+    type: FETCH_POST_ERR,
+    payload: error,
   };
 }
 

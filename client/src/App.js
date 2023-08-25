@@ -9,6 +9,8 @@ import { Provider } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './Nav/components/Navbar';
+import LoginPage from "./Auth/pages/LoginPage";
+import SignupPage from "./Auth/pages/SignupPage";
 
 const theme = createMuiTheme({
     palette: {
@@ -20,21 +22,21 @@ const theme = createMuiTheme({
 
 function App(props) {
   return (
-      <ThemeProvider theme={theme}>
-          <div className="w-100">
-              <Navbar />
-              <div className="w-100 pt-5 mt-5">
-                  <Provider store={props.store}>
-                    <BrowserRouter>
-                      <Switch>
-                          <Route path="/" exact component={PostListPage} />
-                          <Route path="/posts/:cuid/:slug" exact component={PostDetailPage} />
-                      </Switch>
-                    </BrowserRouter>
-                  </Provider>
-              </div>
-          </div>
-      </ThemeProvider>
+      <Provider store={props.store}>
+          <ThemeProvider theme={theme}>
+                  <div className="w-100 pt-5 mt-5">
+                      <BrowserRouter>
+                          <Navbar />
+                          <Switch>
+                              <Route path="/" exact component={PostListPage} />
+                              <Route path="/posts/:cuid" exact component={PostDetailPage} />
+                              <Route path="/login" exact component={LoginPage} />
+                              <Route path="/signup" exact component={SignupPage} />
+                          </Switch>
+                      </BrowserRouter>
+                  </div>
+          </ThemeProvider>
+      </Provider>
 );
 }
 

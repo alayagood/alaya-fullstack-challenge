@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-// Import Components
 import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget';
-// Import Actions
 import { addPostRequest, deletePostRequest, fetchPosts } from '../../PostActions';
 import Logo from '../../../logo.svg';
 
-const PostListPage = ({ showAddPost }) => {
-
+const PostListPage = () => {
   const dispatch = useDispatch();
   const posts = useSelector(state => state.posts.data);
+  const userData = useSelector(state => state.auth.user);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -24,7 +21,7 @@ const PostListPage = ({ showAddPost }) => {
   };
 
   const handleAddPost = (post) => {
-    dispatch(addPostRequest(post));
+    dispatch(addPostRequest(post, userData.userName));
   };
 
   return (
@@ -40,7 +37,7 @@ const PostListPage = ({ showAddPost }) => {
       <hr />
       <div className="row">
         <div className="col-6">
-          <PostCreateWidget addPost={handleAddPost} showAddPost={showAddPost} />
+          <PostCreateWidget addPost={handleAddPost} />
         </div>
         <div className="col-6">
           <PostList handleDeletePost={handleDeletePost} posts={posts} />
@@ -49,10 +46,5 @@ const PostListPage = ({ showAddPost }) => {
     </div>
   );
 };
-
-PostListPage.propTypes = {
-  showAddPost: PropTypes.bool.isRequired
-};
-
 
 export default PostListPage;

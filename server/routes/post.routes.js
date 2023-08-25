@@ -1,17 +1,51 @@
 const express = require('express');
 const router = express.Router();
 const PostController = require('../controllers/post.controller');
+const passport = require("passport");
+require('../services/passport.service')(passport);
+const multer = require('multer');
+const {GridFsStorage} = require('multer-gridfs-storage');
+const mongoConnectString = process.env.MONGO_CONNECT_STRING
+
+const storage = new GridFsStorage({
+    url: mongoConnectString,
+    file: (req, file) => {
+        //If it is an image, save to photos bucket
+        if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+            return {
+                bucketName: "photos",
+                filename: `${Date.now()}_${file.originalname}`,
+            }
+        } else {
+            // if not save to default bucket
+            // TODO this could be used to store other files such as pdf
+            return `${Date.now()}_${file.originalname}`
+        }
+    },
+})
+
+const upload = multer({ storage })
 
 // Get all Posts
-router.route('/posts').get(PostController.getPosts);
+router.route('/').get(PostController.getPosts);
 
 // Get one post by cuid
-router.route('/posts/:cuid').get(PostController.getPost);
+router.route('/:cuid').get(PostController.getPost);
 
-// Add a new Post
-router.route('/posts').post(PostController.addPost);
+router.route('/:cuid').delete(
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        PostController.deletePost(req, res)
+    }
+);
 
-// Delete a post by cuid
-router.route('/posts/:cuid').delete(PostController.deletePost);
+
+router.route('/').post(
+    passport.authenticate('jwt', { session: false }),
+    upload.single('image'),
+    (req, res) => PostController.addPost(req, res, req.file?.id)
+);
+
+
 
 module.exports = router;
