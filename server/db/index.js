@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
+const config = require('../config');
 
-mongoose
-    .connect('mongodb://127.0.0.1:27017/mern-stack', { useNewUrlParser: true, useUnifiedTopology: true })
-    .catch(e => {
-        console.error('Connection error', e.message)
-    });
+const { mongo_connection_url } = config;
 
-const db = mongoose.connection;
+console.log(mongo_connection_url);
 
-module.exports = db;
+const connectDB = () => mongoose.connect(mongo_connection_url, {
+    useNewUrlParser: true,
+    useUnifiedTopology:true
+});
+
+
+module.exports = { connectDB };
+

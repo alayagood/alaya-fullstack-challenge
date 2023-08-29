@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
+const User = require('./user');
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
-    name: { type: 'String', required: true },
+    by: {type:mongoose.Types.ObjectId, ref: User},
     title: { type: 'String', required: true },
     content: { type: 'String', required: true },
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
-    dateAdded: { type: 'Date', default: Date.now, required: true },
-});
+  },
+  {
+    timestamps: true
+  }
+  );
 
 module.exports = mongoose.model('Post', postSchema);

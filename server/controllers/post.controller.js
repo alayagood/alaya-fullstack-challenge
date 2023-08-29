@@ -9,8 +9,8 @@ const sanitizeHtml = require('sanitize-html');
  * @param res
  * @returns void
  */
-getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
+const getPosts = async (req, res) => {
+  Post.find().populate('by', 'name').sort('-createdAt').exec((err, posts) => {
     if (err) {
       res.status(500).send(err);
     }
@@ -18,14 +18,25 @@ getPosts = async (req, res) => {
   });
 };
 
+const getPostsByUser = async (req, res) => {
+  const userId = req.params.userid;
+  Post.find({ by: userId }).populate('by', 'name').sort('-createdAt').exec((err, posts) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    res.json({ posts });
+  });
+}
+
 /**
  * Save a post
  * @param req
  * @param res
  * @returns void
  */
-addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
+const addPost = async (req, res) => {
+
+  if (!req.body.post.by || !req.body.post.title || !req.body.post.content) {
     res.status(403).end();
   }
 
@@ -52,8 +63,8 @@ addPost = async (req, res) => {
  * @param res
  * @returns void
  */
-getPost = async (req, res) => {
-  Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+const getPost = async (req, res) => {
+  Post.findOne({ cuid: req.params.cuid }).populate('by', 'name').exec((err, post) => {
     if (err) {
       res.status(500).send(err);
     }
@@ -67,20 +78,27 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
+const deletePost = async (req, res) => {
+
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
+    console.log(err);
     if (err) {
       res.status(500).send(err);
     }
-
-    post.remove(() => {
-      res.status(200).end();
-    });
-  });
+    if (post === null) {
+      res.status(500).json(err);
+    } else {
+      post.remove(() => {
+        res.status(200).json({ deleted: true }).end();
+      });
+    }
+    
+  }); 
 };
 
 module.exports = {
   getPosts,
+  getPostsByUser,
   addPost,
   getPost,
   deletePost
