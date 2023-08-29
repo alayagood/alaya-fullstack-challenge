@@ -16,9 +16,11 @@ const UserPostPage: React.FC = (): JSX.Element => {
       setPosts(postsStore.user_posts);
     } else {
       if(!postsStore.empty || postsStore.user_posts && postsStore?.user_posts.length === 0) {
+
         if(!posts) {
           dispatch(getUserPosts());
         }
+
         setPosts(postsStore.user_posts);
       }      
     }

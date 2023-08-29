@@ -29,7 +29,6 @@ const RegisterPage: React.FC =(): JSX.Element => {
 
     const validateInput = (): boolean => {
       const isEmpty = formValidation.isEmpty(name);
-      console.log(isEmpty)
       if( isEmpty.failed ) {
         setNameError(true);
         setNameErrorText(isEmpty.message);

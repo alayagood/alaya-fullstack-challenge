@@ -12,14 +12,14 @@ interface HttpServiceInterface {
   
 }
 
-const userToken: string = storeService.get('local','userToken');
+
 
 const setHeaders = ( config?: AxiosRequestConfig): AxiosRequestConfig => {
   if (!config) {
     config = {};
     config.headers = {};
   }
-
+  const userToken: string = storeService.get('local','userToken');
   config.headers = Object.assign(config.headers ?? {}, {
     'Authorization': `Bearer ${userToken ? userToken : ''}`,
   });

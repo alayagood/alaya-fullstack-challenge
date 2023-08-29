@@ -59,12 +59,6 @@ const AddPostPage: React.FC = (): JSX.Element => {
             </Button>
           </div>
        </div>
-       <div className="mt-5">
-        {
-         // loginError && <Alert severity="error">{loginError}</Alert>
-        }
-        
-       </div>
     </div>
   )
 };

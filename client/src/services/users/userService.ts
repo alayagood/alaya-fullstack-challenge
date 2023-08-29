@@ -9,7 +9,6 @@ const userService = {
     },
 
     addUser: async (endpoint:string, user: IUser) => {
-        console.log(endpoint)
         const userRequest = await requestService.post(endpoint, user);
         return userRequest.data;
     }

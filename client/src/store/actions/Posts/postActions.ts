@@ -87,8 +87,10 @@ export function getUserPosts() {
     dispatch(actionGetUserPosts());
 
     try {
+
       const userPosts = await postService.getUserPosts('posts', storageService.get('local', 'userId'));
       dispatch(actionGetUserPostsOk(userPosts));
+
     } catch (error) {
       dispatch(actionGetPostsError());
     }
