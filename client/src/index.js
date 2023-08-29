@@ -1,16 +1,18 @@
-import React from 'react';
-import * as ReactDOM from 'react-dom';
-import { combineReducers, createStore, compose, applyMiddleware } from 'redux';
+import React from 'react'
+import { createRoot } from 'react-dom/client';
+import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import posts from './Post/PostReducer';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import './index.css';
 import App from './App';
 
-// Middleware and store enhancers
-const enhancers = [
-    applyMiddleware(thunk),
-];
+import rootReducer from './store/reducers';
 
-const initialStore = createStore(combineReducers({ posts }), { }, compose(...enhancers));
+export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))
 
-ReactDOM.render(<App store={initialStore}/>, document.getElementById('root'));
+const rootElement = document.getElementById('root');
+if(rootElement) {
+    const root = createRoot(rootElement);   
+    root.render(<App store={store} />);
+}
+
