@@ -18,28 +18,29 @@ passport.use('register',
             passReqToCallback: true
         },
         async ( req, email, password, done ) => {  
+            
             try{
                 //find user to check if exists
-                const  userExists  = await User.findOne({ email: email })
+                const  userExists  = await User.findOne({ email: email });
                 
                 //if user exists an error is retorned
                 if( userExists ) {
-                    const error = new Error('User already exists')
+                    const error = new Error('User already exists');
                     return done(error)
                 }
                 
                 //user password encryption
-                const encriptedPassword = await bcrypt.hash(password, encriptionJumps)
+                const encriptedPassword = await bcrypt.hash(password, encriptionJumps);
                                                             
                 //creates a new user
                 const newUser = new User({
                     email: email,
                     name: req.body.name,
                     password: encriptedPassword,
-                })
+                });
 
                 //save the new user
-                const createdUser = await newUser.save()
+                const createdUser = await newUser.save();
 
                 //return created user hiding de password
                 createdUser.password = undefined;
@@ -48,7 +49,7 @@ passport.use('register',
                 done ( null, createdUser );
                 
             } catch(err) {
-                return done(err)
+                return done(err);
             }
 
         }
@@ -66,7 +67,6 @@ passport.use('login',
         async ( req, email, password, done ) => {  
             try{
                 const userExists = await User.findOne({ email: email });
-
                 if(!userExists) {
                     const error = new Error(JSON.stringify({ 
                         message:'User not found', 
@@ -83,11 +83,10 @@ passport.use('login',
                 };
                 
                 userExists.password = undefined;
-
+                
                 return done( null, userExists );
-
+ 
             } catch(err) {
-                console.log(err)
                 return done(err);
             }
 

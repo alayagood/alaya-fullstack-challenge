@@ -7,6 +7,7 @@ export interface IPost {
     by: postby,
     title: string,
     content: string,
+    images?: string[];
     slug?: string,
     cuid?: string,
 }

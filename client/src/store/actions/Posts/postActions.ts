@@ -45,16 +45,24 @@ export const removePost = (cuid: string) => ({
   payload: cuid,
 });
 
-export function createNewPost(title: string, content: string) {
+export function createNewPost(title: string, content: string, postImgs:FileList | null) {
+
+  const formData = new FormData();
+  const images = postImgs as FileList;
+
+  if(images) {
+    Array.from(images).forEach( img => {
+      formData.append('images', img);
+    });
+  }
+
+  formData.append('by', storageService.get('local', 'userId'));
+  formData.append('title', title);
+  formData.append('content', content);
+
   return async (dispatch: Dispatch) => { 
     try {
-      const post = await postService.addPost('posts/add', {
-        post: {
-          by: storageService.get('local', 'userId'),
-          title: title,
-          content: content
-        }
-      });
+      const post = await postService.addPost('posts/add', formData);
       if('title' in post) dispatch(actionCreatePost(post));
       
     } catch (error) {

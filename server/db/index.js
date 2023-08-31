@@ -3,11 +3,10 @@ const config = require('../config');
 
 const { mongo_connection_url } = config;
 
-console.log(mongo_connection_url);
-
 const connectDB = () => mongoose.connect(mongo_connection_url, {
     useNewUrlParser: true,
-    useUnifiedTopology:true
+    useUnifiedTopology:true,
+    useFindAndModify: false
 });
 
 

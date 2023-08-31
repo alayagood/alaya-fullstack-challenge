@@ -4,10 +4,11 @@ const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
     by: {type:mongoose.Types.ObjectId, ref: User},
-    title: { type: 'String', required: true },
-    content: { type: 'String', required: true },
-    slug: { type: 'String', required: true },
-    cuid: { type: 'String', required: true },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    slug: { type: String, required: true },
+    cuid: { type: String, required: true },
+    images: {type:Array},
   },
   {
     timestamps: true

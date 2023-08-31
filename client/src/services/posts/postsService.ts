@@ -7,18 +7,8 @@ interface IPostService {
     getPosts(endpoint: string): Promise<IPost[] | IErrorResponse>;
     getUserPosts(endpoint: string, userId: string): Promise<IPost[] | IErrorResponse>;
     getPostByCuid(endpoint: string, cuid: string | undefined): Promise<IPost | IErrorResponse>;
-    addPost(endpoint: string, post: IPostRequest): Promise<IPost | IErrorResponse>;
+    addPost(endpoint: string, post: FormData): Promise<IPost | IErrorResponse>;
     deletePost(endpoint: string, postId: string): Promise<IPost | IErrorResponse>;
-}
-
-interface IPostRequest {
-    post: IPostBody;
-}
-
-interface IPostBody {
-    by: string;
-    title: string;
-    content: string;
 }
 
 export interface IErrorResponse {
@@ -74,9 +64,9 @@ const postService: IPostService = {
         }
     },
 
-    async addPost(endpoint: string, post: IPostRequest): Promise<IPost | IErrorResponse> {
+    async addPost(endpoint: string, post: FormData): Promise<IPost | IErrorResponse> {
         try {
-            const newPostResponse: AxiosResponse<{ post: IPost }> = await requestService.post(endpoint, post);
+            const newPostResponse: AxiosResponse<{ post: IPost }> = await requestService.post(endpoint, post, { headers: { 'Content-Type': 'multipart/form-data'}});
             return newPostResponse.data.post;
         } catch (error) {
             const err = error as AxiosError;

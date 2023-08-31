@@ -48,6 +48,7 @@ const addUser = async ( req, res, next ) => {
 }
 
 const userLogin = async (req, res) => {
+    
     const callback = async (error, user) => {
         if(error) {
             return res.status(500).json({ message: 'User or password are wrong.', error:true })

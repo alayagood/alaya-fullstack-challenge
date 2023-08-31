@@ -36,16 +36,20 @@ const getPostsByUser = async (req, res) => {
  */
 const addPost = async (req, res) => {
 
-  if (!req.body.post.by || !req.body.post.title || !req.body.post.content) {
+  if (!req.body.by || !req.body.title || !req.body.content) {
     res.status(403).end();
   }
 
-  const newPost = new Post(req.body.post);
+  const imagenRuta = req.files_url.length ? req.files_url : undefined;
+
+  const newPost = new Post(req.body);
 
   // Let's sanitize inputs
+  newPost.by = sanitizeHtml(newPost.by);
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
+  newPost.images = imagenRuta;
 
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
@@ -81,7 +85,6 @@ const getPost = async (req, res) => {
 const deletePost = async (req, res) => {
 
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
-    console.log(err);
     if (err) {
       res.status(500).send(err);
     }

@@ -15,7 +15,9 @@ const storageService = {
         } else {
             item = sessionStorage.getItem(key);
         }   
+
         return JSON.parse(item as string);
+        
     },
 
     delete: (type: 'local' | 'session', key: string) => {

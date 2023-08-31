@@ -17,6 +17,8 @@ import postService from '../../services/posts/postsService';
 import { useDispatch } from 'react-redux';
 import { removePost } from '../../store/actions/Posts/postActions';
 
+import './PostListItem.css'
+
 interface IPostListItemProps {
   post: IPost;
 }
@@ -53,45 +55,60 @@ const PostListItem: React.FC<IPostListItemProps> = ({ post }): JSX.Element => {
 
   return (
     <>
-      <Card sx={{ minWidth: 275 }}>
-        <CardContent>
-          <Typography sx={{ fontSize: 24 }} color="text.primary" gutterBottom>
-            {title}
-          </Typography>
-          <Typography sx={{ fontSize: 15 }} color="text.secondary" gutterBottom>
-            By:  {by?.name}
-          </Typography>
-          <Typography variant="body2">
-            { excerptCreator(content, 150) }
-          </Typography>
-        </CardContent>
-        <CardActions  
-        sx={{
-          alignSelf: "stretch",
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "flex-start",
-          p: 3,
-        }}
-        >
-          <Link to={`/post-detail/${slug}/${cuid}`}>
-            <Button className='mr-2' color='secondary' variant='contained' size="small">
-              <StickyNote2Icon />
-              Read More
-            </Button>
-          </Link>
-          {
-            userIsLogged 
-            &&
-            location.pathname !== '/'
-            && 
-            <Button onClick={() => handleDialogClickOpen()} color='warning' variant='contained' size="small">
-              <DeleteOutlineIcon />
-              Delete
-            </Button>
+    <Card sx={{ minWidth: 275 }}>
+      <div className="post-content">
+        <div className="post-content__img">
+        {
+            post && post.images 
+            ?
+              <img src={post.images[0]} alt="" />
+            :
+            ''
           }
-        </CardActions>
+        </div>
+        <div className="post-content__text">
+            <CardContent>
+            <Typography sx={{ fontSize: 24 }} color="text.primary" gutterBottom>
+              {title}
+            </Typography>
+            <Typography sx={{ fontSize: 15 }} color="text.secondary" gutterBottom>
+              By:  {by?.name}
+            </Typography>
+            <Typography variant="body2">
+              { excerptCreator(content, 150) }
+            </Typography>
+          </CardContent>
+          <CardActions  
+          sx={{
+            alignSelf: "stretch",
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "flex-start",
+            p: 3,
+          }}
+          >
+            <Link to={`/post-detail/${slug}/${cuid}`}>
+              <Button className='mr-2' color='secondary' variant='contained' size="small">
+                <StickyNote2Icon />
+                Read More
+              </Button>
+            </Link>
+            {
+              userIsLogged 
+              &&
+              location.pathname !== '/'
+              && 
+              <Button onClick={() => handleDialogClickOpen()} color='warning' variant='contained' size="small">
+                <DeleteOutlineIcon />
+                Delete
+              </Button>
+            }
+            </CardActions>
+          
+        </div>
+      </div>
       </Card>
+      
       <Dialog
         open={open}
         onClose={handleDialogClose}
