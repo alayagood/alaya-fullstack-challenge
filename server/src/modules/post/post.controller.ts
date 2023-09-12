@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
-import Post, { IPost } from '../models/post';
-import cuid from 'cuid';
-import slug from 'limax';
-import sanitizeHtml from 'sanitize-html';
+
+import * as postService from './post.service';
+
 
 export const getPosts = async (req: Request, res: Response): Promise<void> => {
   try {
-    const posts = await Post.find().sort('-dateAdded');
+    const posts = await postService.getPosts();
     res.json({ posts });
   } catch (err) {
     res.status(500).send(err);
@@ -18,18 +17,9 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
     res.status(403).end();
     return;
   }
-
-  const newPost: IPost = new Post(req.body.post);
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
-
-  newPost.slug = slug(newPost.title.toLowerCase());
-  newPost.cuid = cuid();
-
   try {
-    const saved = await newPost.save();
-    res.json({ post: saved });
+    const saved = await postService.addPost(req.body.post);
+    res.status(201).json({ post: saved });
   } catch (err) {
     res.status(500).send(err);
   }
@@ -37,7 +27,11 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
 
 export const getPost = async (req: Request, res: Response): Promise<void> => {
   try {
-    const post = await Post.findOne({ cuid: req.params.cuid });
+    const post = await postService.getPost(req.params.cuid)
+    if (!post) {
+      res.status(404).send({ detail: 'Post Not Found' });
+      return
+    }
     res.json({ post });
   } catch (err) {
     res.status(500).send(err);
@@ -46,12 +40,11 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
 
 export const deletePost = async (req: Request, res: Response): Promise<void> => {
   try {
-    const post = await Post.findOne({ cuid: req.params.cuid });
-    if (post) {
-      await post.deleteOne();
-      res.status(200).end();
+    const { deletedCount } = await postService.deletePost(req.params.cuid);
+    if (deletedCount) {
+      res.status(200).send({ detail: `${deletedCount} Post deleted` })
     } else {
-      res.status(404).send('Post not found');
+      res.status(404).send({ detail: 'Post Not Found' });
     }
   } catch (err) {
     res.status(500).send(err);

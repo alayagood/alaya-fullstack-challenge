@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import db from './db';
-import posts from './routes/post.routes';
+import posts from './modules/post/post.routes';
 import 'dotenv/config'
 
 const app: Express = express();
