@@ -1,0 +1,26 @@
+version: '3'
+services:
+  testapp:
+    container_name: testapp
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mydb
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app  
+
+  mongo:
+    image: mongo:latest
+    # Use a different port than the default 27017 in the local machine, which could be already in use by local mongo installation
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
