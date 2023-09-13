@@ -10,11 +10,12 @@ describe('User Routes', () => {
   beforeAll(async () => {
     await waitForServerToStart(baseURL, 30000);
   })
-  beforeEach(async () => {
-    await User.deleteMany({});
-  });
 
   describe('Login Tests', () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+    });
+
     it('should fail with invalid data', async () => {
       const response = await request(baseURL).post('/user/login').send({ email: 'invalid', password: 'password' });
       expect(response.statusCode).toBe(400);
@@ -54,6 +55,9 @@ describe('User Routes', () => {
   });
 
   describe('Signup Tests', () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+    });
     it('should fail with invalid data', async () => {
       const response = await request(baseURL).post('/user/signup').send({ email: 'invalid', password: 'short' });
       expect(response.statusCode).toBe(400);

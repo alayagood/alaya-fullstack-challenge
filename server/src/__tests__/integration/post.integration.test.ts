@@ -1,7 +1,10 @@
 import request from 'supertest';
 import Post from '../../models/post';
+
 import '../../db';
 import { waitForServerToStart } from './helpers';
+import bcrypt from 'bcryptjs';
+import User from '../../models/user';
 
 const baseURL = 'http://localhost:5000/api';
 
@@ -11,10 +14,11 @@ describe('Post Routes', () => {
   })
   beforeEach(async () => {
     await Post.deleteMany({});
+    await User.deleteMany({});
   });
 
   it('should fetch all posts', async () => {
-    const newPost = new Post({ title: 'test', name: 'test', content: 'test', cuid: '1', slug: 'test' });
+    const newPost = new Post({ title: 'test', name: 'test', content: 'test', cuid: '1', slug: 'test', user_id: '1' });
     await newPost.save();
     const response = await request(baseURL).get('/posts');
     expect(response.statusCode).toBe(200);
@@ -22,23 +26,35 @@ describe('Post Routes', () => {
     expect(response.body.posts[0].title).toBe('test');
   });
 
-  it('should add a new post', async () => {
+
+  it('should not allow UNAUTHORIZED users to add post', async () => {
     const post = {
       title: 'Test',
       content: 'This is a test post.',
       name: 'miguel',
     };
 
-    const response = await request(baseURL).post('/posts').send({ post });
+    const response = await request(baseURL).post('/posts').send({ post }).set('Accept', 'application/json')
+    expect(response.statusCode).toBe(401);
+    expect(response.body.message).toBe('Unauthorized');
+  });
+  it('Should allow AUTHORIZED users to add post', async () => {
+    const post = {
+      title: 'Test',
+      content: 'This is a test post.',
+      name: 'miguel',
+    };
+    const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
+    await user.save();
+    const loginResponse = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'correctPassword' });
+    const { accessToken } = loginResponse.body
+    const response = await request(baseURL).post('/posts').send({ post }).set('Bearer', accessToken)
     expect(response.statusCode).toBe(201);
 
-    const postInDb = await Post.findOne({ name: post.name }).exec();
-    expect(postInDb).toBeTruthy();
-    expect(postInDb!.title).toBe('Test');
   });
 
   it('should fetch a single post', async () => {
-    const newPost = new Post({ title: 'Single Post', name: 'test', content: 'test', cuid: '2', slug: 'test' });
+    const newPost = new Post({ title: 'Single Post', name: 'test', content: 'test', cuid: '2', slug: 'test', user_id: '1' });
 
     await newPost.save();
     const response = await request(baseURL).get(`/posts/2`);
@@ -47,18 +63,44 @@ describe('Post Routes', () => {
 
   });
   it('Return 404 when post not found', async () => {
-
     const response = await request(baseURL).get(`/posts/223`);
     expect(response.statusCode).toBe(404);
     expect(response.body.message).toBe('Post Not Found');
 
-
   });
 
-  it('should delete a post', async () => {
-    const newPost = new Post({ title: 'test', name: 'test', content: 'test', cuid: '3', slug: 'test' });
+  it('should not allow UNAUTHORIZED USERS to delete a post', async () => {
+    const newPost = new Post({ title: 'test', name: 'UNAUTHORIZED', content: 'test', cuid: '3', slug: 'test', user_id: '1' });
     await newPost.save();
     const response = await request(baseURL).delete(`/posts/${newPost.cuid}`);
+    expect(response.statusCode).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+
+    const postInDb = await Post.findOne({ name: newPost.name }).exec();
+    expect(postInDb).not.toBeNull();
+
+  });
+  it('should not allow Wrong User to delete a post', async () => {
+    const newPost = new Post({ title: 'test', name: 'Wrong User', content: 'test', cuid: '3', slug: 'test', user_id: '1' });
+    await newPost.save();
+    const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
+    await user.save();
+    const loginResponse = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'correctPassword' });
+    const { accessToken } = loginResponse.body;
+    const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Bearer', accessToken);
+    expect(response.statusCode).toBe(403);
+    const postInDb = await Post.findOne({ name: newPost.name }).exec();
+    expect(postInDb).not.toBeNull();
+
+  });
+  it('should allow Post Owner to delete a post', async () => {
+    const user = new User({ email: 'test2@example.com', password: bcrypt.hashSync('correctPassword', 10) });
+    await user.save();
+    const newPost = new Post({ title: 'test', name: 'test', content: 'test', cuid: '3', slug: 'test', user_id: user.id });
+    await newPost.save();
+    const loginResponse = await request(baseURL).post('/user/login').send({ email: user.email, password: 'correctPassword' });
+    const { accessToken } = loginResponse.body;
+    const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Bearer', accessToken);
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("1 Post deleted");
 
@@ -67,7 +109,11 @@ describe('Post Routes', () => {
 
   });
   it('Return 404 when trying to delete an unexisting post', async () => {
-    const response = await request(baseURL).delete(`/posts/3434`);
+    const user = new User({ email: 'test3@example.com', password: bcrypt.hashSync('correctPassword', 10) });
+    await user.save();
+    const loginResponse = await request(baseURL).post('/user/login').send({ email: user.email, password: 'correctPassword' });
+    const { accessToken } = loginResponse.body;
+    const response = await request(baseURL).delete(`/posts/3434`).set('Bearer', accessToken);
     expect(response.statusCode).toBe(404);
     expect(response.body.message).toBe('Post Not Found');
 
