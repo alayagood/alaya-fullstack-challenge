@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import express, { Express } from 'express';
+import passport from 'passport';
 import cors from 'cors';
 import db from './db';
 import postRouter from './modules/post/post.routes';
@@ -7,7 +8,7 @@ import userRouter from './modules/user/user.routes';
 import errorHandler from './middlewares/errorHandler';
 
 import { CLIENT_ORIGIN, PORT } from './config';
-
+import jwtStrategy from './auth/jwtStrategy';
 
 const app: Express = express();
 
@@ -21,7 +22,9 @@ app.use(
         origin: [CLIENT_ORIGIN],
     })
 );
+app.use(passport.initialize());
 
+passport.use('jwt', jwtStrategy);
 
 app.use('/api', userRouter);
 app.use('/api', postRouter);
