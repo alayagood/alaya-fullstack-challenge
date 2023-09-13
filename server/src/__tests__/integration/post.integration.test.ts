@@ -50,19 +50,17 @@ describe('Post Routes', () => {
 
     const response = await request(baseURL).get(`/posts/223`);
     expect(response.statusCode).toBe(404);
-    expect(response.body.detail).toBe('Post Not Found');
+    expect(response.body.message).toBe('Post Not Found');
 
 
   });
 
   it('should delete a post', async () => {
     const newPost = new Post({ title: 'test', name: 'test', content: 'test', cuid: '3', slug: 'test' });
-
-
     await newPost.save();
     const response = await request(baseURL).delete(`/posts/${newPost.cuid}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.detail).toBe("1 Post deleted");
+    expect(response.body.message).toBe("1 Post deleted");
 
     const postInDb = await Post.findOne({ name: newPost.name }).exec();
     expect(postInDb).toBeNull();
@@ -71,7 +69,7 @@ describe('Post Routes', () => {
   it('Return 404 when trying to delete an unexisting post', async () => {
     const response = await request(baseURL).delete(`/posts/3434`);
     expect(response.statusCode).toBe(404);
-    expect(response.body.detail).toBe('Post Not Found');
+    expect(response.body.message).toBe('Post Not Found');
 
   });
 });

@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ErrorRequestHandler } from 'express';
+import CustomError from '../utils/errors/CustomError';
 
 
 
@@ -11,44 +13,48 @@ const types = {
     SERVER_ERROR: 'SERVER_ERROR',
 };
 
-const errorHandler: ErrorRequestHandler = async (error, req, res) => {
+const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
     // Here we could log the error in a specific logger or send the error to a monitoring service depending wheter we are in production or development
     // logger.log('error', error); 
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(error);
+    }
+    // Custom error
 
-    // Custom error (If we create a custom error classese)
-    // if (error instanceof CustomError) {
-    //     return res.status(error.status).json({
-    //         ok: false,
-    //         _type: types.SIMPLE,
-    //         detail: error.detail,
-    //     });
-    // }
-
+    if (error instanceof CustomError) {
+        return res.status(error.status).send({
+            ok: false,
+            _type: types.SIMPLE,
+            message: error.message,
+        });
+    }
 
     // Mongo error
-    if (error.name === 'MongoError') {
+
+    if (error.name === 'MongoServerError') {
+
         if (error.code === 11000) {
-            return res.status(400).json({
+            return res.status(409).send({
                 ok: false,
                 _type: types.DB_OPERATION,
-                detail: 'There was a duplicate key error',
+                message: `${Object.values(error.keyValue)} already exists`,
                 error: JSON.stringify(error),
             });
         }
-        return res.status(500).json({
+        return res.status(500).send({
             ok: false,
             _type: types.DB_OPERATION,
-            detail: 'Unhandled error',
+            message: error.message,
             error: JSON.stringify(error),
         });
     }
 
     // Other Errors
 
-    return res.status(500).json({
+    return res.status(500).send({
         ok: false,
         _type: types.UNHANDLED_ERROR,
-        detail: 'Unhandled error',
+        message: error.message,
         error: JSON.stringify(error),
     });
 };

@@ -18,21 +18,21 @@ describe('User Routes', () => {
     it('should fail with invalid data', async () => {
       const response = await request(baseURL).post('/user/login').send({ email: 'invalid', password: 'password' });
       expect(response.statusCode).toBe(400);
-      expect(response.body.detail).toBe('Invalid User Data');
+      expect(response.body.message).toBe('Invalid User Data');
     });
 
     it('should fail with non-existing user', async () => {
       const response = await request(baseURL).post('/user/login').send({ email: 'nonexistent@example.com', password: 'password123' });
-      expect(response.statusCode).toBe(400);
-      expect(response.body.detail).toBe('Login Failed');
+      expect(response.statusCode).toBe(401);
+      expect(response.body.message).toBe('Invalid Credentials');
     });
 
     it('should fail with correct user but wrong password', async () => {
       const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
       await user.save();
       const response = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'wrongPassword' });
-      expect(response.statusCode).toBe(400);
-      expect(response.body.detail).toBe('Login Failed');
+      expect(response.statusCode).toBe(401);
+      expect(response.body.message).toBe('Invalid Credentials');
     });
 
     it('should succeed with correct user and password', async () => {
@@ -57,7 +57,7 @@ describe('User Routes', () => {
     it('should fail with invalid data', async () => {
       const response = await request(baseURL).post('/user/signup').send({ email: 'invalid', password: 'short' });
       expect(response.statusCode).toBe(400);
-      expect(response.body.detail).toBe('Invalid User Data');
+      expect(response.body.message).toBe('Invalid User Data');
     });
 
     it('should succeed with valid data', async () => {
@@ -75,8 +75,9 @@ describe('User Routes', () => {
       const user = new User({ email: 'existing@example.com', password: bcrypt.hashSync('password123', 10) });
       await user.save();
       const response = await request(baseURL).post('/user/signup').send({ email: 'existing@example.com', password: 'password123' });
-      expect(response.statusCode).toBe(400);
-      expect(response.body.message).toBe('User already exists');
+      expect(response.statusCode).toBe(409);
+      expect(response.body.message).toBe("existing@example.com already exists");
+
     });
   });
 });

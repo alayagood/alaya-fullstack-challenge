@@ -1,4 +1,6 @@
 import 'dotenv/config'
+// Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
+import 'express-async-errors'
 import express, { Express } from 'express';
 import passport from 'passport';
 import cors from 'cors';
@@ -11,7 +13,6 @@ import { CLIENT_ORIGIN, PORT } from './config';
 import jwtStrategy from './auth/jwtStrategy';
 
 const app: Express = express();
-
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
