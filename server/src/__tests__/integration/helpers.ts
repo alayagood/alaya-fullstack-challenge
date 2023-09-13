@@ -1,7 +1,6 @@
 
 import request from 'supertest';
 
-
 export async function waitForServerToStart(url: string, timeout = 30000) {
     const startTimestamp = Date.now();
 

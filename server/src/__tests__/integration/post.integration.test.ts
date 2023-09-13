@@ -44,9 +44,9 @@ describe('Post Routes', () => {
       content: 'This is a test post.',
       name: 'miguel',
     };
-    const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
+    const user = new User({ email: 'testpost@example.com', password: bcrypt.hashSync('correctPassword', 10) });
     await user.save();
-    const loginResponse = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'correctPassword' });
+    const loginResponse = await request(baseURL).post('/user/login').send({ email: 'testpost@example.com', password: 'correctPassword' });
     const { accessToken } = loginResponse.body
     const response = await request(baseURL).post('/posts').send({ post }).set('Bearer', accessToken)
     expect(response.statusCode).toBe(201);
@@ -83,9 +83,9 @@ describe('Post Routes', () => {
   it('should not allow Wrong User to delete a post', async () => {
     const newPost = new Post({ title: 'test', name: 'Wrong User', content: 'test', cuid: '3', slug: 'test', user_id: '1' });
     await newPost.save();
-    const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
+    const user = new User({ email: 'testpost2@example.com', password: bcrypt.hashSync('correctPassword', 10) });
     await user.save();
-    const loginResponse = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'correctPassword' });
+    const loginResponse = await request(baseURL).post('/user/login').send({ email: 'testpost2@example.com', password: 'correctPassword' });
     const { accessToken } = loginResponse.body;
     const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Bearer', accessToken);
     expect(response.statusCode).toBe(403);

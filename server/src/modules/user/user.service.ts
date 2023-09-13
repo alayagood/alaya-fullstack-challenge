@@ -2,7 +2,6 @@
 import User, { IUser } from '../../models/user';
 import { encryptPassword } from './user.helpers';
 
-
 export const getUserByEmail = async (email: string): Promise<IUser | null> => {
     return User.findOne({ email });
 };

@@ -1,17 +1,15 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-// import bcrypt from 'bcryptjs';
 
 export enum Role {
     admin = "admin",
     user = "user"
 }
 
-
 export interface IUser extends Document {
     email: string;
     password: string;
     dateAdded: Date;
-    role: Role
+    role: Role;
 }
 
 const userSchema = new Schema<IUser>({

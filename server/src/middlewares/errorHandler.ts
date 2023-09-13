@@ -2,9 +2,6 @@
 import { ErrorRequestHandler } from 'express';
 import CustomError from '../utils/errors/CustomError';
 
-
-
-
 const types = {
     SIMPLE: 'SIMPLE',
     ZOD_FLATTENED: 'ZOD_FLATTENED',
