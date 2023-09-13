@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-
-const MONGO_URI: string = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mern-stack';
+import { MONGO_URI } from '../config';
 
 async function run() {
     await mongoose.connect(MONGO_URI);
