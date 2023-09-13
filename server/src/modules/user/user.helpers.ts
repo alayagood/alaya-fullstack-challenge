@@ -22,7 +22,7 @@ export const shapeUser = (user: IUser): UserShape => {
   }
 }
 export const comparePassword = (password: string, hashedPassword: string): boolean => {
-  return !bcrypt.compareSync(password, hashedPassword)
+  return bcrypt.compareSync(password, hashedPassword)
 }
 
 export const signAccessToken = (id: string, role: string) => {
