@@ -1,19 +1,31 @@
+import 'dotenv/config'
 import express, { Express } from 'express';
 import cors from 'cors';
 import db from './db';
-import posts from './modules/post/post.routes';
-import 'dotenv/config'
+import postRouter from './modules/post/post.routes';
+import userRouter from './modules/user/user.routes';
 import errorHandler from './middlewares/errorHandler';
 
+import { CLIENT_ORIGIN, PORT } from './config';
+
+
 const app: Express = express();
-const apiPort: number = Number(process.env.PORT) || 3000;
+
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
-app.use(cors());
 
-app.use('/api', posts);
+// CORS (Cross Origin Resource Sharing)
+app.use(
+    cors({
+        origin: [CLIENT_ORIGIN],
+    })
+);
+
+
+app.use('/api', userRouter);
+app.use('/api', postRouter);
 app.use(errorHandler);
 db.on('error', (error: Error) => console.error('MongoDB connection error:', error));
 
-app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,5 +1,7 @@
 import express from 'express';
 import * as PostController from './post.controller';
+// import authenticate from '../../middlewares/authenticate';
+
 
 const router = express.Router();
 
