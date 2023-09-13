@@ -1,10 +1,14 @@
 import request from 'supertest';
 import Post from '../../models/post';
 import '../../db';
+import { waitForServerToStart } from './helpers';
 
 const baseURL = 'http://localhost:5000/api';
 
 describe('Post Routes', () => {
+  beforeAll(async () => {
+    await waitForServerToStart(baseURL, 30000);
+  })
   beforeEach(async () => {
     await Post.deleteMany({});
   });
@@ -16,10 +20,7 @@ describe('Post Routes', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.posts.length).toBe(1);
     expect(response.body.posts[0].title).toBe('test');
-
   });
-
-
 
   it('should add a new post', async () => {
     const post = {
@@ -49,7 +50,7 @@ describe('Post Routes', () => {
 
     const response = await request(baseURL).get(`/posts/223`);
     expect(response.statusCode).toBe(404);
-    expect(response.body.message).toBe('Post Not Found');
+    expect(response.body.detail).toBe('Post Not Found');
 
 
   });
@@ -61,18 +62,16 @@ describe('Post Routes', () => {
     await newPost.save();
     const response = await request(baseURL).delete(`/posts/${newPost.cuid}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.message).toBe("1 Post deleted");
+    expect(response.body.detail).toBe("1 Post deleted");
 
     const postInDb = await Post.findOne({ name: newPost.name }).exec();
     expect(postInDb).toBeNull();
 
   });
   it('Return 404 when trying to delete an unexisting post', async () => {
-
     const response = await request(baseURL).delete(`/posts/3434`);
     expect(response.statusCode).toBe(404);
-    expect(response.body.message).toBe('Post Not Found');
-
+    expect(response.body.detail).toBe('Post Not Found');
 
   });
 });
