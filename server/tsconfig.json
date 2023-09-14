@@ -1,43 +1,22 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig to read more about this file */
-    // "typeRoots": [ "./node_modules/@types"],
-    /* Projects */
-    "incremental": true,                                /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
-   
-    /* Language and Environment */
-    "target": "ES2017",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */     
-
-    /* Modules */
-    "module": "commonjs",                                /* Specify what module code is generated. */
-
-    /* JavaScript Support */
-    "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
-  
-
-    /* Emit */
-
-    "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
-
-    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
-
-    "inlineSources": true,                            /* Include source code in the sourcemaps inside the emitted JavaScript. */
-
-
-    /* Interop Constraints */
- 
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-
-    /* Type Checking */
-    "strict": true,                                      /* Enable all strict type-checking options. */
-
-
-    /* Completeness */
-    "skipDefaultLibCheck": false,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": false                                 /* Skip type checking all .d.ts files. */
-
-  },
-  "files": ["src/types/_global.d.ts"],
-
+      "target": "es6",
+      "declaration": false,
+      "removeComments": true,
+      "sourceMap": true,
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "module": "commonjs",
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "baseUrl": ".",
+      "useUnknownInCatchVariables": false,
+      "inlineSources": true,
+      "noEmitOnError": true,
+      "strictNullChecks": true,
+      "resolveJsonModule": true,
+      "sourceRoot": "/src",
+      "outDir": "dist",
+      "typeRoots": ["./src/@types", "./node_modules/@types"]
+  }
 }
