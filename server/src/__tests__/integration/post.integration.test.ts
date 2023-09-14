@@ -34,7 +34,7 @@ describe('Post Routes', () => {
       name: 'miguel',
     };
 
-    const response = await request(baseURL).post('/posts').send({ post }).set('Accept', 'application/json')
+    const response = await request(baseURL).post('/posts').send({ post })
     expect(response.statusCode).toBe(401);
     expect(response.body.message).toBe('Unauthorized');
   });

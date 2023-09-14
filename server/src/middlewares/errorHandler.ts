@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { AssertionError } from 'assert';
 import { ErrorRequestHandler } from 'express';
 import CustomError from '../utils/errors/CustomError';
 
@@ -23,6 +24,18 @@ const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
             ok: false,
             _type: types.SIMPLE,
             message: error.message,
+        });
+    }
+
+
+    // Assertion error
+    if (error instanceof AssertionError) {
+        return res.status(500).json({
+            _type: types.SERVER_ERROR,
+            expected: error.expected,
+            actual: error.actual,
+            message: error.message,
+            error: JSON.stringify(error),
         });
     }
 
