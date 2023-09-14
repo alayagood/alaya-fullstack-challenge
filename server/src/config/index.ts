@@ -16,7 +16,7 @@ export const JWT_ACCESS_TOKEN_LIFETIME = pe.JWT_ACCESS_TOKEN_LIFETIME || '1h';
 
 // Client
 
-export const CLIENT_ORIGIN = pe.CLIENT_ORIGIN || `http://localhost:${PORT}}`;
+export const CLIENT_ORIGIN = pe.CLIENT_ORIGIN || `http://localhost:8000`;
 
 
 export const SALT_ROUNDS = Number(pe.SALT_ROUNDS) || 10;
