@@ -20,7 +20,6 @@ export default async (endpoint, method = 'get', body) => {
       if (!response.ok) {
         return Promise.reject(json);
       }
-
       return json;
     })
     .then(

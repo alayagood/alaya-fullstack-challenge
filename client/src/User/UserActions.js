@@ -29,7 +29,9 @@ export function signUpRequest(user) {
       });
       return res;
     } catch (error) {
-      dispatch({ type: SIGN_UP_ERROR, payload: error.message });
+      // handle error apropiately like dispatching ({ type: SIGN_UP_ERROR, payload: error.message }  and using a snackbar..
+      window.confirm(res.message)
+
     }
   };
 }
@@ -51,7 +53,9 @@ export function loginRequest(user) {
         }
       })
     } catch (error) {
-      dispatch({ type: LOGIN_ERROR, payload: error.message });
+      // handle error apropiately like dispatching ({ type: SIGN_UP_ERROR, payload: error.message }  and using a snackbar..
+      window.confirm(res.message)
+
     }
   };
 }
@@ -94,10 +98,12 @@ export function checkAuthentication() {
     }
     // If accessToken is present and not expired, set isAuthenticated to true
     dispatch({
-      type: UPDATE_AUTHENTICATION, payload: {
-        isAuthenticated: true, accessToken,
-        id: decodedAccessToken.id, role: decodedAccessToken.role
-
+      type: UPDATE_AUTHENTICATION,
+      payload: {
+        isAuthenticated: true,
+        accessToken,
+        id: decodedAccessToken.id,
+        role: decodedAccessToken.role,
       }
     });
   };

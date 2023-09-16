@@ -21,9 +21,9 @@ export default function (state = initialState, action) {
         ...state,
         isAuthenticated: action.payload.isAuthenticated,
         accessToken: action.payload.accessToken || null,
+        error: null
       };
     case LOGIN_SUCCESS:
-      console.log("SSSS")
       return {
         ...state,
         isAuthenticated: true,
