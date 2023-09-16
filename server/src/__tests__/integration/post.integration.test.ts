@@ -5,8 +5,9 @@ import '../../db';
 import { waitForServerToStart } from './helpers';
 import bcrypt from 'bcryptjs';
 import User from '../../models/user';
+const PORT =  process.env.PORT
+const baseURL = `http://localhost:${PORT}/api`;
 
-const baseURL = 'http://localhost:5000/api';
 
 describe('Post Routes', () => {
   beforeAll(async () => {
@@ -48,7 +49,7 @@ describe('Post Routes', () => {
     await user.save();
     const loginResponse = await request(baseURL).post('/user/login').send({ email: 'testpost@example.com', password: 'correctPassword' });
     const { accessToken } = loginResponse.body
-    const response = await request(baseURL).post('/posts').send({ post }).set('Bearer', accessToken)
+    const response = await request(baseURL).post('/posts').send({ post }).set('Authorization', `Bearer ${accessToken}`)
     expect(response.statusCode).toBe(201);
 
   });
@@ -87,7 +88,7 @@ describe('Post Routes', () => {
     await user.save();
     const loginResponse = await request(baseURL).post('/user/login').send({ email: 'testpost2@example.com', password: 'correctPassword' });
     const { accessToken } = loginResponse.body;
-    const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Bearer', accessToken);
+    const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(403);
     const postInDb = await Post.findOne({ name: newPost.name }).exec();
     expect(postInDb).not.toBeNull();
@@ -100,7 +101,7 @@ describe('Post Routes', () => {
     await newPost.save();
     const loginResponse = await request(baseURL).post('/user/login').send({ email: user.email, password: 'correctPassword' });
     const { accessToken } = loginResponse.body;
-    const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Bearer', accessToken);
+    const response = await request(baseURL).delete(`/posts/${newPost.cuid}`).set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("1 Post deleted");
 
@@ -113,7 +114,7 @@ describe('Post Routes', () => {
     await user.save();
     const loginResponse = await request(baseURL).post('/user/login').send({ email: user.email, password: 'correctPassword' });
     const { accessToken } = loginResponse.body;
-    const response = await request(baseURL).delete(`/posts/3434`).set('Bearer', accessToken);
+    const response = await request(baseURL).delete(`/posts/3434`).set('Authorization', `Bearer ${accessToken}`);
     expect(response.statusCode).toBe(404);
     expect(response.body.message).toBe('Post Not Found');
 

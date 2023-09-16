@@ -3,8 +3,8 @@ import '../../db'; // Import your database connection
 import User from '../../models/user'; // I'm assuming you have a user model
 import bcrypt from 'bcryptjs';
 import { waitForServerToStart } from './helpers';
-
-const baseURL = 'http://localhost:5000/api';
+const PORT =  process.env.PORT
+const baseURL = `http://localhost:${PORT}/api`;
 
 describe('User Routes', () => {
   beforeAll(async () => {

@@ -26,6 +26,8 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     // Create the user
     const user = await userService.createUser(email, password);
-    res.status(200).send({ user: shapeUser(user) });
+    const accessToken = signAccessToken(user.id, user.role);
+
+    res.status(200).send({accessToken, user: shapeUser(user) });
 
 };
