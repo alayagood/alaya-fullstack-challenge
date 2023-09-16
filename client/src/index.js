@@ -1,8 +1,11 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+
 import * as ReactDOM from 'react-dom';
 import { combineReducers, createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import posts from './Post/PostReducer';
+import user from './User/UserReducer';
 import './index.css';
 import App from './App';
 
@@ -11,6 +14,11 @@ const enhancers = [
     applyMiddleware(thunk),
 ];
 
-const initialStore = createStore(combineReducers({ posts }), { }, compose(...enhancers));
+const store = createStore(combineReducers({ posts, user }), compose(...enhancers));
 
-ReactDOM.render(<App store={initialStore}/>, document.getElementById('root'));
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+
+    , document.getElementById('root'));
