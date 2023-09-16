@@ -39,7 +39,6 @@ export default function SignUpPage() {
     confirmPassword: undefined
   });
 
-
   useEffect(() => {
     if (userState.isAuthenticated) {
       history.push('/');
@@ -135,7 +134,6 @@ export default function SignUpPage() {
           >
             {hasAccount ? "Sign In" : "Sign Up"}
           </Button>
-
         </form>
         <Link
           component="button"
@@ -143,9 +141,7 @@ export default function SignUpPage() {
         >
           {hasAccount ? "Don't have an account? Sign Up" : "Already have an account? Login"}
         </Link>
-
       </div>
-
     </Container>
   );
 }
