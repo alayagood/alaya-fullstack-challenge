@@ -9,14 +9,16 @@ export const getPosts = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const addPost = async (req: Request, res: Response): Promise<void> => {
-  const { post } = req.body
+  const { name, title, content } = req.body
   assert(req.user);
-  if (!post?.name || !post?.title || !post?.content) {
-    res.status(403).end();
+  if (!name || !title || !content) {
+    res.status(400).send("Missing required fields");
     return;
   }
+  const filePath = req.file?.path
+  const fileOriginalName = req.file?.originalname
 
-  const saved = await postService.addPost(post, String(req.user._id));
+  const saved = await postService.addPost({ name, title, content, filePath, fileOriginalName }, String(req.user._id));
   res.status(201).json({ post: saved });
 };
 
@@ -31,9 +33,9 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
 
 export const deletePost = async (req: Request, res: Response): Promise<void> => {
   assert(req.user);
-  const { deletedCount } = await postService.deletePost(req.params.cuid, String(req.user._id));
-  if (deletedCount) {
-    res.status(200).send({ message: `${deletedCount} Post deleted` })
+  const deleted = await postService.deletePost(req.params.cuid, String(req.user._id));
+  if (deleted) {
+    res.status(200).send({ message: `1 Post deleted` })
   } else {
     res.status(404).send({ message: 'Post Not Found' });
   }

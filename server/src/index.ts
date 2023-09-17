@@ -12,13 +12,11 @@ import errorHandler from './middlewares/errorHandler';
 
 import { CLIENT_ORIGIN, PORT } from './config';
 import jwtStrategy from './auth/jwtStrategy';
-import multerCloudinary from './middlewares/multerCloudinary';
 
 const app: Express = express();
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
-app.use(multerCloudinary.single('image'))
 
 // CORS (Cross Origin Resource Sharing)
 app.use(

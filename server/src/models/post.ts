@@ -3,6 +3,8 @@ export interface IPost extends Document {
     name: string;
     title: string;
     content: string;
+    filePath: string;
+    fileOriginalName: string;
     slug: string;
     cuid: string;
     dateAdded: Date;
@@ -13,6 +15,8 @@ const postSchema = new Schema<IPost>({
     name: { type: String, required: true },
     title: { type: String, required: true },
     content: { type: String, required: true },
+    filePath: { type: String, required: false },
+    fileOriginalName: { type: String, required: false },
     slug: { type: String, required: true },
     cuid: { type: String, required: true },
     dateAdded: { type: Date, default: Date.now, required: true },
