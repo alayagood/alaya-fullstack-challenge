@@ -5,7 +5,7 @@ import '../../db';
 import { waitForServerToStart } from './helpers';
 import bcrypt from 'bcryptjs';
 import User from '../../models/user';
-const PORT =  process.env.PORT
+const PORT = process.env.PORT
 const baseURL = `http://localhost:${PORT}/api`;
 
 
@@ -49,7 +49,7 @@ describe('Post Routes', () => {
     await user.save();
     const loginResponse = await request(baseURL).post('/user/login').send({ email: 'testpost@example.com', password: 'correctPassword' });
     const { accessToken } = loginResponse.body
-    const response = await request(baseURL).post('/posts').send({ post }).set('Authorization', `Bearer ${accessToken}`)
+    const response = await request(baseURL).post('/posts').send(post).set('Authorization', `Bearer ${accessToken}`)
     expect(response.statusCode).toBe(201);
 
   });
