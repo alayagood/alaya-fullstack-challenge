@@ -13,24 +13,24 @@ export const UPDATE_AUTHENTICATION = 'UPDATE_AUTHENTICATION';
 export function signUpRequest(user) {
   return async (dispatch) => {
     try {
-      const res = await callApi("user/signup", "post", {
+      const res = await callApi("user/signup", "post", JSON.stringify({
         email: user.email,
         password: user.password,
-      });
-      localStorage.setItem("accessToken", res.accessToken);
-      dispatch({
-        type: SIGN_UP_SUCCESS, payload: {
-          accessToken: res.accessToken,
-          user: {
+      }));
+      if (res.accessToken) {
+        localStorage.setItem("accessToken", res.accessToken);
+        dispatch({
+          type: SIGN_UP_SUCCESS,
+          payload: {
+            accessToken: res.accessToken,
             id: res.user._id,
             role: res.user.role,
           }
-        }
-      });
-      return res;
+        });
+      }
     } catch (error) {
       // handle error apropiately like dispatching ({ type: SIGN_UP_ERROR, payload: error.message }  and using a snackbar..
-      window.confirm(error.message)
+      console.error(error);
 
     }
   };
@@ -39,10 +39,10 @@ export function signUpRequest(user) {
 export function loginRequest(user) {
   return async (dispatch) => {
     try {
-      const res = await callApi("user/login", "post", {
+      const res = await callApi("user/login", "post", JSON.stringify({
         email: user.email,
         password: user.password,
-      });
+      }));
       localStorage.setItem("accessToken", res.accessToken);
       dispatch({
         type: LOGIN_SUCCESS,
@@ -54,7 +54,7 @@ export function loginRequest(user) {
       })
     } catch (error) {
       // handle error apropiately like dispatching ({ type: SIGN_UP_ERROR, payload: error.message }  and using a snackbar..
-      window.confirm(error.message)
+      console.error(error);
 
     }
   };
@@ -85,7 +85,7 @@ export function checkAuthentication() {
     }
     const decodedAccessToken = jwtDecode(accessToken);
     const currentTime = Date.now()
-    if (!decodedAccessToken.exp || currentTime < Number(decodedAccessToken.iat) * 100) {
+    if (!decodedAccessToken.exp || currentTime > Number(decodedAccessToken.exp) * 1000) {
       localStorage.removeItem('accessToken');
       return dispatch({
         type: UPDATE_AUTHENTICATION,
