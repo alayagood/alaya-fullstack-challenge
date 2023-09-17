@@ -15,7 +15,6 @@ function Navbar() {
     const login = () => history.push('/access');
     const logout = () => dispatch(logoutRequest())
 
-    console.log()
     return (
         <AppBar position="fixed">
             <Toolbar className='justify-content-between'>

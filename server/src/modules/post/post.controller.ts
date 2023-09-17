@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import assert from 'assert';
 
 import * as postService from './post.service';
+import CustomError from '../../utils/errors/CustomError';
 
 export const getPosts = async (req: Request, res: Response): Promise<void> => {
   const posts = await postService.getPosts();
@@ -12,8 +13,7 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
   const { name, title, content } = req.body
   assert(req.user);
   if (!name || !title || !content) {
-    res.status(400).send("Missing required fields");
-    return;
+    throw new CustomError('Missing required fields', 400);
   }
   const filePath = req.file?.path
   const fileOriginalName = req.file?.originalname
@@ -25,8 +25,7 @@ export const addPost = async (req: Request, res: Response): Promise<void> => {
 export const getPost = async (req: Request, res: Response): Promise<void> => {
   const post = await postService.getPost(req.params.cuid)
   if (!post) {
-    res.status(404).send({ message: 'Post Not Found' });
-    return
+    throw new CustomError('Post Not Found', 404);
   }
   res.json({ post });
 };
@@ -35,8 +34,8 @@ export const deletePost = async (req: Request, res: Response): Promise<void> => 
   assert(req.user);
   const deleted = await postService.deletePost(req.params.cuid, String(req.user._id));
   if (deleted) {
-    res.status(200).send({ message: `1 Post deleted` })
+    res.status(200).send({ ok: true, message: `1 Post deleted` })
   } else {
-    res.status(404).send({ message: 'Post Not Found' });
+    throw new CustomError('Post Not Found', 404);
   }
 };

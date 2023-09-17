@@ -52,6 +52,8 @@ export function deletePost(cuid) {
 export function deletePostRequest(cuid) {
   return (dispatch) => {
     return callApi(`posts/${cuid}`, "delete").then((res) => {
+
+      console.log(res);
       if (res.ok) {
         dispatch(deletePost(cuid));
       } else {
