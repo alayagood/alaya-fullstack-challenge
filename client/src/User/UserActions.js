@@ -85,8 +85,8 @@ export function checkAuthentication() {
     }
     const decodedAccessToken = jwtDecode(accessToken);
     const currentTime = Date.now()
-    if (!decodedAccessToken.exp || currentTime < Number(decodedAccessToken.iat) * 100) {
-      localStorage.removeItem('accessToken');
+    if (!decodedAccessToken.exp || currentTime > Number(decodedAccessToken.exp) * 1000) {
+
       return dispatch({
         type: UPDATE_AUTHENTICATION,
         payload: {
