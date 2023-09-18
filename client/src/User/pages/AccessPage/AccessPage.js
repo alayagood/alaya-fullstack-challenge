@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Avatar, Button, TextField, Link, Grid, Typography, makeStyles, Container } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginRequest, signUpRequest } from '../../UserActions';
+import { LOGIN_ERROR, loginRequest, signUpRequest } from '../../UserActions';
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -49,7 +49,7 @@ export default function SignUpPage() {
   const handleSignup = (e) => {
     e.preventDefault();
     if (userData.password !== userData.confirmPassword) {
-      return alert("Passwords don't match")
+      return dispatch({ type: LOGIN_ERROR, error: true, message: "Passwords don't match" })
     }
     dispatch(signUpRequest({ ...userData }))
   }

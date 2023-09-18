@@ -11,57 +11,61 @@ export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const UPDATE_AUTHENTICATION = 'UPDATE_AUTHENTICATION';
 
 export function signUpRequest(user) {
-  return async (dispatch) => {
-    try {
-      const res = await callApi("user/signup", "post", JSON.stringify({
-        email: user.email,
-        password: user.password,
-      }));
-      if (res.accessToken) {
-        localStorage.setItem("accessToken", res.accessToken);
-        dispatch({
-          type: SIGN_UP_SUCCESS,
-          payload: {
-            accessToken: res.accessToken,
-            id: res.user._id,
-            role: res.user.role,
-          }
-        });
-      }
-    } catch (error) {
-      // handle error apropiately like dispatching ({ type: SIGN_UP_ERROR, payload: error.message }  and using a snackbar..
-      console.error(error);
-
-    }
+  return (dispatch) => {
+    callApi("user/signup", "post", JSON.stringify({
+      email: user.email,
+      password: user.password,
+    }))
+      .then(res => {
+        if (res.accessToken) {
+          localStorage.setItem("accessToken", res.accessToken);
+          dispatch({
+            type: SIGN_UP_SUCCESS,
+            payload: {
+              accessToken: res.accessToken,
+              id: res.user._id,
+              role: res.user.role,
+            }
+          });
+        } else {
+          throw new Error(res.message);
+        }
+      })
+      .catch(error => {
+        dispatch({ type: SIGN_UP_ERROR, error, message: error.message });
+      });
   };
 }
 
 export function loginRequest(user) {
-  return async (dispatch) => {
-    try {
-      const res = await callApi("user/login", "post", JSON.stringify({
-        email: user.email,
-        password: user.password,
-      }));
-      localStorage.setItem("accessToken", res.accessToken);
-      dispatch({
-        type: LOGIN_SUCCESS,
-        payload: {
-          accessToken: res.accessToken,
-          id: res.user._id,
-          role: res.user.role,
+  return (dispatch) => {
+    callApi("user/login", "post", JSON.stringify({
+      email: user.email,
+      password: user.password,
+    }))
+      .then(res => {
+        if (res.accessToken) {
+          localStorage.setItem("accessToken", res.accessToken);
+          dispatch({
+            type: LOGIN_SUCCESS,
+            payload: {
+              accessToken: res.accessToken,
+              id: res.user._id,
+              role: res.user.role,
+            }
+          });
+        } else {
+          throw new Error(res.message);
         }
       })
-    } catch (error) {
-      // handle error apropiately like dispatching ({ type: SIGN_UP_ERROR, payload: error.message }  and using a snackbar..
-      console.error(error);
-
-    }
+      .catch(error => {
+        dispatch({ type: LOGIN_ERROR, error, message: error.message });
+      });
   };
 }
 
 export function logoutRequest() {
-  return async (dispatch) => {
+  return (dispatch) => {
     localStorage.removeItem("accessToken");
     return dispatch({
       type: UPDATE_AUTHENTICATION,

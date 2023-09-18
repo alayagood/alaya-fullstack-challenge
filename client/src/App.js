@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 
@@ -10,9 +10,10 @@ import PostDetailPage from './Post/pages/PostDetailPage/PostDetailPage';
 import Navbar from './Nav/components/Navbar';
 import AccessPage from './User/pages/AccessPage/AccessPage';
 import { checkAuthentication } from './User/UserActions';
+import AlertComponent from './shared/components/Alert/AlertComponent';
 
 
-const theme = createMuiTheme({
+const theme = createTheme({
     palette: {
         primary: {
             main: '#1ecde2',
@@ -31,6 +32,7 @@ function App(props) {
         <ThemeProvider theme={theme}>
             <div className="w-100">
                 <BrowserRouter>
+                    <AlertComponent />
                     <Navbar />
                     <div className="w-100 pt-5 mt-5">
                         <Switch>
