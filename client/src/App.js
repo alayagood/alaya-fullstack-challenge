@@ -27,10 +27,10 @@ function App(props) {
 
     useEffect(() => {
         dispatch(checkAuthentication())
+        apiCaller.innerClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     }, [accessToken])
 
     React.useEffect(() => {
-        apiCaller.innerClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         // Here we catch all axios errors in case we want to be lazy and dont handle them anywhere else
         apiCaller.innerClient.interceptors.response.use(
             res => res,
