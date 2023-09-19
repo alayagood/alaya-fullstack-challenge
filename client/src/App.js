@@ -11,7 +11,7 @@ import Navbar from './Nav/components/Navbar';
 import AccessPage from './User/pages/AccessPage/AccessPage';
 import { checkAuthentication } from './User/UserActions';
 import AlertComponent from './shared/components/Alert/AlertComponent';
-import { HTTP_ERROR } from './shared/ErrorReducer';
+
 
 const theme = createTheme({
     palette: {
@@ -30,17 +30,6 @@ function App(props) {
         apiCaller.innerClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     }, [accessToken])
 
-    React.useEffect(() => {
-        // Here we catch all axios errors in case we want to be lazy and dont handle them anywhere else
-        apiCaller.innerClient.interceptors.response.use(
-            res => res,
-            error => {
-                const message = error?.response?.data ? JSON.stringify(error.response.data) : error.toString()
-                dispatch({ type: HTTP_ERROR, error: true, message })
-                // Propagate the error 
-                return Promise.reject(error);
-            })
-    }, [])
 
     return (
         <ThemeProvider theme={theme}>

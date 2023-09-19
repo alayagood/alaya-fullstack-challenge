@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
+import { InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
+
 import Loader from '../../shared/components/Loader/Loader';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -58,11 +60,11 @@ const PostCreateWidget = ({ addPost }) => {
   return (
     <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
       <h3>Create new post</h3>
-      <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
-      <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
-      <TextField variant="filled" multiline minRows="4" label="Post content" name="content" onChange={handleChange} />
+      <TextField variant="filled" required label="Author name" name="name" onChange={handleChange} />
+      <TextField variant="filled" required label="Post title" name="title" onChange={handleChange} />
+      <TextField variant="filled" required multiline minRows="4" label="Post content" name="content" onChange={handleChange} />
+      <InputLabel htmlFor="background-image-input">Select background image</InputLabel>
       <input type="file" placeholder="Add Background image" onChange={handleImageChange} />
-
       <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
         Submit
       </Button>
