@@ -1,5 +1,6 @@
-import callApi from '../util/apiCaller';
+import apiCaller from '../util/apiCaller';
 import jwtDecode from "jwt-decode";
+import { CREDENTIALS_LOCAL_STORAGE_ITEM } from '../constants';
 
 // Export Constants
 
@@ -12,13 +13,13 @@ export const UPDATE_AUTHENTICATION = 'UPDATE_AUTHENTICATION';
 
 export function signUpRequest(user) {
   return (dispatch) => {
-    callApi("user/signup", "post", JSON.stringify({
+    apiCaller.callApi("user/signup", "post", JSON.stringify({
       email: user.email,
       password: user.password,
     }))
       .then(res => {
         if (res.accessToken) {
-          localStorage.setItem("accessToken", res.accessToken);
+          localStorage.setItem(CREDENTIALS_LOCAL_STORAGE_ITEM, res.accessToken);
           dispatch({
             type: SIGN_UP_SUCCESS,
             payload: {
@@ -27,25 +28,21 @@ export function signUpRequest(user) {
               role: res.user.role,
             }
           });
-        } else {
-          throw new Error(res.message);
         }
       })
-      .catch(error => {
-        dispatch({ type: SIGN_UP_ERROR, error, message: error.message });
-      });
+
   };
 }
 
 export function loginRequest(user) {
   return (dispatch) => {
-    callApi("user/login", "post", JSON.stringify({
+    apiCaller.callApi("user/login", "post", JSON.stringify({
       email: user.email,
       password: user.password,
     }))
       .then(res => {
         if (res.accessToken) {
-          localStorage.setItem("accessToken", res.accessToken);
+          localStorage.setItem(CREDENTIALS_LOCAL_STORAGE_ITEM, res.accessToken);
           dispatch({
             type: LOGIN_SUCCESS,
             payload: {
@@ -54,19 +51,14 @@ export function loginRequest(user) {
               role: res.user.role,
             }
           });
-        } else {
-          throw new Error(res.message);
         }
       })
-      .catch(error => {
-        dispatch({ type: LOGIN_ERROR, error, message: error.message });
-      });
   };
 }
 
 export function logoutRequest() {
   return (dispatch) => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem(CREDENTIALS_LOCAL_STORAGE_ITEM);
     return dispatch({
       type: UPDATE_AUTHENTICATION,
       payload: {
@@ -79,7 +71,7 @@ export function logoutRequest() {
 
 export function checkAuthentication() {
   return (dispatch) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem(CREDENTIALS_LOCAL_STORAGE_ITEM);
 
     if (!accessToken) {
       return dispatch({
@@ -100,7 +92,7 @@ export function checkAuthentication() {
         },
       });
     }
-    // If accessToken is present and not expired, set isAuthenticated to true
+
     dispatch({
       type: UPDATE_AUTHENTICATION,
       payload: {
