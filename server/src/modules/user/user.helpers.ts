@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import * as EmailValidator from 'email-validator';
 import bcrypt from 'bcryptjs';
 
 import { SECRET_KEY, JWT_ACCESS_TOKEN_LIFETIME, SALT_ROUNDS } from '../../config';
@@ -37,13 +36,3 @@ export const encryptPassword = (password: string): string => {
   return bcrypt.hashSync(password, SALT_ROUNDS);
 }
 
-export const isUserInputValid = (email: string, password: string): boolean => {
-  if (!email || !password) {
-    return false
-  }
-  // Password must be at least 6 characters long (other rules could be applied)
-  if (password.length < 6) return false
-  // 
-  return EmailValidator.validate(email);
-
-}

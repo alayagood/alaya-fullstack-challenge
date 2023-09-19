@@ -1,23 +1,16 @@
-import cuid from 'cuid';
-import slug from 'limax';
-import sanitizeHtml from 'sanitize-html';
+
 import Post, { IPost } from '../../models/post';
 import CustomError from '../../utils/errors/CustomError';
 import { cloudinary } from '../../middlewares/multerCloudinary';
+import { AddPostSchema } from './post.schema';
 
 
 export const getPosts = async (): Promise<IPost[]> => {
     return Post.find().sort('-dateAdded');
 }
 
-export const addPost = async (post: { name: string, title: string, content: string, filePath?: string, fileOriginalName?: string }, userId: string): Promise<IPost> => {
-    const newPost: IPost = new Post({ ...post, user_id: userId });
-    newPost.title = sanitizeHtml(newPost.title);
-    newPost.name = sanitizeHtml(newPost.name);
-    newPost.content = sanitizeHtml(newPost.content);
-    newPost.slug = slug(newPost.title.toLowerCase());
-    newPost.cuid = cuid();
-
+export const addPost = async ({ title, name, content, fileOriginalName, filePath }: AddPostSchema, userId: string): Promise<IPost> => {
+    const newPost: IPost = new Post({ title, name, content, fileOriginalName, filePath, user_id: userId });
     return newPost.save();
 }
 

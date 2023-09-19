@@ -2,6 +2,8 @@
 import { AssertionError } from 'assert';
 import { ErrorRequestHandler } from 'express';
 import CustomError from '../utils/errors/CustomError';
+import { ZodError } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 
 const types = {
     SIMPLE: 'SIMPLE',
@@ -25,6 +27,11 @@ const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
             _type: types.SIMPLE,
             message: error.message,
         });
+    }
+
+    if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).send(validationError)
     }
 
 

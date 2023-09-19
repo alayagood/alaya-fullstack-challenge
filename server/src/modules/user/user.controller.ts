@@ -1,15 +1,14 @@
 import { Request, Response } from 'express';
 
 import * as userService from './user.service';
-import { isUserInputValid, shapeUser, signAccessToken, comparePassword } from './user.helpers';
+import { shapeUser, signAccessToken, comparePassword } from './user.helpers';
 import CustomError from '../../utils/errors/CustomError';
+import { accessDataSchema } from './user.schema';
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-    const { email, password } = req.body;
-    if (!isUserInputValid(email, password)) {
-        throw new CustomError('Invalid User Data', 400)
-    }
-    const user = await userService.getUserByEmail(req.body.email);
+    const { email, password } = accessDataSchema.parse(req.body)
+
+    const user = await userService.getUserByEmail(email);
 
     if (!user || !comparePassword(password, user.password)) {
         throw new CustomError('Invalid Credentials', 401)
@@ -19,15 +18,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
-    const { email, password } = req.body;
-    if (!isUserInputValid(email, password)) {
-        throw new CustomError('Invalid User Data', 400)
-    }
+    const { email, password } = accessDataSchema.parse(req.body)
 
     // Create the user
     const user = await userService.createUser(email, password);
     const accessToken = signAccessToken(user.id, user.role);
 
-    res.status(200).send({accessToken, user: shapeUser(user) });
+    res.status(200).send({ accessToken, user: shapeUser(user) });
 
 };

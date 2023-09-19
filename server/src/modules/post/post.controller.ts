@@ -3,6 +3,7 @@ import assert from 'assert';
 
 import * as postService from './post.service';
 import CustomError from '../../utils/errors/CustomError';
+import { AddPostSchema, addPostSchema } from './post.schema';
 
 export const getPosts = async (req: Request, res: Response): Promise<void> => {
   const posts = await postService.getPosts();
@@ -10,11 +11,10 @@ export const getPosts = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const addPost = async (req: Request, res: Response): Promise<void> => {
-  const { name, title, content } = req.body
+
+  const { title, name, content }: AddPostSchema = addPostSchema.parse(req.body);
   assert(req.user);
-  if (!name || !title || !content) {
-    throw new CustomError('Missing required fields', 400);
-  }
+
   const filePath = req.file?.path
   const fileOriginalName = req.file?.originalname
 

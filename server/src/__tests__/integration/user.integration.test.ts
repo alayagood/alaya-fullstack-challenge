@@ -3,7 +3,7 @@ import '../../db'; // Import your database connection
 import User from '../../models/user'; // I'm assuming you have a user model
 import bcrypt from 'bcryptjs';
 import { waitForServerToStart } from './helpers';
-const PORT =  process.env.PORT
+const PORT = process.env.PORT
 const baseURL = `http://localhost:${PORT}/api`;
 
 describe('User Routes', () => {
@@ -19,7 +19,7 @@ describe('User Routes', () => {
     it('should fail with invalid data', async () => {
       const response = await request(baseURL).post('/user/login').send({ email: 'invalid', password: 'password' });
       expect(response.statusCode).toBe(400);
-      expect(response.body.message).toBe('Invalid User Data');
+      expect(response.body.name).toBe('ZodValidationError');
     });
 
     it('should fail with non-existing user', async () => {
@@ -61,7 +61,7 @@ describe('User Routes', () => {
     it('should fail with invalid data', async () => {
       const response = await request(baseURL).post('/user/signup').send({ email: 'invalid', password: 'short' });
       expect(response.statusCode).toBe(400);
-      expect(response.body.message).toBe('Invalid User Data');
+      expect(response.body.name).toBe('ZodValidationError');
     });
 
     it('should succeed with valid data', async () => {

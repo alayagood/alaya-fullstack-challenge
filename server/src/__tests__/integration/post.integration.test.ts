@@ -55,10 +55,10 @@ describe('Post Routes', () => {
   });
 
   it('should fetch a single post', async () => {
-    const newPost = new Post({ title: 'Single Post', name: 'test', content: 'test', cuid: '2', slug: 'test', user_id: '1' });
+    const newPost = new Post({ title: 'Single Post', name: 'test', content: 'test', user_id: '1' });
 
-    await newPost.save();
-    const response = await request(baseURL).get(`/posts/2`);
+    const post = await newPost.save();
+    const response = await request(baseURL).get(`/posts/${post.cuid}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.post.title).toBe('Single Post');
 
