@@ -9,7 +9,12 @@ import Button from '@material-ui/core/Button';
 
 function PostListItem({ post, onDelete }) {
   return (
-    <Card className="w-100 my-4">
+    <Card className="w-100 my-4"
+
+      style={{
+        background: `url(${post.filePath}) center/ cover no-repeat`,
+      }}
+    >
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
           <Link to={`/posts/${post.cuid}/${post.slug}`} >

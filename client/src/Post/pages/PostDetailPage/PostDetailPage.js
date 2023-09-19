@@ -5,6 +5,8 @@ import { fetchPost } from '../../PostActions';
 // Import Selectors
 import { useParams } from 'react-router-dom';
 
+import Loader from '../../../shared/components/Loader/Loader';
+
 export function PostDetailPage() {
 
   const { cuid } = useParams();
@@ -18,16 +20,21 @@ export function PostDetailPage() {
 
   return (post
     ?
-      (<div className="container">
-        <div className="row">
-          <div className="col-12">
-            <h1>{post.title}</h1>
-            <p>By {post.name}</p>
-            <p>{post.content}</p>
-          </div>
+    (<div className="container"
+      style={{
+        background: `url(${post.filePath}) center/ cover no-repeat`,
+        height: 600
+      }}
+    >
+      <div className="row">
+        <div className="col-12">
+          <h1>{post.title}</h1>
+          <p>By {post.name}</p>
+          <p>{post.content}</p>
         </div>
-      </div>)
-    : (<div>Loading</div>)
+      </div>
+    </div >)
+    : (<Loader />)
   );
 }
 export default PostDetailPage;
