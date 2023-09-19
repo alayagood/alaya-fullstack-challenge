@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import assert from 'assert';
 
 import * as postService from './post.service';
+import sanitizeHtml from 'sanitize-html';
 
 export const getPosts = async (req: Request, res: Response): Promise<void> => {
   const posts = await postService.getPosts();
@@ -10,11 +11,15 @@ export const getPosts = async (req: Request, res: Response): Promise<void> => {
 
 export const addPost = async (req: Request, res: Response): Promise<void> => {
   const { post } = req.body
-  assert(req.user);
   if (!post?.name || !post?.title || !post?.content) {
     res.status(403).end();
     return;
   }
+  post.title = sanitizeHtml(post.title);
+  post.name = sanitizeHtml(post.name);
+  post.content = sanitizeHtml(post.content);
+  assert(req.user);
+
 
   const saved = await postService.addPost(post, String(req.user._id));
   res.status(201).json({ post: saved });
