@@ -56,6 +56,17 @@ describe('Post Routes', () => {
       const response = await createPostRequest('Test', 'miguel', 'This is a test post.', accessToken);
       expect(response.statusCode).toBe(201);
     });
+    it('Should add file to the post', async () => {
+      await createUser('testpost@example.com', 'correctPassword');
+      const { accessToken } = await loginUser('testpost@example.com', 'correctPassword');
+      const response = await createPostRequest('Test', 'miguel', 'This is a test post.', accessToken, 'src/__tests__/logo192.png');
+
+      expect(response.statusCode).toBe(201);
+      expect(response.body.post.fileOriginalName).toBe("logo192.png");
+      // DELETE FROM CLOUDINARY
+      await deletePostRequest(response.body.post.cuid, accessToken);
+
+    });
   });
 
   describe('Deleting Posts', () => {
