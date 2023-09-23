@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import slug from 'limax';
 import cuid from 'cuid';
+// import { IUser } from 'src/models/user';
 export interface IPost extends Document {
     name: string;
     title: string;
@@ -10,7 +11,8 @@ export interface IPost extends Document {
     slug: string;
     cuid: string;
     dateAdded: Date;
-    user_id: string
+    user_id: string,
+    // user: IUser['_id']
 }
 
 const postSchema = new Schema<IPost>({
@@ -22,7 +24,9 @@ const postSchema = new Schema<IPost>({
     slug: { type: String, required: true },
     cuid: { type: String, required: true },
     dateAdded: { type: Date, default: Date.now, required: true },
-    user_id: { type: String, required: true }
+    user_id: { type: String, required: true },
+    // user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
 });
 
 postSchema.pre("validate", function (next) {

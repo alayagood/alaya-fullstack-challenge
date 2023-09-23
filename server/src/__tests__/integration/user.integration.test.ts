@@ -17,13 +17,13 @@ describe('User Routes', () => {
     });
 
     it('should fail with invalid data', async () => {
-      const response = await request(baseURL).post('/user/login').send({ email: 'invalid', password: 'password' });
+      const response = await request(baseURL).post('/users/login').send({ email: 'invalid', password: 'password' });
       expect(response.statusCode).toBe(400);
       expect(response.body.name).toBe('ZodValidationError');
     });
 
     it('should fail with non-existing user', async () => {
-      const response = await request(baseURL).post('/user/login').send({ email: 'nonexistent@example.com', password: 'password123' });
+      const response = await request(baseURL).post('/users/login').send({ email: 'nonexistent@example.com', password: 'password123' });
       expect(response.statusCode).toBe(401);
       expect(response.body.message).toBe('Invalid Credentials');
     });
@@ -31,7 +31,7 @@ describe('User Routes', () => {
     it('should fail with correct user but wrong password', async () => {
       const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
       await user.save();
-      const response = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'wrongPassword' });
+      const response = await request(baseURL).post('/users/login').send({ email: 'test@example.com', password: 'wrongPassword' });
       expect(response.statusCode).toBe(401);
       expect(response.body.message).toBe('Invalid Credentials');
     });
@@ -39,7 +39,7 @@ describe('User Routes', () => {
     it('should succeed with correct user and password', async () => {
       const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
       await user.save();
-      const response = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'correctPassword' });
+      const response = await request(baseURL).post('/users/login').send({ email: 'test@example.com', password: 'correctPassword' });
       expect(response.statusCode).toBe(200);
       expect(response.body.accessToken).toBeTruthy();
       expect(response.body.user.email).toBe('test@example.com');
@@ -47,7 +47,7 @@ describe('User Routes', () => {
     it('should not return password', async () => {
       const user = new User({ email: 'test@example.com', password: bcrypt.hashSync('correctPassword', 10) });
       await user.save();
-      const response = await request(baseURL).post('/user/login').send({ email: 'test@example.com', password: 'correctPassword' });
+      const response = await request(baseURL).post('/users/login').send({ email: 'test@example.com', password: 'correctPassword' });
       expect(response.statusCode).toBe(200);
       expect(response.body.accessToken).toBeTruthy();
       expect(response.body.password).toBe(undefined);
@@ -59,18 +59,18 @@ describe('User Routes', () => {
       await User.deleteMany({});
     });
     it('should fail with invalid data', async () => {
-      const response = await request(baseURL).post('/user/signup').send({ email: 'invalid', password: 'short' });
+      const response = await request(baseURL).post('/users/signup').send({ email: 'invalid', password: 'short' });
       expect(response.statusCode).toBe(400);
       expect(response.body.name).toBe('ZodValidationError');
     });
 
     it('should succeed with valid data', async () => {
-      const response = await request(baseURL).post('/user/signup').send({ email: 'newuser@example.com', password: 'newpassword123' });
+      const response = await request(baseURL).post('/users/signup').send({ email: 'newuser@example.com', password: 'newpassword123' });
       expect(response.statusCode).toBe(200);
       expect(response.body.user.email).toBe('newuser@example.com');
     });
     it('should not return password', async () => {
-      const response = await request(baseURL).post('/user/signup').send({ email: 'newuser2@example.com', password: 'newpassword123' });
+      const response = await request(baseURL).post('/users/signup').send({ email: 'newuser2@example.com', password: 'newpassword123' });
       expect(response.statusCode).toBe(200);
       expect(response.body.password).toBe(undefined);
     });
@@ -78,7 +78,7 @@ describe('User Routes', () => {
     it('should fail with existing email', async () => {
       const user = new User({ email: 'existing@example.com', password: bcrypt.hashSync('password123', 10) });
       await user.save();
-      const response = await request(baseURL).post('/user/signup').send({ email: 'existing@example.com', password: 'password123' });
+      const response = await request(baseURL).post('/users/signup').send({ email: 'existing@example.com', password: 'password123' });
       expect(response.statusCode).toBe(409);
       expect(response.body.message).toBe("existing@example.com already exists");
 

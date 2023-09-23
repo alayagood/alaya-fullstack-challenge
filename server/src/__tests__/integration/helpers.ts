@@ -46,12 +46,16 @@ export async function createPost(title: string, name: string, content: string) {
     return newPost.save();
 }
 
-export async function createPostRequest(title: string, name: string, content: string, token?: string) {
-    const post = { title, name, content };
-    let req = request(baseURL).post('/posts').send(post);
+export async function createPostRequest(title: string, name: string, content: string, token?: string, file?: string) {
+    // const post = { title, name, content };
+    let req = request(baseURL).post('/posts').field("title", title).field('name', name).field("content", content)
+    if (file) {
+        req.attach('image', file)
+    }
     if (token) {
         req = req.set('Authorization', `Bearer ${token}`);
     }
+
     return req;
 }
 
@@ -62,7 +66,7 @@ export async function createUser(email: string, password: string) {
 }
 
 export async function loginUser(email: string, password: string) {
-    const response = await request(baseURL).post('/user/login').send({ email, password });
+    const response = await request(baseURL).post('/users/login').send({ email, password });
     return response.body;
 }
 
@@ -74,5 +78,5 @@ export async function clearUsers() {
 
 
 export async function signupUser(email: string, password: string) {
-    return request(baseURL).post('/user/signup').send({ email, password });
+    return request(baseURL).post('/users/signup').send({ email, password });
 }
