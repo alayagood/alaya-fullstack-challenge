@@ -13,7 +13,7 @@ export const UPDATE_AUTHENTICATION = 'UPDATE_AUTHENTICATION';
 
 export function signUpRequest(user) {
   return (dispatch) => {
-    apiCaller.callApi("user/signup", "post", JSON.stringify({
+    apiCaller.callApi("users/signup", "post", JSON.stringify({
       email: user.email,
       password: user.password,
     }))
@@ -36,7 +36,7 @@ export function signUpRequest(user) {
 
 export function loginRequest(user) {
   return (dispatch) => {
-    apiCaller.callApi("user/login", "post", JSON.stringify({
+    apiCaller.callApi("users/login", "post", JSON.stringify({
       email: user.email,
       password: user.password,
     }))
