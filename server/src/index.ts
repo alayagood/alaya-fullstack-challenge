@@ -1,36 +1,41 @@
 import 'dotenv/config'
-// Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
-import 'express-async-errors'
-import express, { Express } from 'express';
-import passport from 'passport';
-
-import cors from 'cors';
 import db from './db';
-import postRouter from './modules/post/post.routes';
-import userRouter from './modules/user/user.routes';
-import errorHandler from './middlewares/errorHandler';
+import App from './app';
+import PostRouter from './modules/posts/PostRouter';
+import UserRouter from './modules/users/UserRouter';
+import DIContainer from './di/diContainer';
+import UserService from './modules/users/UserService';
+import PostService from './modules/posts/PostService';
 
-import { CLIENT_ORIGIN, PORT } from './config';
-import jwtStrategy from './auth/jwtStrategy';
+import DI_TYPES from './di/DITypes';
+import { PORT, ENVIRONMENT } from './config';
 
-const app: Express = express();
+const initializeDependencies = () => {
+    DIContainer.initialize();
+    const userService = new UserService();
+    DIContainer.bind(DI_TYPES.UserService, userService);
+    const postService = new PostService();
+    DIContainer.bind(DI_TYPES.PostService, postService);
+}
 
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json());
+const initializeServer = async (): Promise<void> => {
+    initializeDependencies()
+    const app = new App().config([
+        new PostRouter('posts'),
+        new UserRouter('users')
+    ]);
+    const server = app.listen(PORT, () => {
+        if (ENVIRONMENT === 'development') {
+            console.log(`💻 Started on http://localhost:${PORT}`);
+        } else {
+            console.log(`💻 Started on port ${PORT}`);
+        }
+    });
+    db.on('error', (error: Error) => console.error('MongoDB connection error:', error));
+    server.on('error', (error) => {
+        console.log(error);
+    });
+}
+initializeServer()
 
-// CORS (Cross Origin Resource Sharing)
-app.use(
-    cors({
-        origin: [CLIENT_ORIGIN],
-    })
-);
-app.use(passport.initialize());
 
-passport.use('jwt', jwtStrategy);
-
-app.use('/api', userRouter);
-app.use('/api', postRouter);
-app.use(errorHandler);
-db.on('error', (error: Error) => console.error('MongoDB connection error:', error));
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

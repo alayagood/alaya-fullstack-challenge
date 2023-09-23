@@ -12,3 +12,4 @@ export const addPostSchema = z.object({
 
 
 export type AddPostSchema = z.infer<typeof addPostSchema>;
+
