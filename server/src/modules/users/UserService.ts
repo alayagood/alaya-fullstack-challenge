@@ -9,7 +9,7 @@ export default class UserService implements IUserService {
 
     authenticateUser = async (email: string, plaintextPassword: string) => {
         const user = await User.findOne({ email });
-        if (!user || !comparePassword(plaintextPassword, user.password)) {
+        if (!user || ! await comparePassword(plaintextPassword, user.password)) {
             throw new CustomError('Invalid Credentials', 401)
         }
         return user;
@@ -19,7 +19,7 @@ export default class UserService implements IUserService {
         email: string,
         password: string,
     ): Promise<IUser> => {
-        const encryptedPassword = encryptPassword(password)
+        const encryptedPassword = await encryptPassword(password)
         return User.create({ email, password: encryptedPassword });
     }
 }

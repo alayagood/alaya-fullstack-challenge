@@ -12,8 +12,8 @@ import { IAppRouter } from './modules/BaseRouter';
 
 import { ENVIRONMENT, CLIENT_ORIGIN } from './config';
 
-// Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
 import 'express-async-errors'
+// Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
 
 class App {
   private app: express.Application;

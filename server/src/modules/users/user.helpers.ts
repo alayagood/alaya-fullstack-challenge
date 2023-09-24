@@ -20,8 +20,8 @@ export const shapeUser = (user: IUser): UserShape => {
     dateAdded: user.dateAdded.toISOString()
   }
 }
-export const comparePassword = (password: string, hashedPassword: string): boolean => {
-  return bcrypt.compareSync(password, hashedPassword)
+export const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
+  return bcrypt.compare(password, hashedPassword)
 }
 
 export const signAccessToken = (id: string, role: string) => {
@@ -32,7 +32,7 @@ export const signAccessToken = (id: string, role: string) => {
   return accessToken;
 };
 
-export const encryptPassword = (password: string): string => {
-  return bcrypt.hashSync(password, SALT_ROUNDS);
+export const encryptPassword = (password: string): Promise<string> => {
+  return bcrypt.hash(password, SALT_ROUNDS);
 }
 
