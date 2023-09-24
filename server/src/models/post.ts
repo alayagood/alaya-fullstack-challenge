@@ -22,7 +22,7 @@ const postSchema = new Schema<IPost>({
     filePath: { type: String, required: false },
     fileOriginalName: { type: String, required: false },
     slug: { type: String, required: true },
-    cuid: { type: String, required: true },
+    cuid: { type: String, required: true, index: true, unique: true },
     dateAdded: { type: Date, default: Date.now, required: true },
     user_id: { type: String, required: true },
     // user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

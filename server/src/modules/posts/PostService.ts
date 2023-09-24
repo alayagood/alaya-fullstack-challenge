@@ -1,26 +1,29 @@
-import Post, { IPost } from '../../models/post';
+import IPostService from "./interfaces/IPostService";
+import ICrudService from '../../database/interfaces/ICrudService';
+import { IPost } from '../../models/post';
+import { AddPostSchema } from "./post.schema";
 import CustomError from '../../utils/errors/CustomError';
-import { cloudinary } from '../../middlewares/multerCloudinary';
-import IPostService from './interfaces/IPostService';
-
-import { AddPostSchema } from './post.schema';
+import { cloudinary } from "../../middlewares/multerCloudinary";
+import availableModels from '../../models/index';
 
 class PostService implements IPostService {
+
+  constructor(private crudService: ICrudService) {
+  }
+
   async getPosts(): Promise<IPost[]> {
-    return Post.find().sort('-dateAdded');
+    return this.crudService.findMany<IPost>(availableModels.post, {}, '-dateAdded');
   }
 
   async addPost({ title, name, content, fileOriginalName, filePath }: AddPostSchema, userId: string): Promise<IPost> {
-    const newPost: IPost = new Post({ title, name, content, fileOriginalName, filePath, user_id: userId });
-    return newPost.save();
+    return this.crudService.createOne(availableModels.post, { title, name, content, fileOriginalName, filePath, user_id: userId });
   }
 
   async getPost(cuid: string): Promise<IPost | null> {
-    return Post.findOne({ cuid });
+    return this.crudService.findOne(availableModels.post, { cuid });
   }
 
   async deletePost(cuid: string, userId: string): Promise<IPost | null> {
-
     const post = await this.getPost(cuid);
     if (!post) {
       return null;
@@ -34,10 +37,15 @@ class PostService implements IPostService {
       await cloudinary.uploader.destroy(post.fileOriginalName);
     }
 
-    return post.deleteOne();
-
-
+    return this.crudService.deleteOne(availableModels.post, { cuid });
   }
-}
+  // We could add other more complex operations using crudservice operation or accessing the model directly
+  // async otherOperation(params: any) {
+  //   1.accessing the model:
+  //   const model = this.crudService.getModel(model)
+  //   2. using the cruds service operation :
+  //   this.crudService.otherOperation(model)
+  // }
 
+}
 export default PostService;
