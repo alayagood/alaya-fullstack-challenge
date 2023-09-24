@@ -1,28 +1,90 @@
 import request from 'supertest';
-import Post from '../../models/post';
-import User from '../../models/user';
+import express from 'express';
+import bcrypt from 'bcryptjs';
 
-import '../../db';
-import { createPost, createPostRequest, createPostWithUser, createUser, deletePostRequest, loginUser, waitForServerToStart } from './helpers';
+import availableModels from '../../models';
+import { Model } from 'mongoose';
+import { IPost } from '../../models/post';
+import { IUser } from '../../models/user';
+import App from '../../app';
+import DIContainer from '../../di/diContainer';
+import PostRouter from '../../modules/posts/PostRouter';
+import UserRouter from '../../modules/users/UserRouter';
+import DI_TYPES from '../../di/DITypes';
+import IDatabase from '../../database/interfaces/IDatabase';
 
-const PORT = process.env.PORT;
-const baseURL = `http://localhost:${PORT}/api`;
+
+async function createPostRequest(title: string, name: string, content: string, token?: string, file?: string) {
+
+  let req = request(app).post('/api/posts').field("title", title).field('name', name).field("content", content)
+  if (file) {
+    req.attach('image', file)
+  }
+  if (token) {
+    req = req.set('Authorization', `Bearer ${token}`);
+  }
+
+  return req;
+}
+async function deletePostRequest(cuid: string, token?: string) {
+  let req = request(app).delete(`/api/posts/${cuid}`);
+  if (token) {
+    req = req.set('Authorization', `Bearer ${token}`);
+  }
+  return req;
+}
+async function loginUser(email: string, password: string) {
+  const response = await request(app).post('/api/users/login').send({ email, password });
+  return response.body;
+}
+
+async function createPostWithUser(title: string, name: string, content: string, userId: any) {
+  const newPost = new Post({ title, name, content, cuid: '1', slug: title, user_id: userId });
+  return newPost.save();
+}
+
+async function createPost(title: string, name: string, content: string) {
+  const newPost = new Post({ title, name, content, cuid: '1', slug: title, user_id: '1' });
+  return newPost.save();
+}
 
 
+async function createUser(email: string, password: string) {
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const user = new User({ email, password: hashedPassword });
+  return user.save();
+}
+
+
+let app: express.Application
+let Post: Model<IPost>
+let User: Model<IUser>
 describe('Post Routes', () => {
+
   beforeAll(async () => {
-    await waitForServerToStart(baseURL, 30000);
+    app = await new App().config([
+      new PostRouter('posts'),
+      new UserRouter('users')
+    ]);
+    const database = DIContainer.get<IDatabase>(DI_TYPES.Database)
+    Post = database.getModel(availableModels.post)
+    User = database.getModel(availableModels.user)
+
   });
 
   beforeEach(async () => {
     await Post.deleteMany({});
     await User.deleteMany({});
   });
+  afterAll(async () => {
+    const database = DIContainer.get<IDatabase>(DI_TYPES.Database)
+    await database.disconnect()
+  })
 
   describe('Fetching Posts', () => {
     it('should fetch all posts', async () => {
       await createPost('test', 'test', 'test');
-      const response = await request(baseURL).get('/posts');
+      const response = await request(app).get('/api/posts');
       expect(response.statusCode).toBe(200);
       expect(response.body.posts.length).toBe(1);
       expect(response.body.posts[0].title).toBe('test');
@@ -30,13 +92,13 @@ describe('Post Routes', () => {
 
     it('should fetch a single post', async () => {
       const post = await createPost('Single Post', 'test', 'test');
-      const response = await request(baseURL).get(`/posts/${post.cuid}`);
+      const response = await request(app).get(`/api/posts/${post.cuid}`);
       expect(response.statusCode).toBe(200);
       expect(response.body.post.title).toBe('Single Post');
     });
 
     it('returns 404 when post not found', async () => {
-      const response = await request(baseURL).get(`/posts/223`);
+      const response = await request(app).get(`/api/posts/223`);
       expect(response.statusCode).toBe(404);
       expect(response.body.message).toBe('Post Not Found');
     });

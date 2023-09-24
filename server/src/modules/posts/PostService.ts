@@ -8,8 +8,7 @@ import availableModels from '../../models/index';
 
 class PostService implements IPostService {
 
-  constructor(private crudService: ICrudService) {
-  }
+  constructor(private crudService: ICrudService) { }
 
   async getPosts(): Promise<IPost[]> {
     return this.crudService.findMany<IPost>(availableModels.post, {}, '-dateAdded');

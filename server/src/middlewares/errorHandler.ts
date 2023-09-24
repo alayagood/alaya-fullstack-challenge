@@ -16,7 +16,7 @@ const types = {
 const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
     // Here we could log the error in a specific logger or send the error to a monitoring service depending wheter we are in production or development
     // logger.log('error', error); 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV == 'development') {
         console.log(error);
     }
     // Custom error

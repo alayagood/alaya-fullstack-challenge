@@ -1,11 +1,10 @@
 const pe = process.env;
-
+export const ENVIRONMENT = (pe.ENVIRONMENT as Environment) || 'development';
 export const MONGO_URI: string = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mern-stack';
 
 export const PORT: number = Number(process.env.PORT) || 3000;
 type Environment = 'development' | 'production' | 'test';
 
-export const ENVIRONMENT = (pe.ENVIRONMENT as Environment) || 'development';
 
 export const SECRET_KEY = pe.SECRET_KET || "donttellanyone please"
 
@@ -25,3 +24,4 @@ export const CLIENT_ORIGIN = pe.CLIENT_ORIGIN || `http://localhost:8000`;
 
 
 export const SALT_ROUNDS = Number(pe.SALT_ROUNDS) || 10;
+

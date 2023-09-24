@@ -8,11 +8,16 @@ import passport from 'passport';
 import errorHandler from './middlewares/errorHandler';
 import jwtStrategy from './auth/jwtStrategy';
 import { IAppRouter } from './modules/BaseRouter';
+import DIContainer from './di/diContainer';
+import UserService from './modules/users/UserService';
+import PostService from './modules/posts/PostService';
+import MongooseDatabase from './database/MongoDatabase';
+import DI_TYPES from './di/DITypes';
 
-
-import { ENVIRONMENT, CLIENT_ORIGIN } from './config';
+import { ENVIRONMENT, CLIENT_ORIGIN, MONGO_URI } from './config';
 
 import 'express-async-errors'
+import MongoCrudService from './database/MongoCrudService';
 // Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
 
 class App {
@@ -21,9 +26,27 @@ class App {
   constructor() {
     this.app = express();
   }
+  private async initializeDependencies() {
+    DIContainer.initialize();
 
-  public config(routers: IAppRouter[]): express.Application {
+    //  Initilize DB
+    const database = new MongooseDatabase(MONGO_URI)
+    DIContainer.bind(DI_TYPES.Database, database);
+    await database.connect()
+    database.loadModels()
 
+    //    Initialize services
+    const crudService = new MongoCrudService(database)
+    DIContainer.bind(DI_TYPES.CrudService, crudService);
+    const postService = new PostService(crudService);
+    DIContainer.bind(DI_TYPES.PostService, postService);
+
+    const userService = new UserService(crudService);
+    DIContainer.bind(DI_TYPES.UserService, userService);
+  }
+  public async config(routers: IAppRouter[]): Promise<express.Application> {
+
+    await this.initializeDependencies()
     // CORS (Cross Origin Resource Sharing)
     this.app.use(
       cors({
@@ -40,7 +63,7 @@ class App {
 
     // Logging
     const format =
-      ENVIRONMENT === 'development'
+      ENVIRONMENT !== 'production'
         ? 'dev'
         : '[:date[clf]] :method :url :status :res[content-length] - :response-time ms';
     this.app.use(morgan(format));

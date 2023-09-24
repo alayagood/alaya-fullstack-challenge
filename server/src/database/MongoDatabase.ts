@@ -26,7 +26,6 @@ class MongooseDatabase implements IDatabase {
     try {
       await mongoose.connect(this.uri);
       this.connection = mongoose.connection
-      console.log("Connected to database.");
     } catch (error) {
       console.error("Error connecting to database: ", error);
       throw new Error("Database connection failed.");

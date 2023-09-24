@@ -1,8 +1,5 @@
 import DependenciesMap from './dependenciesMap';
 
-
-
-
 export default class DIContainer {
   // eslint-disable-next-line no-use-before-define
   private static instance: DIContainer;

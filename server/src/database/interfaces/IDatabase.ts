@@ -4,5 +4,6 @@ export default interface IDatabase {
   disconnect: () => Promise<void>;
   models: any;
   getModel: <T>(model: string) => T
-  getConnection: any
+  loadModels: () => void
+  getConnection: () => any
 }
