@@ -31,7 +31,8 @@ To run the test on the backend
     
 ```
 - In the client repository you have the Front-end code of the blog that uses React and Redux.
-To start the Front-end
+To start the Front-end.
+(Since this project needs external libraries to work with node versions above v16 i added an .nvmrc file to explicitly show the node version required, that's why i wrote the script to use the correct version below )
 ```
     cd client
     npm i
