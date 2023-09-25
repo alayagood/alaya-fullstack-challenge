@@ -9,8 +9,8 @@ import { IPost } from '../../models/post';
 import { IUser } from '../../models/user';
 import App from '../../app';
 import DIContainer from '../../di/diContainer';
-import PostRouter from '../../modules/posts/PostRouter';
-import UserRouter from '../../modules/users/UserRouter';
+import PostRouter from '../../api/posts/PostRouter';
+import UserRouter from '../../api/users/UserRouter';
 import DI_TYPES from '../../di/DITypes';
 import IDatabase from '../../database/interfaces/IDatabase';
 
@@ -60,8 +60,8 @@ describe('Post Routes', () => {
 
   beforeAll(async () => {
     app = await new App().config([
-      new PostRouter('posts'),
-      new UserRouter('users')
+      new PostRouter(),
+      new UserRouter()
     ]);
     const database = DIContainer.get<IDatabase>(DI_TYPES.Database)
     Post = database.getModel(availableModels.post)

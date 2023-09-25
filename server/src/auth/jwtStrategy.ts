@@ -10,7 +10,6 @@ const options: StrategyOptions = {
 
 const jwtStrategy = new Strategy(options, async (payload, verify) => {
   const user = await User.findById(payload.id);
-
   if (user) {
     verify(null, user);
   } else {

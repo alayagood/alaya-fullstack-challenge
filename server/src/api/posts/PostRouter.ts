@@ -10,7 +10,10 @@ import IPostService from './interfaces/IPostService';
 
 
 export default class PostRouter extends BaseRouter {
-
+  constructor() {
+    // Create path from _dirname (posts)
+    super(__dirname)
+  }
   createRouter(): Router {
     const router = Router();
     const postController = new PostController(
