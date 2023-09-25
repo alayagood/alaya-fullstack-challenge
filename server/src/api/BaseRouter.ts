@@ -6,7 +6,11 @@ export interface IAppRouter {
 }
 
 export abstract class BaseRouter implements IAppRouter {
-  constructor(private path: string) { }
+  private path: string
+  constructor(private dirname: string) {
+    const lastSlashIndex = dirname.lastIndexOf('/'); // if no slash index = -1
+    this.path = dirname.slice(lastSlashIndex + 1);
+  }
 
   createRouter(): Router {
     throw new Error('Method not implemented.');

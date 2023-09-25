@@ -1,8 +1,7 @@
 import 'dotenv/config'
-// import db from './db';
 import App from './app';
-import PostRouter from './modules/posts/PostRouter';
-import UserRouter from './modules/users/UserRouter';
+import PostRouter from './api/posts/PostRouter';
+import UserRouter from './api/users/UserRouter';
 
 
 import { PORT, ENVIRONMENT } from './config';
@@ -14,8 +13,8 @@ import DI_TYPES from './di/DITypes';
 
 const initializeServer = async (): Promise<void> => {
     const app = await new App().config([
-        new PostRouter('posts'),
-        new UserRouter('users')
+        new PostRouter(),
+        new UserRouter()
     ]);
     const server = app.listen(PORT, () => {
         if (ENVIRONMENT === 'development') {

@@ -7,10 +7,10 @@ import passport from 'passport';
 
 import errorHandler from './middlewares/errorHandler';
 import jwtStrategy from './auth/jwtStrategy';
-import { IAppRouter } from './modules/BaseRouter';
+import { IAppRouter } from './api/BaseRouter';
 import DIContainer from './di/diContainer';
-import UserService from './modules/users/UserService';
-import PostService from './modules/posts/PostService';
+import UserService from './api/users/UserService';
+import PostService from './api/posts/PostService';
 import MongooseDatabase from './database/MongoDatabase';
 import DI_TYPES from './di/DITypes';
 
@@ -61,7 +61,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
-    // Logging
+    // Logging in a production app this would be an independent service
     const format =
       ENVIRONMENT !== 'production'
         ? 'dev'

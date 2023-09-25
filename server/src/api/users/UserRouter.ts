@@ -10,8 +10,9 @@ import IUserService from './interfaces/IUserService';
 
 
 export default class UserRouter extends BaseRouter {
-  constructor(path: string) {
-    super(path)
+  constructor() {
+    // Create path from _dirname (users)
+    super(__dirname)
   }
   createRouter(): Router {
     const router = Router();
