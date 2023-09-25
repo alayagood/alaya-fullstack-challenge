@@ -1,11 +1,14 @@
-import callApi from '../util/apiCaller';
+import apiCaller from '../util/apiCaller';
+
 
 // Export Constants
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
 export const DELETE_POST = 'DELETE_POST';
+export const SET_LOADING = 'SET_LOADING';
 
 // Export Actions
+
 export function addPost(post) {
   return {
     type: ADD_POST,
@@ -15,13 +18,14 @@ export function addPost(post) {
 
 export function addPostRequest(post) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
-    }).then(res => dispatch(addPost(res.post)));
+    dispatch({ type: SET_LOADING, loading: true })
+    return apiCaller.callApi('posts', 'post',
+      post
+      , {})
+      .then(res => dispatch(addPost(res.post)))
+      .catch(error => {
+        dispatch({ type: SET_LOADING, loading: false })
+      })
   };
 }
 
@@ -34,15 +38,15 @@ export function addPosts(posts) {
 
 export function fetchPosts() {
   return (dispatch) => {
-    return callApi('posts').then(res => {
-      dispatch(addPosts(res.posts));
-    });
+    return apiCaller.callApi('posts').then(res => {
+      dispatch(addPosts(res.posts))
+    })
   };
 }
 
 export function fetchPost(cuid) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`).then(res => dispatch(addPost(res.post)));
+    return apiCaller.callApi(`posts/${cuid}`).then(res => dispatch(addPost(res.post)));
   };
 }
 
@@ -55,6 +59,10 @@ export function deletePost(cuid) {
 
 export function deletePostRequest(cuid) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
+    return apiCaller.callApi(`posts/${cuid}`, "delete").then((res) => {
+      if (res.ok) {
+        dispatch(deletePost(cuid));
+      }
+    });
   };
 }

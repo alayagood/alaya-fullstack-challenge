@@ -13,20 +13,30 @@ To start the server be sure to have installed mongoDB locally as a service then 
 ```$xslt
     cd server
     npm i
-    node index.js
+    npm run build
+    npm start
 ```
 If you want to restart the server at any change you can also install nodemon and start the server like this
 ```
     cd server
     npm i
-    npm i -g nodemon
-    nodemon index.js
+    npm run dev
+    
+```
+To run the test on the backend
+```
+    cd server
+    npm i
+    npm test
+    
 ```
 - In the client repository you have the Front-end code of the blog that uses React and Redux.
-To start the Front-end
+To start the Front-end.
+(Since this project needs external libraries to work with node versions above v16 i added an .nvmrc file to explicitly show the node version required, that's why i wrote the script to use the correct version below )
 ```
     cd client
     npm i
+    nvm use 
     npm start
 ```
 
