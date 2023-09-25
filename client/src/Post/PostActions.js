@@ -55,6 +55,14 @@ export function deletePost(cuid) {
 
 export function deletePostRequest(cuid) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
+    return callApi(`posts/${cuid}`, "delete").then((res) => {
+      if (res.ok) {
+        dispatch(deletePost(cuid));
+      } else {
+        if (window.confirm(res.message)) {
+          return;
+        }
+      }
+    });
   };
 }
