@@ -68,7 +68,7 @@ describe('PostService', () => {
     it('should delete a post', async () => {
       const cuid = 'someCuid';
       const userId = 'someUserId';
-      const mockPost = { user_id: userId, fileOriginalName: 'originalName' };
+      const mockPost = { user: userId, fileOriginalName: 'originalName' };
 
       mockCrudService.findOne.mockResolvedValue(mockPost);
       mockCrudService.deleteOne.mockResolvedValue(mockPost);

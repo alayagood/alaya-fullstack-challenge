@@ -35,6 +35,7 @@ To start the Front-end
 ```
     cd client
     npm i
+    nvm use 
     npm start
 ```
 

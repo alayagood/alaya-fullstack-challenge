@@ -38,7 +38,7 @@ describe('UserService', () => {
     it('should throw an error when user doesnt exits', async () => {
       const email = 'john.doe@example.com';
       const plaintextPassword = 'plaintextPassword';
-
+      \
       mockCrudService.findOne.mockResolvedValue(null);
 
       await expect(userService.authenticateUser(email, plaintextPassword)).rejects.toThrow(new CustomError('Invalid Credentials', 401));

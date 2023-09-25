@@ -15,7 +15,7 @@ class PostService implements IPostService {
   }
 
   async addPost({ title, name, content, fileOriginalName, filePath }: AddPostSchema, userId: string): Promise<IPost> {
-    return this.crudService.createOne(availableModels.post, { title, name, content, fileOriginalName, filePath, user_id: userId });
+    return this.crudService.createOne(availableModels.post, { title, name, content, fileOriginalName, filePath, user: userId });
   }
 
   async getPost(cuid: string): Promise<IPost | null> {
@@ -27,8 +27,8 @@ class PostService implements IPostService {
     if (!post) {
       return null;
     }
-
-    if (post.user_id !== userId) {
+    // Here you could compare use the native mongo "post.user.equals(userId)" for comparison , but I wanted to keep the service agnostic from the database language.
+    if (String(post.user) !== String(userId)) {
       throw new CustomError('User cant delete other user posts', 403);
     }
 

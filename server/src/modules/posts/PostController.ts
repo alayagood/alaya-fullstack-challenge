@@ -24,7 +24,7 @@ export default class PostController implements IPostController {
 
     const saved = await this.postService.addPost(
       { name, title, content, filePath, fileOriginalName },
-      String(req.user._id)
+      req.user._id
     );
     res.status(201).json({ post: saved });
   };
@@ -39,7 +39,7 @@ export default class PostController implements IPostController {
 
   public deletePost = async (req: Request, res: Response): Promise<void> => {
     assert(req.user);
-    const deleted = await this.postService.deletePost(req.params.cuid, String(req.user._id));
+    const deleted = await this.postService.deletePost(req.params.cuid, req.user._id);
     if (deleted) {
       res.status(200).send({ ok: true, message: `1 Post deleted` });
     } else {

@@ -1,6 +1,7 @@
 import request from 'supertest';
 import express from 'express';
 import bcrypt from 'bcryptjs';
+import { ObjectId } from 'mongodb'
 
 import availableModels from '../../models';
 import { Model } from 'mongoose';
@@ -38,13 +39,9 @@ async function loginUser(email: string, password: string) {
   return response.body;
 }
 
-async function createPostWithUser(title: string, name: string, content: string, userId: any) {
-  const newPost = new Post({ title, name, content, cuid: '1', slug: title, user_id: userId });
-  return newPost.save();
-}
 
-async function createPost(title: string, name: string, content: string) {
-  const newPost = new Post({ title, name, content, cuid: '1', slug: title, user_id: '1' });
+async function createPost(title: string, name: string, content: string, userId: ObjectId) {
+  const newPost = new Post({ title, name, content, cuid: '1', slug: title, user: userId });
   return newPost.save();
 }
 
@@ -83,7 +80,7 @@ describe('Post Routes', () => {
 
   describe('Fetching Posts', () => {
     it('should fetch all posts', async () => {
-      await createPost('test', 'test', 'test');
+      await createPost('test', 'test', 'test', new ObjectId());
       const response = await request(app).get('/api/posts');
       expect(response.statusCode).toBe(200);
       expect(response.body.posts.length).toBe(1);
@@ -91,7 +88,7 @@ describe('Post Routes', () => {
     });
 
     it('should fetch a single post', async () => {
-      const post = await createPost('Single Post', 'test', 'test');
+      const post = await createPost('Single Post', 'test', 'test', new ObjectId());
       const response = await request(app).get(`/api/posts/${post.cuid}`);
       expect(response.statusCode).toBe(200);
       expect(response.body.post.title).toBe('Single Post');
@@ -135,7 +132,7 @@ describe('Post Routes', () => {
     it('should not allow UNAUTHORIZED USERS to delete a post', async () => {
       const undefinedToken = undefined
 
-      const post = await createPost('test', 'UNAUTHORIZED', 'test');
+      const post = await createPost('test', 'UNAUTHORIZED', 'test', new ObjectId());
       const response = await deletePostRequest(post.cuid, undefinedToken);
       expect(response.statusCode).toBe(401);
       expect(response.body.message).toBe("Unauthorized");
@@ -145,7 +142,7 @@ describe('Post Routes', () => {
     });
 
     it('should not allow Wrong User to delete a post', async () => {
-      const post = await createPost('test', 'Wrong User', 'test');
+      const post = await createPost('test', 'Wrong User', 'test', new ObjectId());
       await createUser('testpost2@example.com', 'correctPassword');
       const { accessToken } = await loginUser('testpost2@example.com', 'correctPassword');
       const response = await deletePostRequest(post.cuid, accessToken);
@@ -157,7 +154,7 @@ describe('Post Routes', () => {
 
     it('should allow Post Owner to delete a post', async () => {
       const user = await createUser('test2@example.com', 'correctPassword');
-      const post = await createPostWithUser('test', 'test', 'test', user._id);
+      const post = await createPost('test', 'test', 'test', user._id);
       const { accessToken } = await loginUser('test2@example.com', 'correctPassword');
       const response = await deletePostRequest(post.cuid, accessToken);
       expect(response.statusCode).toBe(200);
