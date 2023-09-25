@@ -32,7 +32,7 @@ export const signAccessToken = (id: string, role: string) => {
   return accessToken;
 };
 
-export const encryptPassword = (password: string): Promise<string> => {
+export const encryptPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
 
