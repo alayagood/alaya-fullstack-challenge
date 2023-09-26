@@ -5,6 +5,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
+import { rateLimit } from 'express-rate-limit'
 
 import errorHandler from './middlewares/errorHandler';
 import jwtStrategy from './auth/jwtStrategy';
@@ -47,6 +48,7 @@ class App {
   public async config(routers: IAppRouter[]): Promise<express.Application> {
 
     await this.initializeDependencies()
+
     // CORS (Cross Origin Resource Sharing)
     this.app.use(
       cors({
@@ -61,6 +63,14 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
+    // Rate limit
+    this.app.use('/api', rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+      standardHeaders: 'draft-7', // Set `RateLimit` and `RateLimit-Policy` headers
+      legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    })
+    )
     // Logging 
     const format =
       ENVIRONMENT !== 'production'
