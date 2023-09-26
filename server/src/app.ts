@@ -1,6 +1,7 @@
+import 'express-async-errors'
+// Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
 import express from 'express';
 import cors from 'cors';
-
 import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
@@ -11,14 +12,12 @@ import { IAppRouter } from './api/BaseRouter';
 import DIContainer from './di/diContainer';
 import UserService from './api/users/UserService';
 import PostService from './api/posts/PostService';
+import MongoCrudService from './database/MongoCrudService';
 import MongooseDatabase from './database/MongoDatabase';
-import DI_TYPES from './di/DITypes';
 
+import DI_TYPES from './di/DITypes';
 import { ENVIRONMENT, CLIENT_ORIGIN, MONGO_URI } from './config';
 
-import 'express-async-errors'
-import MongoCrudService from './database/MongoCrudService';
-// Importing this package will catch all errors that are thrown in async functions and pass them to the next() function which will then be handled by our error handler middleware.
 
 class App {
   private app: express.Application;
@@ -38,6 +37,7 @@ class App {
     //    Initialize services
     const crudService = new MongoCrudService(database)
     DIContainer.bind(DI_TYPES.CrudService, crudService);
+
     const postService = new PostService(crudService);
     DIContainer.bind(DI_TYPES.PostService, postService);
 
