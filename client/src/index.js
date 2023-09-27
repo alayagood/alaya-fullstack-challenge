@@ -7,10 +7,8 @@ import './index.css';
 import App from './App';
 
 // Middleware and store enhancers
-const enhancers = [
-    applyMiddleware(thunk),
-];
+const enhancers = [applyMiddleware(thunk)];
 
-const initialStore = createStore(combineReducers({ posts }), { }, compose(...enhancers));
+const initialStore = createStore(combineReducers({ posts }), {}, compose(...enhancers));
 
-ReactDOM.render(<App store={initialStore}/>, document.getElementById('root'));
+ReactDOM.render(<App store={initialStore} />, document.getElementById('root'));

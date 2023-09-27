@@ -12,9 +12,7 @@ function PostListItem({ post, onDelete }) {
     <Card className="w-100 my-4">
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-          <Link to={`/posts/${post.cuid}/${post.slug}`} >
-            {post.title}
-          </Link>
+          <Link to={`/posts/${post.cuid}/${post.slug}`}>{post.title}</Link>
         </Typography>
         <Typography component="p" className="mt-3">
           {post.content}

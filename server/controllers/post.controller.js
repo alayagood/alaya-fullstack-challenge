@@ -10,12 +10,14 @@ const sanitizeHtml = require('sanitize-html');
  * @returns void
  */
 getPosts = async (req, res) => {
-  Post.find().sort('-dateAdded').exec((err, posts) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ posts });
-  });
+  Post.find()
+    .sort('-dateAdded')
+    .exec((err, posts) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      res.json({ posts });
+    });
 };
 
 /**
@@ -83,5 +85,5 @@ module.exports = {
   getPosts,
   addPost,
   getPost,
-  deletePost
+  deletePost,
 };
