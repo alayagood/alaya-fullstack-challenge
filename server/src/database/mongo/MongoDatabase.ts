@@ -1,23 +1,26 @@
-// MongooseDatabase.ts
-
 import mongoose from 'mongoose';
-import IDatabase from './interfaces/IDatabase';
-import availableModels from '../models/index';
-import { Post, User } from '../models';
+import IDatabase from '../interfaces/IDatabase';
+import availableModels from '../../models/index';
+import { Post, User } from '../../models';
 
-class MongooseDatabase implements IDatabase {
+class MongoDatabase implements IDatabase {
   private uri: string;
   public models: { [key: string]: any } = {};
+
   protected connection: any
   constructor(uri: string) {
     this.uri = uri;
   }
+
   loadModels() {
     // This could be done reading a directory and assigning the models from the filesystem
     this.models = {
       [availableModels.post]: Post,
       [availableModels.user]: User,
     }
+  }
+  public getModel<T>(model: string): T {
+    return this.models[model]
   }
   getConnection() {
     return this.connection
@@ -30,9 +33,6 @@ class MongooseDatabase implements IDatabase {
       console.error("Error connecting to database: ", error);
       throw new Error("Database connection failed.");
     }
-  }
-  public getModel<T>(model: string): T {
-    return this.models[model]
   }
 
   async disconnect(): Promise<void> {
@@ -48,4 +48,4 @@ class MongooseDatabase implements IDatabase {
 
 }
 
-export default MongooseDatabase;
+export default MongoDatabase;

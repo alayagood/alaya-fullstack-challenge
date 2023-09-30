@@ -7,7 +7,6 @@ const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
 
-
 const jwtStrategy = new Strategy(options, async (payload, verify) => {
   const user = await User.findById(payload.id);
   if (user) {

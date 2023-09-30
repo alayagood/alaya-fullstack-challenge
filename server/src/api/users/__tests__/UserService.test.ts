@@ -9,17 +9,18 @@ jest.mock('../user.helpers', () => ({
   encryptPassword: jest.fn(),
 }));
 
-// Mock ICrudService
-const mockCrudService = {
-  findOne: jest.fn(),
-  createOne: jest.fn(),
+const mockDataService = {
+  user: {
+    findOne: jest.fn(),
+    createOne: jest.fn(),
+  }
 };
 
 describe('UserService', () => {
   let userService: UserService;
 
   beforeEach(() => {
-    userService = new UserService(mockCrudService as any);
+    userService = new UserService(mockDataService as any);
   });
 
   describe('authenticateUser', () => {
@@ -29,7 +30,7 @@ describe('UserService', () => {
       const encryptedPassword = await encryptPassword(plaintextPassword);
       const mockUser = { email, password: encryptedPassword };
 
-      mockCrudService.findOne.mockResolvedValue(mockUser);
+      mockDataService.user.findOne.mockResolvedValue(mockUser);
       (comparePassword as jest.Mock).mockResolvedValue(true);
 
       const result = await userService.authenticateUser(email, plaintextPassword);
@@ -38,7 +39,7 @@ describe('UserService', () => {
     it('should throw an error when user doesnt exits', async () => {
       const email = 'john.doe@example.com';
       const plaintextPassword = 'plaintextPassword';
-      mockCrudService.findOne.mockResolvedValue(null);
+      mockDataService.user.findOne.mockResolvedValue(null);
 
       await expect(userService.authenticateUser(email, plaintextPassword)).rejects.toThrow(new CustomError('Invalid Credentials', 401));
 
@@ -48,7 +49,7 @@ describe('UserService', () => {
       const email = 'john.doe@example.com';
       const plaintextPassword = 'plaintextPassword';
 
-      mockCrudService.findOne.mockResolvedValue(null);
+      mockDataService.user.findOne.mockResolvedValue(null);
       (comparePassword as jest.Mock).mockResolvedValue(false);
 
       await expect(userService.authenticateUser(email, plaintextPassword)).rejects.toThrow(new CustomError('Invalid Credentials', 401));
@@ -63,7 +64,7 @@ describe('UserService', () => {
       const mockUser = { email, password: encryptedPassword };
 
       (encryptPassword as jest.Mock).mockResolvedValue(encryptedPassword);
-      mockCrudService.createOne.mockResolvedValue(mockUser);
+      mockDataService.user.createOne.mockResolvedValue(mockUser);
 
       const result = await userService.createUser(email, plaintextPassword);
 

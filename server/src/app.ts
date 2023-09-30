@@ -13,11 +13,13 @@ import { IAppRouter } from './api/BaseRouter';
 import DIContainer from './di/diContainer';
 import UserService from './api/users/UserService';
 import PostService from './api/posts/PostService';
-import MongoCrudService from './database/MongoCrudService';
-import MongooseDatabase from './database/MongoDatabase';
+import MongoDatabase from './database/mongo/MongoDatabase';
 
 import DI_TYPES from './di/DITypes';
 import { ENVIRONMENT, CLIENT_ORIGIN, MONGO_URI } from './config';
+import { MongoDataService } from './database/mongo/MongoDataService';
+import IDatabase from './database/interfaces/IDatabase';
+
 
 
 class App {
@@ -26,25 +28,34 @@ class App {
   constructor() {
     this.app = express();
   }
+
   private async initializeDependencies() {
     DIContainer.initialize();
+    await this.initializeDatabase(MONGO_URI);
+    this.initializeServices();
+  }
 
-    //  Initilize DB
-    const database = new MongooseDatabase(MONGO_URI)
+  private async initializeDatabase(uri: string) {
+    const database = new MongoDatabase(uri);
     DIContainer.bind(DI_TYPES.Database, database);
-    await database.connect()
-    database.loadModels()
+    await database.connect();
+    database.loadModels();
+    return database;
+  }
 
-    //    Initialize services
-    const crudService = new MongoCrudService(database)
-    DIContainer.bind(DI_TYPES.CrudService, crudService);
+  private initializeServices() {
+    const database = DIContainer.get<IDatabase>(DI_TYPES.Database)
 
-    const postService = new PostService(crudService);
+    const dataService = new MongoDataService(database);
+    DIContainer.bind(DI_TYPES.DataService, dataService);
+
+    const postService = new PostService(dataService);
     DIContainer.bind(DI_TYPES.PostService, postService);
 
-    const userService = new UserService(crudService);
+    const userService = new UserService(dataService);
     DIContainer.bind(DI_TYPES.UserService, userService);
   }
+
   public async config(routers: IAppRouter[]): Promise<express.Application> {
 
     await this.initializeDependencies()

@@ -1,9 +1,8 @@
+import { FilterQuery } from 'mongoose';
 
-
-export default interface ICrudService {
-  getModel<T>(model: string): T;
-  createOne<T>(model: string, data: object): Promise<T>;
-  deleteOne<T>(model: string, query: any): Promise<T | any>;
-  findOne<T>(model: string, query: any): Promise<T>;
-  findMany<T>(model: string, query: any, sort: any): Promise<T[]>;
+export default interface ICrudService<T> {
+  createOne(data: object): Promise<T>;
+  deleteOne(filter: FilterQuery<T>): Promise<T | any>;
+  findOne(filter: FilterQuery<T>): Promise<T | null>;
+  findMany(filter: FilterQuery<T>, sort: any): Promise<T[]>;
 }

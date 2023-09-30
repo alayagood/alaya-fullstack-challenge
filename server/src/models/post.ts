@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import slug from 'limax';
 import cuid from 'cuid';
 import { IUser } from './user';
-// import { IUser } from 'src/models/user';
+
 export interface IPost extends Document {
     name: string;
     title: string;

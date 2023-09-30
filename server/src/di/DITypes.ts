@@ -1,5 +1,5 @@
 const DI_TYPES = {
-  CrudService: Symbol.for('CrudService'),
+  DataService: Symbol.for('DataService'),
   Database: Symbol.for('Database'),
   PostService: Symbol.for('PostService'),
   UserService: Symbol.for('UserService')

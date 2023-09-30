@@ -1,25 +1,25 @@
 import IPostService from "./interfaces/IPostService";
-import ICrudService from '../../database/interfaces/ICrudService';
+
 import { IPost } from '../../models/post';
 import { AddPostSchema } from "./post.schema";
 import CustomError from '../../utils/errors/CustomError';
 import { cloudinary } from "../../middlewares/multerCloudinary";
-import availableModels from '../../models/index';
+import { IDataService } from "src/database/interfaces/IDataService";
 
 class PostService implements IPostService {
 
-  constructor(private crudService: ICrudService) { }
+  constructor(private dataService: IDataService) { }
 
   async getPosts(): Promise<IPost[]> {
-    return this.crudService.findMany<IPost>(availableModels.post, {}, '-dateAdded');
+    return this.dataService.post.findMany({}, '-dateAdded');
   }
 
   async addPost({ title, name, content, fileOriginalName, filePath }: AddPostSchema, userId: string): Promise<IPost> {
-    return this.crudService.createOne(availableModels.post, { title, name, content, fileOriginalName, filePath, user: userId });
+    return this.dataService.post.createOne({ title, name, content, fileOriginalName, filePath, user: userId });
   }
 
   async getPost(cuid: string): Promise<IPost | null> {
-    return this.crudService.findOne(availableModels.post, { cuid });
+    return this.dataService.post.findOne({ cuid });
   }
 
   async deletePost(cuid: string, userId: string): Promise<IPost | null> {
@@ -36,15 +36,7 @@ class PostService implements IPostService {
       await cloudinary.uploader.destroy(post.fileOriginalName);
     }
 
-    return this.crudService.deleteOne(availableModels.post, { cuid });
+    return this.dataService.post.deleteOne({ cuid });
   }
-  // We could add other more complex operations using crudservice operation or accessing the model directly
-  // async otherOperation(params: any) {
-  //   1.accessing the model:
-  //   const model = this.crudService.getModel(model)
-  //   2. using the cruds service operation :
-  //   this.crudService.otherOperation(model)
-  // }
-
 }
 export default PostService;

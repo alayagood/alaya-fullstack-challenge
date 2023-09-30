@@ -12,19 +12,21 @@ jest.mock('../../../middlewares/multerCloudinary', () => ({
     },
   },
 }));
-// Mock ICrudService
-const mockCrudService = {
-  findMany: jest.fn(),
-  createOne: jest.fn(),
-  findOne: jest.fn(),
-  deleteOne: jest.fn(),
+
+const mockDataService = {
+  post: {
+    findMany: jest.fn(),
+    createOne: jest.fn(),
+    findOne: jest.fn(),
+    deleteOne: jest.fn(),
+  }
 };
 describe('PostService', () => {
 
   let postService: PostService;
 
   beforeEach(() => {
-    postService = new PostService(mockCrudService as any);
+    postService = new PostService(mockDataService as any);
   });
 
 
@@ -33,7 +35,7 @@ describe('PostService', () => {
       const mockPosts: any[] = [
         { name: "name", content: "content", title: "tittle", slug: "slug", cuid: "cuid", }
       ];
-      mockCrudService.findMany.mockResolvedValue(mockPosts);
+      mockDataService.post.findMany.mockResolvedValue(mockPosts);
       const result = await postService.getPosts();
       expect(result).toEqual(mockPosts);
     });
@@ -45,7 +47,7 @@ describe('PostService', () => {
       const userId = 'someUserId';
       const mockCreatedPost = { name: "name", content: "content" };
 
-      mockCrudService.createOne.mockResolvedValue(mockCreatedPost);
+      mockDataService.post.createOne.mockResolvedValue(mockCreatedPost);
 
       const result = await postService.addPost(mockPostData, userId);
       expect(result).toEqual(mockCreatedPost);
@@ -57,7 +59,7 @@ describe('PostService', () => {
       const cuid = 'someCuid';
       const mockPost = { name: "name", content: "content" };
 
-      mockCrudService.findOne.mockResolvedValue(mockPost);
+      mockDataService.post.findOne.mockResolvedValue(mockPost);
 
       const result = await postService.getPost(cuid);
       expect(result).toEqual(mockPost);
@@ -70,8 +72,8 @@ describe('PostService', () => {
       const userId = 'someUserId';
       const mockPost = { user: userId, fileOriginalName: 'originalName' };
 
-      mockCrudService.findOne.mockResolvedValue(mockPost);
-      mockCrudService.deleteOne.mockResolvedValue(mockPost);
+      mockDataService.post.findOne.mockResolvedValue(mockPost);
+      mockDataService.post.deleteOne.mockResolvedValue(mockPost);
 
       const result = await postService.deletePost(cuid, userId);
       expect(result).toEqual(mockPost);
@@ -84,7 +86,7 @@ describe('PostService', () => {
       const otherUserId = 'otherUserId';
       const mockPost = { user_id: otherUserId };
 
-      mockCrudService.findOne.mockResolvedValue(mockPost);
+      mockDataService.post.findOne.mockResolvedValue(mockPost);
 
       await expect(postService.deletePost(cuid, userId)).rejects.toThrow(new CustomError('User cant delete other user posts', 403));
     });
