@@ -9,7 +9,12 @@ function PostList(props) {
     <div className="d-flex flex-column w-100">
       <h3 className="mt-4">Posts</h3>
       {props.posts.map((post) => (
-        <PostListItem post={post} key={post.cuid} onDelete={() => props.handleDeletePost(post.cuid)} />
+        <PostListItem
+          post={post}
+          key={post.cuid}
+          onDelete={() => props.handleDeletePost(post.cuid)}
+          cookies={props.cookies}
+        />
       ))}
     </div>
   );
@@ -23,9 +28,10 @@ PostList.propTypes = {
       content: PropTypes.string.isRequired,
       slug: PropTypes.string.isRequired,
       cuid: PropTypes.string.isRequired,
-    }),
+    })
   ).isRequired,
   handleDeletePost: PropTypes.func.isRequired,
+  cookies: PropTypes.object.isRequired,
 };
 
 export default PostList;

@@ -13,13 +13,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PostCreateWidget = ({ addPost }) => {
-  const [state, setState] = useState({});
+const getDefaultState = () => ({ title: '', content: '' });
+
+const PostCreateWidget = ({ addPost, cookies }) => {
+  const [state, setState] = useState(getDefaultState());
   const classes = useStyles();
 
   const submit = () => {
-    if (state.name && state.title && state.content) {
-      addPost(state);
+    if (cookies?.auth?.identity?.name && state.title && state.content) {
+      addPost({ name: cookies.auth.identity.name, ...state });
+      setState(getDefaultState());
     }
   };
 
@@ -34,10 +37,27 @@ const PostCreateWidget = ({ addPost }) => {
   return (
     <div className={`${classes.root} d-flex flex-column my-4 w-100`}>
       <h3>Create new post</h3>
-      <TextField variant="filled" label="Author name" name="name" onChange={handleChange} />
-      <TextField variant="filled" label="Post title" name="title" onChange={handleChange} />
-      <TextField variant="filled" multiline rows="4" label="Post content" name="content" onChange={handleChange} />
-      <Button className="mt-4" variant="contained" color="primary" onClick={() => submit()} disabled={!state.name || !state.title || !state.content}>
+      <TextField
+        label="Post title"
+        name="title"
+        onChange={handleChange}
+        value={state.title}
+      />
+      <TextField
+        multiline
+        rows="4"
+        label="Post content"
+        name="content"
+        onChange={handleChange}
+        value={state.content}
+      />
+      <Button
+        className="mt-4"
+        variant="contained"
+        color="primary"
+        onClick={() => submit()}
+        disabled={!state.title || !state.content}
+      >
         Submit
       </Button>
     </div>

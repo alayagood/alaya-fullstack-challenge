@@ -13,15 +13,20 @@ export function addPost(post) {
   };
 }
 
-export function addPostRequest(post) {
+export function addPostRequest(post, auth) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
+    return callApi(
+      'posts',
+      'post',
+      {
+        post: {
+          name: post.name,
+          title: post.title,
+          content: post.content,
+        },
       },
-    }).then((res) => dispatch(addPost(res.post)));
+      auth
+    ).then((res) => dispatch(addPost(res.post)));
   };
 }
 
@@ -53,8 +58,10 @@ export function deletePost(cuid) {
   };
 }
 
-export function deletePostRequest(cuid) {
+export function deletePostRequest(cuid, auth) {
   return (dispatch) => {
-    return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
+    return callApi(`posts/${cuid}`, 'delete', null, auth).then(() =>
+      dispatch(deletePost(cuid))
+    );
   };
 }

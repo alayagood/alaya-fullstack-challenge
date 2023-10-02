@@ -7,7 +7,23 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 
-function PostListItem({ post, onDelete }) {
+const isPostOwnedByCurrentUser = (identity, post) =>
+  post.owner && identity?._id === post.owner;
+
+function PostListItem({ post, onDelete, cookies }) {
+  const deletePostButton = isPostOwnedByCurrentUser(
+    cookies.auth?.identity,
+    post
+  ) ? (
+    <CardActions>
+      <Button size="small" color="secondary" onClick={onDelete}>
+        Delete post
+      </Button>
+    </CardActions>
+  ) : (
+    ''
+  );
+
   return (
     <Card className="w-100 my-4">
       <CardContent>
@@ -17,15 +33,15 @@ function PostListItem({ post, onDelete }) {
         <Typography component="p" className="mt-3">
           {post.content}
         </Typography>
-        <Typography color="textSecondary" component="p" className="mt-3 font-italic">
+        <Typography
+          color="textSecondary"
+          component="p"
+          className="mt-3 font-italic"
+        >
           From {post.name}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small" color="secondary" onClick={onDelete}>
-          Delete post
-        </Button>
-      </CardActions>
+      {deletePostButton}
     </Card>
   );
 }
