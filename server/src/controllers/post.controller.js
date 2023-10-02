@@ -1,7 +1,5 @@
 const Post = require('../models/post');
-const cuid = require('cuid');
-const slug = require('limax');
-const sanitizeHtml = require('sanitize-html');
+const { createNewPost } = require('../libs/post/create');
 
 /**
  * Get all posts
@@ -9,12 +7,12 @@ const sanitizeHtml = require('sanitize-html');
  * @param res
  * @returns void
  */
-getPosts = async (req, res) => {
+const getPosts = async (req, res) => {
   Post.find()
     .sort('-dateAdded')
     .exec((err, posts) => {
       if (err) {
-        res.status(500).send(err);
+        return res.status(500).send(err);
       }
       res.json({ posts });
     });
@@ -26,26 +24,13 @@ getPosts = async (req, res) => {
  * @param res
  * @returns void
  */
-addPost = async (req, res) => {
-  if (!req.body.post.name || !req.body.post.title || !req.body.post.content) {
-    res.status(403).end();
+const addPost = async (req, res) => {
+  try {
+    const newPost = await createNewPost(req.body.post, req.decodedToken.sub);
+    return res.json({ post: newPost });
+  } catch (err) {
+    throw err;
   }
-
-  const newPost = new Post(req.body.post);
-
-  // Let's sanitize inputs
-  newPost.title = sanitizeHtml(newPost.title);
-  newPost.name = sanitizeHtml(newPost.name);
-  newPost.content = sanitizeHtml(newPost.content);
-
-  newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
-  newPost.cuid = cuid();
-  newPost.save((err, saved) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ post: saved });
-  });
 };
 
 /**
@@ -54,7 +39,7 @@ addPost = async (req, res) => {
  * @param res
  * @returns void
  */
-getPost = async (req, res) => {
+const getPost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
@@ -69,7 +54,7 @@ getPost = async (req, res) => {
  * @param res
  * @returns void
  */
-deletePost = async (req, res) => {
+const deletePost = async (req, res) => {
   Post.findOne({ cuid: req.params.cuid }).exec((err, post) => {
     if (err) {
       res.status(500).send(err);
