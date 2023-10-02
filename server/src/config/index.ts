@@ -1,5 +1,5 @@
 const pe = process.env;
-export const ENVIRONMENT = (pe.ENVIRONMENT as Environment) || 'development';
+export const NODE_ENV = (pe.NODE_ENV as Environment) || 'development';
 export const MONGO_URI: string = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mern-stack';
 
 export const PORT: number = Number(process.env.PORT) || 3000;
@@ -8,7 +8,7 @@ type Environment = 'development' | 'production' | 'test';
 
 export const SECRET_KEY = pe.SECRET_KET || "donttellanyone please"
 
-if (ENVIRONMENT === "production" && !pe.SECRET_KEY) {
+if (NODE_ENV === "production" && !pe.SECRET_KEY) {
   throw new Error('Please provide SECRET_KEY environment variable!');
 }
 

@@ -4,6 +4,9 @@ import { ErrorRequestHandler } from 'express';
 import CustomError from '../utils/errors/CustomError';
 import { ZodError } from 'zod';
 import { fromZodError } from 'zod-validation-error';
+import Logger from '../lib/Logger';
+import DI_TYPES from '../di/DITypes';
+import DIContainer from '../di/diContainer';
 
 const types = {
     SIMPLE: 'SIMPLE',
@@ -12,13 +15,11 @@ const types = {
     UNHANDLED_ERROR: 'UNHANDLED_ERROR',
     SERVER_ERROR: 'SERVER_ERROR',
 };
-
 const errorHandler: ErrorRequestHandler = async (error, req, res, next) => {
     // Here we could log the error in a specific logger or send the error to a monitoring service depending wheter we are in production or development
-    // logger.log('error', error); 
-    if (process.env.NODE_ENV == 'development') {
-        console.log(error);
-    }
+    const logger = DIContainer.get<Logger>(DI_TYPES.Logger)
+    logger.error(error.message);
+
     // Custom error
 
     if (error instanceof CustomError) {

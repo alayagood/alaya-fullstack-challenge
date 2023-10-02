@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
 import { rateLimit } from 'express-rate-limit'
+import correlator from 'express-correlation-id';
 
 import errorHandler from './middlewares/errorHandler';
 import jwtStrategy from './auth/jwtStrategy';
@@ -14,12 +15,12 @@ import DIContainer from './di/diContainer';
 import UserService from './api/users/UserService';
 import PostService from './api/posts/PostService';
 import MongoDatabase from './database/mongo/MongoDatabase';
+import MongoDataService from './database/mongo/MongoDataService';
+import Logger from './lib/Logger';
 
 import DI_TYPES from './di/DITypes';
-import { ENVIRONMENT, CLIENT_ORIGIN, MONGO_URI } from './config';
-import { MongoDataService } from './database/mongo/MongoDataService';
+import { NODE_ENV, CLIENT_ORIGIN, MONGO_URI } from './config';
 import IDatabase from './database/interfaces/IDatabase';
-
 
 
 class App {
@@ -38,6 +39,7 @@ class App {
   private async initializeDatabase(uri: string) {
     const database = new MongoDatabase(uri);
     DIContainer.bind(DI_TYPES.Database, database);
+
     await database.connect();
     database.loadModels();
     return database;
@@ -54,6 +56,10 @@ class App {
 
     const userService = new UserService(dataService);
     DIContainer.bind(DI_TYPES.UserService, userService);
+
+    const logger = new Logger()
+    DIContainer.bind(DI_TYPES.Logger, logger);
+
   }
 
   public async config(routers: IAppRouter[]): Promise<express.Application> {
@@ -82,12 +88,23 @@ class App {
       legacyHeaders: false, // Disable the `X-RateLimit-*` headers
     })
     )
+    this.app.use(correlator());
     // Logging 
     const format =
-      ENVIRONMENT !== 'production'
+      NODE_ENV !== 'production'
         ? 'dev'
         : '[:date[clf]] :method :url :status :res[content-length] - :response-time ms';
-    this.app.use(morgan(format));
+    const logger = DIContainer.get<Logger>(DI_TYPES.Logger)
+
+    const morganOption = {
+      stream: {
+        write: (message: any) => {
+          // Use the Winston logger here
+          logger.info(message)
+        }
+      }
+    };
+    this.app.use(morgan(format, morganOption));
 
     // Authentication
     this.app.use(passport.initialize());

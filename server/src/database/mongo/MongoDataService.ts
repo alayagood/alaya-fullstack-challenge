@@ -7,7 +7,7 @@ import IDatabase from "../interfaces/IDatabase";
 import availableModels from '../../models/index';
 
 
-export class MongoDataService implements IDataService {
+export default class MongoDataService implements IDataService {
   post: MongoCrudService<IPost>;
   user: MongoCrudService<IUser>;
   constructor(public database: IDatabase) {
