@@ -1,4 +1,12 @@
-# Alaya mern dev challenge
+# Author notes
+Unfortunately, this is still not quite finished (and I apologize for it), due to the fact that I haven't had a lot of time to myself lately.
+Also due to the fact that the extent of my React.js experience is a "tic-tac-toe" tutorial I did some 4 months ago on a whim: doing some react (and redux) was very interesting, but also a lot more time-consuming than I thought it would be.
+
+The project is still missing the image upload management, I will try to work on it this week (but being on a business trip in Paris this week, I may not have a lot of time to make progress), but I figured I would at least push what I've done for now to give an idea of my progress.
+
+I added some unit tests to the server, coverage is far from 100% but I figured what really mattered was to give a demo of how I'd normally do tests
+
+# Alaya mern dev challenge 
 
 ## Presentation
 
@@ -7,27 +15,22 @@ In this project which is a MERN stack you can write and edit post blog.
 This application is composed by 2 repositories, the server and the client:
 
 - In the server repository you can find an express HTTP server that connect to a local mongo database and expose
-  the api.
-  To start the server be sure to have installed mongoDB locally as a service then go in the server repository and launch the index.js
-
+the api.
+To start the server be sure to have installed mongoDB locally as a service then go in the server repository and launch the index.js
 ```$xslt
     cd server
     npm i
     node index.js
 ```
-
 If you want to restart the server at any change you can also install nodemon and start the server like this
-
 ```
     cd server
     npm i
     npm i -g nodemon
     nodemon index.js
 ```
-
 - In the client repository you have the Front-end code of the blog that uses React and Redux.
-  To start the Front-end
-
+To start the Front-end
 ```
     cd client
     npm i
@@ -38,11 +41,6 @@ If you want to restart the server at any change you can also install nodemon and
 
 Please create a pull request for each exercise, so that we can evaluate the final features' code.
 Don't hesitate to enhance the setup documentation if required.
-
-### 0 - Guidelines
-
-- The only accepted delivery method is a pull request on this repository. We do not accept any other delivery method (no zip, no link to a zip, no link to a fork, etc.).
-- Do not change the prettier config or introduce your own code style rules. It is important that we can easily read and understand the diff of your changes.
 
 To show us your skills we would like you to build theses 2 features:
 
